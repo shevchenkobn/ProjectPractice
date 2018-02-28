@@ -39,5 +39,4 @@ sysinfo.txt
 
 #------------------------------------------
 # node.js backend
-.vscode/
 node_modules/
