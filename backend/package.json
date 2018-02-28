@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "startWin": "set NODE_ENV=production node ./dist/",
+    "startDevWin": "rd /s /q \"./dist/\" && tsc && node ./dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "hapi": "^17.2.0",
+    "mongodb": "^3.0.3",
+    "socket.io": "^2.0.4"
+  }
+}
