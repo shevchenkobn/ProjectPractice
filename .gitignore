@@ -1,12 +1,12 @@
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
 
-/Assets/AssetStoreTools*
-/Assets/Plugins/GitHub.meta
-/Assets/Plugins/GitHub/
+Assets/AssetStoreTools*
+Assets/Plugins/GitHub.meta
+Assets/Plugins/GitHub/
 
 # Visual Studio 2015 cache directory
 /.vs/
