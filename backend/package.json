@@ -15,8 +15,8 @@
     "typescript": "^2.7.2"
   },
   "dependencies": {
-    "hapi": "^17.2.0",
-    "mongodb": "^3.0.3",
-    "socket.io": "^2.0.4"
+    "@types/hapi": "^17.0.3",
+    "@types/mongodb": "^3.0.5",
+    "@types/socket.io": "^1.4.31"
   }
 }
