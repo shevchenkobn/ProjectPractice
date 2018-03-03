@@ -1,0 +1,137 @@
+{
+  "boards": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "rulesId": "ObjectId of rules",
+    "localizations": [
+      "ObjectId of available localizations"
+    ],
+    "cells": [
+      {
+        "cellId": "0: number //start",
+        "next": 1
+      },
+      {
+        "cellId": 1,
+        "function": "ObjectId of function",
+        "next": 2
+      }
+    ]
+  },
+  "rules": {
+    "turnLimit": 6,
+    "playerLimit": 6,
+    "hasRoles": true,
+    "//comment": "what do I have to put here?"
+  },
+  "localizations": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "language": "en",
+    "style": "Japanese Feodal",
+    "dictionary": [
+      {
+        "type": "cellFunction| //whatever",
+        "entityId": "ObjectId",
+        "name": "name",
+        "description": "description",
+        "//comment": "what do I have to put here?"
+      }
+    ]
+  },
+  "cellFunctions": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "building?": {
+      "class": "ObjectId of class",
+      "price": 1000,
+      "profit": 10,
+      "fee": 100,
+      "improvement?": {
+        "//comment": "need to clarify"
+      }
+    },
+    "event?": {
+      "//comment": "not sure if smth is additionally needed",
+      "class": "ObjectId of class",
+      "options?": "ObjectId of options",
+      "action?": "skip 1 || smth else",
+      "//comment": "either of above"
+    },
+    "//comment": "either of above"
+  },
+  "cellFunctionClass": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "functions": [],
+    "descriptor?": "//comment: not sure how it will be"
+  },
+  "cellOptions": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "options": [
+      {
+        "cash?": -100,
+        "action": "skip 1 || smth else",
+        "action": [
+          {
+            "boardId": "ObjectId of board",
+            "action": "goto 10 || smth else"
+          }
+        ]
+      }
+    ]
+  },
+  "games": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "stepCount": 1,
+    "playerIndex": 2,
+    "players": [
+      {
+        "playerId": "ObjectId of user",
+        "role?": "ObjectId of role (clan)",
+        "status": "active|left|defeated",
+        "date?": "//comment: date when left or defeated",
+        "position": 10,
+        "modifiers": {
+          "step": 2,
+          "actionId?": "ObjectId of cellfunction",
+          "action?": {
+            "actionId": "ObjectId of cellfunction",
+            "optionIndex": 3
+          },
+          "//comment": "either of above"
+        },
+        "cash": 9000,
+        "possesions": [
+          "ObjectId of cellFunction"
+        ]
+      }
+    ],
+    "boardId": "ObjectId of board",
+    "outcome?": {
+      "//comment": "date is not needed because of updatedAt field; maybe other stuff is needed",
+      "winner": "ObjectId of user"
+    }
+  },
+  "playerRoles": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "modifiers": [
+      {
+        "cash?": "1.1: number //percentage",
+        "prices?": "1.1: number //percentage",
+        "fees?": "1.1: number //percentage",
+        "//comment": "whatever"
+      }
+    ]
+  }
+}

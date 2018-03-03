@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rd /s /q \"./dist/\" && tsc",
     "startWin": "set NODE_ENV=production node ./dist/",
-    "startDevWin": "rd /s /q \"./dist/\" && tsc && node ./dist/"
+    "startDevWin": "npm run build && node ./dist/"
   },
   "keywords": [],
   "author": "",
