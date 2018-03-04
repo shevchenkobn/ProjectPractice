@@ -5,14 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rd /s /q \"./dist/\" && tsc",
-    "startWin": "set NODE_ENV=production node ./dist/",
-    "startDevWin": "npm run build && node ./dist/"
+    "preinstall": "npm i pm2 -g",
+    "build": "if exist \".\\dist\\\" (rd /s /q .\\dist\\ && tsc) else tsc",
+    "startWatching": "nodemon --watch src/**/*.* --exec \"npm run startDev\"",
+    "startDev": "npm run build && node --inspect ./bootstrap",
+    "start": "set NODE_ENV=\"production\" npm run build && node ./dist/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "nodemon": "^1.17.1",
     "typescript": "^2.7.2"
   },
   "dependencies": {

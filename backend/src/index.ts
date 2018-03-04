@@ -2,6 +2,7 @@
 import KoaApplication from 'koa';
 import KoaRouter, {IMiddleware} from 'koa-router';
 
+
 const app = new KoaApplication();
 const router = new KoaRouter();
 
@@ -11,6 +12,8 @@ const get: IMiddleware = (ctx, next) => {
 const post: IMiddleware = (ctx, next) => {
   ctx.body = "Post hello";
 };
+
+console.log("another");
 
 router.get('/:name/:id([0-9]{0,5})', (ctx) => {
   ctx.body = ctx.params.name + ' with ' + ctx.params.id;

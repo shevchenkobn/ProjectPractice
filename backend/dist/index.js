@@ -13,6 +13,7 @@ const get = (ctx, next) => {
 const post = (ctx, next) => {
     ctx.body = "Post hello";
 };
+console.log("another");
 router.get('/:name/:id([0-9]{0,5})', (ctx) => {
     ctx.body = ctx.params.name + ' with ' + ctx.params.id;
 });

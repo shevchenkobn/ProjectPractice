@@ -20,7 +20,7 @@
     ]
   },
   "rules": {
-    "turnLimit": 6,
+    "stepLimit": 6,
     "playerLimit": 6,
     "hasRoles": true,
     "//comment": "what do I have to put here?"
