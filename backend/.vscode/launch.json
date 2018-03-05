@@ -7,8 +7,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Запустить программу",
-      "program": "${file}"
+      "name": "Tests File",
+      "program": "${workspaceFolder}/tests/file"
     }
   ]
 }
