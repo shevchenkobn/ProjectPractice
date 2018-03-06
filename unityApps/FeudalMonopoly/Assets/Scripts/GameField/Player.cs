@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public int Id { get; private set; } = 0; // TODO: temporary workaround
+
     [SerializeField] private float initialStep = 7;
     [SerializeField] private float step = 5;
     [SerializeField] private float speed = 10;
-    private Vector3 velocity = Vector3.one;
+    
     private Vector3 movementDirection = Vector3.forward;
+    private int currentStepIndex = 1;
     
 
     private List<Vector3> possibleSpots = new List<Vector3>(Field.CORNERS_AMOUNT * (Field.STEPS_PER_CORNER + 1));
@@ -20,7 +23,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(Move());
+        GameManager.Instance.Registrate(this);
     }
 
     /// <summary>
@@ -54,24 +57,44 @@ public class Player : MonoBehaviour
             else if (i == 1) movementDirection = Vector3.back;
             else movementDirection = Vector3.right;
         }
-    }   
+    }
+
+    public void Move(int stepsToMove)
+    {
+        StartCoroutine(MoveThroughPositions(stepsToMove));
+    }
 
     /// <summary>
-    /// Moves Player to possible position endlessly
+    /// Iterates throught all possible positions and moves Player to possible position stepsToMove times
     /// </summary>
+    /// <param name="stepsToMove">Amount of steps to move</param>
     /// <returns></returns>
-    private IEnumerator Move()
+    private IEnumerator MoveThroughPositions(int stepsToMove)
     {
-        while (true)
-        {
-            for (int i = 0; i < possibleSpots.Count; i = ++i % possibleSpots.Count)
+        Debug.Log("Moving " + stepsToMove + " units");
+
+        yield return new WaitForSeconds(1f); //TODO: temporary workaround bc it is freezing on start
+
+        int bound = currentStepIndex + stepsToMove;
+
+        for (int i = currentStepIndex; i < bound; i = ++i % possibleSpots.Count)
+        {            
+            while (transform.position != possibleSpots[i])
             {
-                while (transform.position != possibleSpots[i])
-                {
-                    transform.position = Vector3.Lerp(transform.position, possibleSpots[i], speed * Time.deltaTime);
-                    yield return null;
-                }
+                transform.position = Vector3.Lerp(transform.position, possibleSpots[i], speed * Time.deltaTime);                
+                yield return null;
             }
-        }
+
+            GenerateNextStepIndex(); // for keeping track of current position
+        }        
+    }
+
+    /// <summary>
+    /// Increments currentStepIndex and calculates index of next player's step
+    /// </summary>
+    public void GenerateNextStepIndex()
+    {
+        currentStepIndex++;
+        currentStepIndex %= possibleSpots.Count;
     }
 }
