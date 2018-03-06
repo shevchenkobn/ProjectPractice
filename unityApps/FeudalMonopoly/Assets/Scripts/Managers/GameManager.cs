@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,6 +40,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        Dice.DiceRolled += OnDiceRolled;
+    }
+
+    private void OnDisable()
+    {
+        Dice.DiceRolled += OnDiceRolled;
+    }
+
+    private void OnDiceRolled(int steps)
+    {
+        CurrentPlayer.Move(steps);
+    }
+
     /// <summary>
     /// Increments currentPlayerIndex and calculates index of next player
     /// </summary>
@@ -46,5 +62,10 @@ public class GameManager : MonoBehaviour
     {
         currentPlayerIndex++;
         currentPlayerIndex %= PLAYER_AMOUNT;
+    }
+
+    public void Registrate(Player player)
+    {
+        players[player.Id] = player;
     }
 }
