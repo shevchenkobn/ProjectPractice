@@ -9,7 +9,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float initialStep = 7;
     [SerializeField] private float step = 5;
     [SerializeField] private float speed = 10;
-    
+    [SerializeField] private float delayBeforeMove = 0.5f;
+    [SerializeField] private float delayBetweenSteps = 0.6f;
+
     private Vector3 movementDirection = Vector3.forward;
     private int currentStepIndex = 1;
     
@@ -73,19 +75,25 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Moving " + stepsToMove + " units");
 
-        yield return new WaitForSeconds(1f); //TODO: temporary workaround bc it is freezing on start
+        yield return new WaitForSeconds(delayBeforeMove); //TODO: temporary workaround bc it is freezing on start
 
         int bound = currentStepIndex + stepsToMove;
 
         for (int i = currentStepIndex; i < bound; i = ++i % possibleSpots.Count)
-        {            
-            while (transform.position != possibleSpots[i])
+        {
+            Vector3 initialPoition = transform.position;
+            float fraction = speed * Time.deltaTime;
+
+            while (fraction < 1)
             {
-                transform.position = Vector3.Lerp(transform.position, possibleSpots[i], speed * Time.deltaTime);                
+                transform.position = Vector3.Lerp(initialPoition, possibleSpots[i], fraction);                
                 yield return null;
+                fraction += speed * Time.deltaTime;
             }
 
             GenerateNextStepIndex(); // for keeping track of current position
+
+            yield return new WaitForSeconds(delayBetweenSteps);
         }        
     }
 

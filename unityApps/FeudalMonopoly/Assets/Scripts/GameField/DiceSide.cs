@@ -9,6 +9,10 @@ public class DiceSide : MonoBehaviour
 
     [SerializeField] private int value;
 
+    /// <summary>
+    /// Detectes whether side touches the ground 
+    /// </summary>
+    /// <param name="other">Another object to check</param>
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Floor"))
@@ -17,6 +21,10 @@ public class DiceSide : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Detectes whether side leaves the ground 
+    /// </summary>
+    /// <param name="other">Another object to check</param>
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Floor"))
