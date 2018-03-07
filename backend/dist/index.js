@@ -14,9 +14,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const koa_1 = __importDefault(require("koa"));
 const koa_router_1 = __importDefault(require("koa-router"));
 const koa_body_1 = __importDefault(require("koa-body"));
+const path_1 = __importDefault(require("path"));
 const app = new koa_1.default();
 const router = new koa_router_1.default();
-const bodyParser = koa_body_1.default();
+const uploadPath = path_1.default.resolve(__dirname, '../uploads');
+const bodyParser = koa_body_1.default({
+    formidable: { uploadDir: uploadPath },
+    multipart: true,
+    urlencoded: true
+});
 router.all('/test', (ctx, next) => __awaiter(this, void 0, void 0, function* () {
     ctx.body = "all test";
     next();
@@ -33,8 +39,14 @@ router.all('/test', (ctx, next) => __awaiter(this, void 0, void 0, function* () 
         // ctx.app.emit('error', err, ctx);
     }
     next();
+})).post('/form', (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+    console.log(ctx.request.body);
+    ctx.body = ctx.request.body;
 }));
 app
+    .use(bodyParser)
+    .use((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+}))
     .use(router.routes())
     .use((ctx, next) => {
     if (ctx.status !== 404)

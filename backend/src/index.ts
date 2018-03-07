@@ -1,11 +1,17 @@
 "use strict";
 import KoaApplication from 'koa';
-import KoaRouter, {IMiddleware} from 'koa-router';
+import KoaRouter, { IMiddleware } from 'koa-router';
 import KoaBody from 'koa-body';
+import path from 'path';
 
 const app = new KoaApplication();
 const router = new KoaRouter();
-const bodyParser = KoaBody();
+const uploadPath = path.resolve(__dirname, '../uploads');
+const bodyParser = KoaBody({
+  formidable: { uploadDir: uploadPath },
+  multipart: true,
+  urlencoded: true
+});
 
 router.all('/test', async (ctx, next) => {
   ctx.body = "all test";
@@ -22,14 +28,20 @@ router.all('/test', async (ctx, next) => {
     // ctx.app.emit('error', err, ctx);
   }
   next();
+}).post('/form', async (ctx, next) => {
+  console.log(ctx.request.body);
+  ctx.body = ctx.request.body;
 });
 
 app
-.use(router.routes())
-.use((ctx, next) => {
-  if (ctx.status !== 404) return;
-  ctx.redirect('/not_found');
-})
-.listen(3000, () => {
-  console.log('listening');
-});
+  .use(bodyParser)
+  .use(async (ctx, next) => { 
+  })
+  .use(router.routes())
+  .use((ctx, next) => {
+    if (ctx.status !== 404) return;
+    ctx.redirect('/not_found');
+  })
+  .listen(3000, () => {
+    console.log('listening');
+  });
