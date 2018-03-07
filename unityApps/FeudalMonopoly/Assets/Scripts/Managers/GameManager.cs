@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
-        Dice.DiceRolled += OnDiceRolled;
+        Dice.DiceRolled -= OnDiceRolled;
     }
 
     private void OnDiceRolled(int steps)
