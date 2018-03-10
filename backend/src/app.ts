@@ -2,23 +2,54 @@ import KoaApplication from 'koa';
 import KoaRouter from 'koa-router';
 import { Server } from 'http';
 
-export class App {
-  private _app: KoaApplication
-  private _routers: Array<KoaRouter>
+import * as swagger from 'swagger2';
+import { router as swaggerRouter, Router } from 'swagger2-koa';
 
-  constructor(routes: Array<KoaRouter>) {
-    this._app = new KoaApplication();
-    this._routers = routes;
-    for (let route of routes) {
-      this._app.use(route.routes());
+export abstract class BaseApp {
+  protected readonly _app: KoaApplication
+
+  protected constructor(app: KoaApplication) {
+    if (!app) {
+      throw new TypeError('app must be an object');
     }
+    this._app = app;
   }
 
-  async listen(port: number): Promise<Server> {
+  async listen(port: number, callback?: () => void): Promise<Server> {
     try {
-      return this._app.listen(port);
+      return this._app.listen(port, callback);
     } catch (err) {
       return err;
     }
+  }
+}
+
+export class App extends BaseApp {
+  private readonly _routers: Array<KoaRouter>
+
+  constructor(routes: Array<KoaRouter>) {
+    super(new KoaApplication());
+    this._routers = routes;
+
+    for (let route of this._routers) {
+      this._app.use(route.routes());
+    }
+  }
+}
+
+export class SwaggerApp extends BaseApp {
+  private readonly _swaggerConfigPath: string
+  private readonly _swaggerDocument: any
+  private readonly _swaggerRouter: Router
+
+  constructor(swaggerConfigPath: string) {
+    const document = swagger.loadDocumentSync(swaggerConfigPath);
+    const router = swaggerRouter(document);
+    
+    super(router.app());
+    
+    this._swaggerConfigPath = swaggerConfigPath;
+    this._swaggerDocument = document;
+    this._swaggerRouter = router;
   }
 }

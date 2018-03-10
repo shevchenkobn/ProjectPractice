@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "npm i pm2 swagger -g",
+    "preinstall": "npm i pm2 -g",
     "buildWin": "if exist \".\\dist\\\" (rd /s /q .\\dist\\ && tsc) else tsc",
     "startWatchWin": "nodemon --watch src/**/*.* --exec \"npm run startDevWin\"",
     "startDevWin": "npm run buildWin && node --inspect ./dist/",
