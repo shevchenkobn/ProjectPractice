@@ -1,14 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Dice : MonoBehaviour
 {
     public static event System.Action<int> DiceRolled = delegate { };
+    public static event System.Action DiceRolling = delegate { };
 
-    private Rigidbody rigidbody;
-    private Transform transform;
+    private static string path;
+
+    private new Rigidbody rigidbody;
+    private new Transform transform;
 
     private bool isLanded = false;
     private bool isThrown = false;
@@ -17,16 +20,29 @@ public class Dice : MonoBehaviour
     private Quaternion initialRotation;
     private int diceValue;
 
+    private Dictionary<int, List<Vector3>> sideTorqueValusePair = new Dictionary<int, List<Vector3>>();
+    private Vector3 torque;
+    private int randomNumber;
+
     private DiceSide[] diceSides = new DiceSide[6];
 
     private void Awake()
-    {     
+    {
+        path = Path.Combine(Application.dataPath, "Json/Dice.json");
+
         rigidbody = GetComponent<Rigidbody>();
         transform = GetComponent<Transform>();
     }
 
     private void Start()
     {
+        JsonHelper.LoadJson(path, ref sideTorqueValusePair);
+
+        if (sideTorqueValusePair == null)
+        {
+            sideTorqueValusePair = new Dictionary<int, List<Vector3>>();
+        }
+
         foreach (Transform child in transform)
         {
             DiceSide side = child.GetComponent<DiceSide>();
@@ -76,11 +92,13 @@ public class Dice : MonoBehaviour
     /// </summary>
     private void RollDice()
     {
-        int randomnNumber = Random.Range(1, 7);
-
         if (!isThrown && !isLanded)
         {
-            ThrowDice(randomnNumber);
+            randomNumber = Random.Range(1, 7); // should be sent from server
+
+            DiceRolling();
+
+            ThrowDice(randomNumber);
         }
         else if (isThrown && isLanded)
         {
@@ -89,19 +107,19 @@ public class Dice : MonoBehaviour
     }
 
     /// <summary>
-    /// Throws dice with rando values
+    /// Throws dice with torque value depending on randomNumber
     /// </summary>
-    private void ThrowDice(int number)
+    /// <param name="randomNumber">Number from server that determines torque</param>
+    private void ThrowDice(int randomNumber)
     {
         isThrown = true;
         rigidbody.useGravity = true;
 
-        int x = Random.Range(0, 500);
-        int y = Random.Range(0, 500);
-        int z = Random.Range(0, 500);
+        int count = sideTorqueValusePair[randomNumber].Count;
+        int index = Random.Range(0, count);
 
-        Debug.Log("x: " + x + " y: " + y + " z: " + z);
-        rigidbody.AddTorque(x, y, z);
+        torque = sideTorqueValusePair[randomNumber][index];        
+        rigidbody.AddTorque(torque);
     }
 
 
@@ -126,10 +144,7 @@ public class Dice : MonoBehaviour
     private void RollAgain()
     {
         ResetDice();
-
-        int randomnNumber = Random.Range(1, 7);
-
-        ThrowDice(randomnNumber);
+        ThrowDice(randomNumber);
     }
 
     /// <summary>
@@ -149,6 +164,17 @@ public class Dice : MonoBehaviour
 
         if (diceValue != 0)
         {
+            //Record new values for torque
+
+            //if (!sideTorqueValusePair.ContainsKey(diceValue))
+            //{
+            //    sideTorqueValusePair.Add(diceValue, new List<Vector3>());
+            //}
+
+            //sideTorqueValusePair[diceValue].Add(torque);
+
+            //JsonHelper.SaveJson(path, ref sideTorqueValusePair);
+
             DiceRolled(diceValue);
         }
     }

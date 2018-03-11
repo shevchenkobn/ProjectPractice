@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public static event System.Action Rotated = delegate { };
+
     public int Id { get; private set; } = 0; // TODO: temporary workaround
 
     [SerializeField] private float initialStep = 7;
@@ -12,6 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float delayBeforeMove = 0.5f;
     [SerializeField] private float delayBetweenSteps = 0.6f;
 
+    private Vector3 cornerRotation= new Vector3(0, -90, 0);
     private Vector3 movementDirection = Vector3.forward;
     private int currentStepIndex = 1;
     
@@ -87,7 +90,14 @@ public class Player : MonoBehaviour
                 fraction += speed * Time.deltaTime;
             }
 
-            GenerateNextStepIndex(); // for keeping track of current position
+            // for rotation
+            if (currentStepIndex % 10 == 0)
+            {
+                transform.Rotate(cornerRotation);
+                Rotated();
+            }
+
+            GenerateNextStepIndex(); // for keeping track of current position            
 
             yield return new WaitForSeconds(delayBetweenSteps);
         }        

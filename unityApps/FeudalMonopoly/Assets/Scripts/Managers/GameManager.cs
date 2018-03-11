@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum GameStatus { Active, Pause, GameOver }
 
@@ -60,19 +57,23 @@ public class GameManager : MonoBehaviour
     /// <param name="steps">Amount of steps to move</param>
     private void OnDiceRolled(int steps)
     {
-        stepsToMove += steps;
+        CurrentPlayer.Move(steps);
 
-        if (!isRolledTwice)
-        {           
-            isRolledTwice = true;
-        }
-        else
-        {
-            CurrentPlayer.Move(stepsToMove);
+        // for two dices
 
-            isRolledTwice = false;
-            stepsToMove = 0;
-        }        
+        //stepsToMove += steps;
+
+        //if (!isRolledTwice)
+        //{           
+        //    isRolledTwice = true;
+        //}
+        //else
+        //{
+        //    CurrentPlayer.Move(stepsToMove);
+
+        //    isRolledTwice = false;
+        //    stepsToMove = 0;
+        //}        
     }
 
     /// <summary>
