@@ -41,11 +41,7 @@ public class Player : MonoBehaviour
             {
                 if (i == Field.CORNERS_AMOUNT - 1 && j == Field.STEPS_PER_CORNER) break;
 
-                if (j == 0)
-                {
-                    possibleSpots.Add(possibleSpots[ind - 1] + movementDirection * initialStep);
-                }
-                else if (j == Field.STEPS_PER_CORNER)
+                if (j == 0 || j == Field.STEPS_PER_CORNER)
                 {
                     possibleSpots.Add(possibleSpots[ind - 1] + movementDirection * initialStep);
                 }

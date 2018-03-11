@@ -14,6 +14,7 @@ public class Dice : MonoBehaviour
     private bool isThrown = false;
 
     private Vector3 initPosition;
+    private Quaternion initialRotation;
     private int diceValue;
 
     private DiceSide[] diceSides = new DiceSide[6];
@@ -32,6 +33,7 @@ public class Dice : MonoBehaviour
             diceSides[side.SideValue - 1] = side;
         }
 
+        initialRotation = transform.rotation;
         initPosition = transform.position;
         rigidbody.useGravity = false;
     }
@@ -74,9 +76,11 @@ public class Dice : MonoBehaviour
     /// </summary>
     private void RollDice()
     {
+        int randomnNumber = Random.Range(1, 7);
+
         if (!isThrown && !isLanded)
         {
-            ThrowDice();
+            ThrowDice(randomnNumber);
         }
         else if (isThrown && isLanded)
         {
@@ -87,18 +91,26 @@ public class Dice : MonoBehaviour
     /// <summary>
     /// Throws dice with rando values
     /// </summary>
-    private void ThrowDice()
+    private void ThrowDice(int number)
     {
         isThrown = true;
         rigidbody.useGravity = true;
-        rigidbody.AddTorque(Random.Range(0, 500), Random.Range(0, 500), Random.Range(0, 500));
+
+        int x = Random.Range(0, 500);
+        int y = Random.Range(0, 500);
+        int z = Random.Range(0, 500);
+
+        Debug.Log("x: " + x + " y: " + y + " z: " + z);
+        rigidbody.AddTorque(x, y, z);
     }
+
 
     /// <summary>
     /// Get dice back to its initial position and sets rigidbody properties
     /// </summary>
     private void ResetDice()
     {
+        transform.rotation = initialRotation;
         transform.position = initPosition;
 
         isThrown = false;
@@ -114,7 +126,10 @@ public class Dice : MonoBehaviour
     private void RollAgain()
     {
         ResetDice();
-        ThrowDice();
+
+        int randomnNumber = Random.Range(1, 7);
+
+        ThrowDice(randomnNumber);
     }
 
     /// <summary>
