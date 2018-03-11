@@ -3,9 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class UserController {
     constructor() {
         this.getUsers = (ctx, next) => {
-            ctx.body = [{
-                    hello: 'world'
-                }];
+            ctx.body = {};
         };
     }
 }

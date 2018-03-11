@@ -3,8 +3,8 @@ import KoaRouter from 'koa-router';
 import { Server } from 'http';
 import KoaBody, { IKoaBodyOptions } from 'koa-body';
 
-import * as swagger from 'swagger2';
 import { validate } from 'swagger2-koa';
+import { loadSwaggerDocument } from './services/swagger.service';
 
 export abstract class App {
   protected readonly _app: KoaApplication
@@ -50,11 +50,7 @@ export class SwaggerApp extends App {
   private readonly _swaggerValidator: Middleware
 
   constructor(swaggerConfigPath: string, routes: Array<KoaRouter>, uploadDir?: string, middlewares?: Array<Middleware>) {
-    const document = swagger.loadDocumentSync(swaggerConfigPath);
-
-    if (!swagger.validateDocument(document)) {
-      throw new TypeError(`${swaggerConfigPath} does not conform to the Swagger 2.0 schema`);
-    }
+    const document = loadSwaggerDocument(swaggerConfigPath);
 
     const validator: Middleware = validate(document);
     if (middlewares) {

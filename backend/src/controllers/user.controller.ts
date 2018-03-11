@@ -7,8 +7,6 @@ export class UserController {
   }
 
   public readonly getUsers: Middleware = (ctx, next) => {
-    ctx.body = [{
-      hello: 'world'
-    }];
+    ctx.body = {};
   }
 }
