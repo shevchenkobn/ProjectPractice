@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "preinstall": "npm i pm2 -g",
-    "build": "if exist \".\\dist\\\" (rd /s /q .\\dist\\ && tsc) else tsc",
-    "startWatching": "nodemon --watch src/**/*.* --exec \"npm run startDev\"",
-    "startDev": "npm run build && node --inspect ./dist/",
-    "start": "set NODE_ENV=\"production\" npm run build && node ./dist/"
+    "buildWin": "if exist \".\\dist\\\" (rd /s /q .\\dist\\ && tsc) else tsc",
+    "startWatchWin": "nodemon --watch src/**/*.* --exec \"npm run startDevWin\"",
+    "startDevWin": "npm run buildWin && node --inspect ./dist/",
+    "startWin": "set NODE_ENV=\"production\" npm run buildWin && node ./dist/"
   },
   "keywords": [],
   "author": "",
@@ -20,19 +20,20 @@
   },
   "dependencies": {
     "@types/body-parser": "^1.16.8",
+    "@types/config": "0.0.34",
     "@types/koa": "^2.0.44",
-    "@types/koa-bodyparser": "^4.2.0",
     "@types/koa-router": "^7.0.27",
     "@types/mongodb": "^3.0.5",
     "@types/mongoose": "^5.0.3",
     "@types/socket.io": "^1.4.31",
+    "config": "^1.30.0",
     "koa": "^2.5.0",
     "koa-body": "^2.5.0",
-    "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.4.0",
     "mongodb": "^3.0.3",
     "mongoose": "^5.0.7",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "swagger2-koa": "0.0.44"
   },
   "optionalDependencies": {
     "path-to-regexp": "^2.1.0"

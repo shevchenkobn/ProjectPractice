@@ -1,0 +1,21 @@
+swagger: "2.0"
+info:
+  title: Monopoly
+  description: Non-game Web API of Feodal Monopoly project
+  version: 1.0.0
+
+host: 127.0.0.1:3000
+basePath: /api/v1
+schemes:
+  - http
+
+paths:
+  /users:
+    get:
+      summary: ...
+      description: ...
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
