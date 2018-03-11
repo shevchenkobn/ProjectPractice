@@ -2,6 +2,7 @@ import KoaApplication, { Middleware } from 'koa';
 import KoaRouter from 'koa-router';
 import { Server } from 'http';
 import KoaBody, { IKoaBodyOptions } from 'koa-body';
+import session from 'koa-session';
 
 import { validate } from 'swagger2-koa';
 import { loadSwaggerDocument } from './services/swagger.service';
@@ -24,6 +25,7 @@ export abstract class App {
       koaBodyOptions.formidable = { uploadDir };
     }
     this._app.use(KoaBody(koaBodyOptions));
+    this._app.use(session({}, this._app));
     if (middlewares) {
       for (let middleware of this._middlewares) {
         this._app.use(middleware);

@@ -4,7 +4,7 @@ import dotProp from 'dot-prop';
 
 const configureProps: Array<any> = [
   [
-    (host: any, port: any): any => {
+    (host: string, port: string): string => {
       return host + ':' + port;
     },
     ['host', 'port'],
