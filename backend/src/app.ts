@@ -1,55 +1,72 @@
-import KoaApplication from 'koa';
+import KoaApplication, { Middleware } from 'koa';
 import KoaRouter from 'koa-router';
 import { Server } from 'http';
+import KoaBody, { IKoaBodyOptions } from 'koa-body';
 
 import * as swagger from 'swagger2';
-import { router as swaggerRouter, Router } from 'swagger2-koa';
+import { validate } from 'swagger2-koa';
 
-export abstract class BaseApp {
+export abstract class App {
   protected readonly _app: KoaApplication
+  protected readonly _routers: Array<KoaRouter>
+  protected readonly _middlewares: Array<Middleware>
 
-  protected constructor(app: KoaApplication) {
-    if (!app) {
-      throw new TypeError('app must be an object');
-    }
-    this._app = app;
-  }
-
-  async listen(port: number, callback?: () => void): Promise<Server> {
-    try {
-      return this._app.listen(port, callback);
-    } catch (err) {
-      return err;
-    }
-  }
-}
-
-export class App extends BaseApp {
-  private readonly _routers: Array<KoaRouter>
-
-  constructor(routes: Array<KoaRouter>) {
-    super(new KoaApplication());
+  constructor(routes: Array<KoaRouter>, uploadDir?: string, middlewares?: Array<Middleware>) {
+    this._app = new KoaApplication();
     this._routers = routes;
+    this._middlewares = middlewares;
+
+    const koaBodyOptions: IKoaBodyOptions = {
+      multipart: true,
+      urlencoded: true
+    }
+    if (uploadDir) {
+      koaBodyOptions.formidable = { uploadDir };
+    }
+    this._app.use(KoaBody(koaBodyOptions));
+    if (middlewares) {
+      for (let middleware of this._middlewares) {
+        this._app.use(middleware);
+      }
+    }
 
     for (let route of this._routers) {
       this._app.use(route.routes());
     }
   }
+
+  async listen(port: number, callback?: (app: KoaApplication) => void): Promise<Server> {
+    try {
+      return this._app.listen(port, () => callback && callback(this._app));
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
-export class SwaggerApp extends BaseApp {
+export class SwaggerApp extends App {
   private readonly _swaggerConfigPath: string
   private readonly _swaggerDocument: any
-  private readonly _swaggerRouter: Router
+  private readonly _swaggerValidator: Middleware
 
-  constructor(swaggerConfigPath: string) {
+  constructor(swaggerConfigPath: string, routes: Array<KoaRouter>, uploadDir?: string, middlewares?: Array<Middleware>) {
     const document = swagger.loadDocumentSync(swaggerConfigPath);
-    const router = swaggerRouter(document);
-    
-    super(router.app());
-    
+
+    if (!swagger.validateDocument(document)) {
+      throw new TypeError(`${swaggerConfigPath} does not conform to the Swagger 2.0 schema`);
+    }
+
+    const validator: Middleware = validate(document);
+    if (middlewares) {
+      middlewares.unshift(validator);
+    } else {
+      middlewares = [validator];
+    }
+    super(routes, uploadDir, middlewares);
+    this._middlewares.shift();
+
     this._swaggerConfigPath = swaggerConfigPath;
     this._swaggerDocument = document;
-    this._swaggerRouter = router;
+    this._swaggerValidator = validator;
   }
 }

@@ -1,15 +1,18 @@
 import config from 'config'; 
+import appRoot from 'app-root-path';
+
 import { SwaggerApp } from './app';
-import path from 'path';
+import { apiRoutes } from './routes/index';
 
 const mongoConfig = config.get('mongodb');
 
-const swaggerConfig = config.get<string>('swaggerConfig');
-const app = new SwaggerApp(swaggerConfig);
+const swaggerConfig = appRoot.resolve(config.get<string>('swaggerConfig'));
+const uploadDir = appRoot.resolve(config.get<string>('uploadDir'));
+const app = new SwaggerApp(swaggerConfig, apiRoutes, uploadDir);
 
-app.listen(config.get<number>('port'), () => {
+app.listen(config.get<number>('port'), (app) => {
   console.log('listening');
 }).catch(err => {
   console.error(err);
-  process.nextTick(() => process.exit(1));
+  process.kill(process.pid, 'SIGTERM');
 });
