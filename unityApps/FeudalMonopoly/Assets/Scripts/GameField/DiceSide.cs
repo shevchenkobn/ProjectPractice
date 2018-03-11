@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DiceSide : MonoBehaviour
 {
+    public DiceSide oppositeSide;
+
     public bool IsOnGround { get; private set; }    
     public int SideValue { get { return value; } }
 
