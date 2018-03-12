@@ -25,12 +25,24 @@ koa_passport_1.default.use('local', new passport_local_1.Strategy((username, pas
             done(null, user);
         }
         else {
-            done(null, user, new TypeError('Password is invalid'));
+            done(null, false, new TypeError('Password is invalid'));
         }
     }
     catch (err) {
         done(err);
     }
 })));
+koa_passport_1.default.serializeUser((user, done) => {
+    done(null, user._id);
+});
+koa_passport_1.default.deserializeUser((id, done) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        const user = yield User.findById(id);
+        done(null, user);
+    }
+    catch (err) {
+        done(err);
+    }
+}));
 exports.default = koa_passport_1.default;
 //# sourceMappingURL=passport-auth.service.js.map

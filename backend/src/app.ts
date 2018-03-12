@@ -25,7 +25,7 @@ export abstract class App {
       koaBodyOptions.formidable = { uploadDir };
     }
     this._app.use(KoaBody(koaBodyOptions));
-    this._app.use(session({}, this._app));
+    // this._app.use(session({}, this._app));
     if (middlewares) {
       for (let middleware of this._middlewares) {
         this._app.use(middleware);

@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const koa_1 = __importDefault(require("koa"));
 const koa_body_1 = __importDefault(require("koa-body"));
-const koa_session_1 = __importDefault(require("koa-session"));
 const swagger2_koa_1 = require("swagger2-koa");
 const swagger_service_1 = require("./services/swagger.service");
 class App {
@@ -29,7 +28,7 @@ class App {
             koaBodyOptions.formidable = { uploadDir };
         }
         this._app.use(koa_body_1.default(koaBodyOptions));
-        this._app.use(koa_session_1.default({}, this._app));
+        // this._app.use(session({}, this._app));
         if (middlewares) {
             for (let middleware of this._middlewares) {
                 this._app.use(middleware);

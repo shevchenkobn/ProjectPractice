@@ -9,7 +9,7 @@ const router = new koa_router_1.default({
     prefix: '/auth'
 });
 const controller = new auth_controller_1.AuthController();
-router.post('/', controller.login);
+router.post('/login', controller.login);
 router.get('/logout', controller.logout);
 router.post('/register', controller.register);
 exports.default = router;

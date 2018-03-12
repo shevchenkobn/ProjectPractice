@@ -12,16 +12,21 @@ const userSchema = new mongoose.Schema({
   passwordHash: String,
   salt: String
 }, {
-  timestamps: true
+  timestamps: true,
+  toObject: {
+    transform(doc) {
+      
+    }
+  }
 });
 mongoose.model('string', userSchema);
 
 userSchema.virtual('password')
-  .set(async function (password: string) {
+  .set(function (password: string) {
     this._password = password + '';
-    if (password.length) {
-      this.salt = await bcrypt.genSalt();
-      this.passwordHash = await bcrypt.hash(this._password, this.salt);
+    if (this._password.length) {
+      this.salt = bcrypt.genSaltSync();
+      this.passwordHash = bcrypt.hashSync(this._password, this.salt);
     } else {
       this.salt = this.passwordHash = undefined;
     }

@@ -12,10 +12,24 @@ passport.use('local', new LocalStrategy(async (username, password, done) => {
     if (await user.checkPassword(password)) {
       done(null, user);
     } else {
-      done(null, user, new TypeError('Password is invalid'));
+      done(null, false, new TypeError('Password is invalid'));
     }
   } catch (err) {
     done(err);
   }
 }));
+
+passport.serializeUser<any, string>((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
 export default passport;

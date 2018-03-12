@@ -28,16 +28,14 @@ const userSchema = new mongoose_1.default.Schema({
 mongoose_1.default.model('string', userSchema);
 userSchema.virtual('password')
     .set(function (password) {
-    return __awaiter(this, void 0, void 0, function* () {
-        this._password = password + '';
-        if (password.length) {
-            this.salt = yield bcrypt_1.default.genSalt();
-            this.passwordHash = yield bcrypt_1.default.hash(this._password, this.salt);
-        }
-        else {
-            this.salt = this.passwordHash = undefined;
-        }
-    });
+    this._password = password + '';
+    if (this._password.length) {
+        this.salt = bcrypt_1.default.genSaltSync();
+        this.passwordHash = bcrypt_1.default.hashSync(this._password, this.salt);
+    }
+    else {
+        this.salt = this.passwordHash = undefined;
+    }
 })
     .get(function () {
     return this._password;

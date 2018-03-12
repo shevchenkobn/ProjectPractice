@@ -6,7 +6,7 @@ const router = new KoaRouter({
 });
 
 const controller = new AuthController();
-router.post('/', controller.login);
+router.post('/login', controller.login);
 router.get('/logout', controller.logout);
 router.post('/register', controller.register);
 
