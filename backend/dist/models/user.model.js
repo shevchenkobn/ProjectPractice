@@ -23,7 +23,11 @@ const userSchema = new mongoose_1.default.Schema({
     passwordHash: String,
     salt: String
 }, {
-    timestamps: true
+    timestamps: true,
+    toObject: {
+        transform(doc) {
+        }
+    }
 });
 mongoose_1.default.model('string', userSchema);
 userSchema.virtual('password')
@@ -49,20 +53,34 @@ userSchema.methods.checkPassword = function (password) {
         return (yield bcrypt_1.default.hash(password, this.salt)) === password;
     });
 };
+let _modelName = 'User';
+/**
+ * Export part
+ */
 let User;
-function bindUser(connection, modelName = 'User') {
-    if (User) {
-        throw new TypeError('User is already bound to connection');
+let _connection;
+const initializer = {
+    bindToConnection(connection, modelName = _modelName) {
+        if (User) {
+            throw new TypeError('User is already bound to connection');
+        }
+        _modelName = modelName;
+        _connection = connection;
+        User = connection.model(modelName, userSchema);
+        return User;
+    },
+    getModel() {
+        if (!User) {
+            throw new TypeError('User is not bound to connection');
+        }
+        return User;
+    },
+    isBoundToConnection(connection = _connection) {
+        return User && connection === _connection;
+    },
+    getModelName() {
+        return _modelName;
     }
-    User = connection.model(modelName, userSchema);
-    return User;
-}
-exports.bindUser = bindUser;
-function getUserModel() {
-    if (!User) {
-        throw new TypeError('User is not bound to connection');
-    }
-    return User;
-}
-exports.getUserModel = getUserModel;
+};
+exports.default = initializer;
 //# sourceMappingURL=user.model.js.map

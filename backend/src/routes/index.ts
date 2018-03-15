@@ -1,7 +1,13 @@
 import KoaRouter from 'koa-router';
-import usersRouter from './users.route';
-import authRouter from './auth.route';
+import { initialize as authRouterInitialize } from './auth.route';
 
-export const apiRoutes: Array<KoaRouter> = [];
+let apiRoutes: Array<KoaRouter>;
 
-apiRoutes.push(authRouter, usersRouter);
+export function initialize(): Array<KoaRouter> {
+  if (apiRoutes) {
+    return apiRoutes;
+  }
+  apiRoutes = [];
+  apiRoutes.push(authRouterInitialize());
+  return apiRoutes;
+}

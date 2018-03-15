@@ -1,10 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-const users_route_1 = __importDefault(require("./users.route"));
-const auth_route_1 = __importDefault(require("./auth.route"));
-exports.apiRoutes = [];
-exports.apiRoutes.push(auth_route_1.default, users_route_1.default);
+const auth_route_1 = require("./auth.route");
+let apiRoutes;
+function initialize() {
+    if (apiRoutes) {
+        return apiRoutes;
+    }
+    apiRoutes = [];
+    apiRoutes.push(auth_route_1.initialize());
+    return apiRoutes;
+}
+exports.initialize = initialize;
 //# sourceMappingURL=index.js.map

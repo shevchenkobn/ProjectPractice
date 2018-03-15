@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-
+import { IModelInitializer } from './index';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -41,19 +41,39 @@ userSchema.methods.checkPassword = async function (password: string) {
   return (await bcrypt.hash(password, this.salt)) === password;
 }
 
+let _modelName = 'User';
+
+/**
+ * Export part
+ */
+
 let User: mongoose.Model<mongoose.Document>;
-export function bindUser (connection: mongoose.Connection, modelName: string = 'User'): mongoose.Model<mongoose.Document> {
-  if (User) {
-    throw new TypeError('User is already bound to connection');
-  }
-  User = connection.model(modelName, userSchema);
-  return User;
-}
+let _connection: mongoose.Connection | typeof mongoose;
 
-export function getUserModel() {
-  if (!User) {
-    throw new TypeError('User is not bound to connection');
-  }
-  return User;
-}
+const initializer: IModelInitializer = {
+  bindToConnection(connection: mongoose.Connection | typeof mongoose, modelName: string = _modelName): mongoose.Model<mongoose.Document> {
+    if (User) {
+      throw new TypeError('User is already bound to connection');
+    }
+    _modelName = modelName;
+    _connection = connection;
+    User = (connection as any).model(modelName, userSchema);
+    return User;
+  },
 
+  getModel() {
+    if (!User) {
+      throw new TypeError('User is not bound to connection');
+    }
+    return User;
+  },
+
+  isBoundToConnection(connection: mongoose.Connection | typeof mongoose = _connection): boolean {
+    return User && connection === _connection;
+  },
+
+  getModelName() {
+    return _modelName;
+  }
+};
+export default initializer;
