@@ -1,0 +1,5 @@
+implement async password workaround for user model for better productivity
+
+logging in:
+https://medium.com/hyphe/token-based-authentication-in-node-6e8731bfd7f2
+https://github.com/jaredhanson/passport-http-bearer

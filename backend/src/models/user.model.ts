@@ -14,8 +14,11 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true,
   toObject: {
-    transform(doc) {
-      
+    transform(doc, ret) {
+      return {
+        _id: ret._id,
+        username: ret.username  
+      };
     }
   }
 });
@@ -35,10 +38,10 @@ userSchema.virtual('password')
     return this._password;
   });
 
-userSchema.methods.checkPassword = async function (password: string) {
+userSchema.methods.checkPassword = function (password: string) {
   if (!password) return false;
   if (!this.passwordHash) return false;
-  return (await bcrypt.hash(password, this.salt)) === password;
+  return bcrypt.hashSync(password, this.salt) === password;
 }
 
 let _modelName = 'User';
