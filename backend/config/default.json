@@ -7,6 +7,7 @@
     "port": 27017,
     "dbName": "monopoly"
   },
+  "jwtSecret": ">>>= is the Flash",
   "swaggerConfig": "./config/swagger.yml",
   "uploadDir": "./uploads"
 }

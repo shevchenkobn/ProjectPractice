@@ -37,7 +37,7 @@ export abstract class App {
     }
   }
 
-  async listen(port: number, callback?: (app: KoaApplication) => void): Promise<Server> {
+  listen(port: number, callback?: (app: KoaApplication) => void): Server {
     try {
       return this._app.listen(port, () => callback && callback(this._app));
     } catch (err) {

@@ -2,35 +2,46 @@ import { Middleware } from 'koa';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import UserInitializer from '../models/user.model';
+import { initialize as initAuthService, service as authService } from '../services/authentication.service';
 
+let User: mongoose.Model<mongoose.Document>;
 export class AuthController {
-  private readonly _userModel: mongoose.Model<mongoose.Document>;
-
   constructor() {
-    this._userModel = UserInitializer.getModel();
+    if (!User) {
+      User = UserInitializer.getModel();
+    }
+    if (!authService) {
+      initAuthService();
+    }
   }
+
   register: Middleware = async (ctx, next) => {
     if (ctx.isAuthenticated()) {
       ctx.throw(400, "User is logged in");
     }
-    let user = await this._userModel.findOne({username: ctx.request.body.username});
-    if (!user) {
-      user = new this._userModel(ctx.request.body);
-      await user.save();
+    try {
+      const user = await authService.createUser(ctx.request.body);
       await ctx.login(user);
-      ctx.body = ctx.state.user;
-    } else {
-      ctx.throw(400, "Username is occupied");
+      ctx.body = authService.getResponse(ctx);
+    } catch (err) {
+      if (err instanceof Error) {
+        ctx.throw(500);
+      } else {
+        ctx.throw(400, err);
+      }
     }
+    await next();
   }
+
   login: Middleware = async (ctx, next) => {
     if (ctx.isAuthenticated()) {
       ctx.throw(400, "User is logged in");
     }
-    const user = await this._userModel.findOne({username: ctx.request.body.username});
+    const user = await User.findOne({username: ctx.request.body.username});
     await ctx.login(user);
     ctx.body = ctx.state.user;
   }
+
   logout: Middleware = async (ctx, next) => {
     ctx.logout();
     ctx.body = {
