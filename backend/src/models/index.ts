@@ -1,4 +1,5 @@
 import UserInitializer from './user.model';
+import SessionInitializer from './session.model';
 import mongoose from 'mongoose';
 
 let models: IModels = null;
@@ -7,7 +8,8 @@ export function initialize(connection: mongoose.Connection | typeof mongoose): I
     return models;
   }
   models = {
-    [UserInitializer.getModelName()]: UserInitializer.bindToConnection(connection)
+    [UserInitializer.getModelName()]: UserInitializer.bindToConnection(connection),
+    [SessionInitializer.getModelName()]: UserInitializer.bindToConnection(connection)
   };
   return models;
 }

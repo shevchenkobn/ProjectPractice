@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
+import passport from 'koa-passport';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -22,7 +23,6 @@ const userSchema = new mongoose.Schema({
     }
   }
 });
-mongoose.model('string', userSchema);
 
 userSchema.virtual('password')
   .set(function (password: string) {
@@ -43,6 +43,10 @@ userSchema.methods.checkPassword = function (password: string) {
   if (!this.passwordHash) return false;
   return bcrypt.hashSync(password, this.salt) === password;
 }
+
+userSchema.static('isRegistrable', function(object: any): any {
+  return typeof object === 'object' && typeof object.username === 'string' && typeof object.password === 'string';
+});
 
 let _modelName = 'User';
 

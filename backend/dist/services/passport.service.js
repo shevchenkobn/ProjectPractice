@@ -54,4 +54,4 @@ function initialize(userModel = user_model_1.default.getModel()) {
     return koa_passport_1.default;
 }
 exports.initialize = initialize;
-//# sourceMappingURL=passport-auth.service.js.map
+//# sourceMappingURL=passport.service.js.map

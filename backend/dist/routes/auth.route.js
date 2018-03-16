@@ -15,8 +15,8 @@ function initialize() {
         prefix: '/auth'
     });
     controller = new auth_controller_1.AuthController();
-    router.post('/login', controller.login);
-    router.get('/logout', controller.logout);
+    router.post('/', controller.login);
+    router.post('/logout', controller.logout);
     router.post('/register', controller.register);
     return router;
 }
