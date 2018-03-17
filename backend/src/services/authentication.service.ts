@@ -52,11 +52,7 @@ export function getService(): IAuthenticationService {
         throw "Bad username or password";
       }
       const token = service.generateToken(user);
-      const session = new Session({
-        token,
-        userId: user._id
-      });
-      await session.save();
+      const session = await service.createSession(token, user);
       return session;
     },
 
