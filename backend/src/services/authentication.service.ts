@@ -5,11 +5,6 @@ import UserInitializer, { IUserModel, IUserDocument } from '../models/user.model
 import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/session.model';
 import config from 'config';
 
-export interface ILoginResponse {
-  user: IUserDocument;
-  token: string;
-}
-
 export interface IAuthenticationService {
   getResponse(ctx: Context): any; // TODO: json schema
   login(loginObject: any): Promise<ISessionDocument>;
