@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1952727269}
-  smoothTime: 1.5
+  smoothTime: 1.25
   offset: {x: 10, y: 12, z: -10}
 --- !u!20 &171705259
 Camera:
