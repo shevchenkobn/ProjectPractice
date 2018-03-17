@@ -1,6 +1,15 @@
 import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
 
+export interface ISessionDocument extends Document {
+  token: string;
+  userId: Schema.Types.ObjectId;
+  gameId: null | Schema.Types.ObjectId;
+  status: 'active' | 'outdated';
+}
+
+export interface ISessionModel extends Model<ISessionDocument> {}
+
 const sessionSchema = new Schema({
   token: {
     type: String,
@@ -30,10 +39,12 @@ const sessionSchema = new Schema({
  */
 
 let _modelName = 'Session';
-let Session: Model<Document>;
+let Session: ISessionModel;
 let _connection: Connection | typeof mongoose;
 
-const initializer: IModelInitializer = {
+export interface ISessionInitializer extends IModelInitializer<ISessionModel, ISessionDocument> {}
+
+const initializer: ISessionInitializer = {
   bindToConnection(connection, modelName = _modelName) {
     if (Session) {
       throw new TypeError('User is already bound to connection');

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_model_1 = __importDefault(require("../models/user.model"));
+const authentication_service_1 = require("../services/authentication.service");
 let User;
 class AuthController {
     constructor() {
@@ -19,16 +20,20 @@ class AuthController {
             if (ctx.isAuthenticated()) {
                 ctx.throw(400, "User is logged in");
             }
-            let user = yield User.findOne({ username: ctx.request.body.username });
-            if (!user) {
-                user = new User(ctx.request.body);
-                yield user.save();
+            try {
+                const user = yield authentication_service_1.service.createUser(ctx.request.body);
                 yield ctx.login(user);
-                ctx.body = ctx.state.user;
+                ctx.body = authentication_service_1.service.getResponse(ctx);
             }
-            else {
-                ctx.throw(400, "Username is occupied");
+            catch (err) {
+                if (err instanceof Error) {
+                    ctx.throw(500);
+                }
+                else {
+                    ctx.throw(400, err);
+                }
             }
+            yield next();
         });
         this.login = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
             if (ctx.isAuthenticated()) {
@@ -48,6 +53,9 @@ class AuthController {
         });
         if (!User) {
             User = user_model_1.default.getModel();
+        }
+        if (!authentication_service_1.service) {
+            authentication_service_1.initialize();
         }
     }
 }

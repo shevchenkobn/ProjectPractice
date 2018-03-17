@@ -9,20 +9,25 @@ const app_1 = require("./app");
 const index_1 = require("./routes/index");
 const models_1 = require("./models");
 const user_model_1 = __importDefault(require("./models/user.model"));
-const passport_service_1 = require("./services/passport.service");
 const database_service_1 = require("./services/database.service");
+const passport_service_1 = require("./services/passport.service");
 const mongoConfig = config_1.default.get('mongodb');
 const dbConnection = database_service_1.initialize(mongoConfig);
 const models = models_1.initialize(dbConnection);
 const passport = passport_service_1.initialize(models[user_model_1.default.getModelName()]);
 const middlewares = [];
 middlewares.push(passport.initialize(), passport.session());
-const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
-const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
-const app = new app_1.SwaggerApp(swaggerConfigPath, index_1.initialize(), uploadDir, middlewares);
-app.listen(config_1.default.get('port'), (app) => {
-    console.log('listening');
-}).catch(softExit);
+try {
+    const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
+    const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
+    const app = new app_1.SwaggerApp(swaggerConfigPath, index_1.initialize(), uploadDir, middlewares);
+    app.listen(config_1.default.get('port'), (app) => {
+        console.log('listening');
+    });
+}
+catch (err) {
+    softExit(err);
+}
 function softExit(err) {
     console.error(err);
     process.kill(process.pid, database_service_1.terminateSignal);

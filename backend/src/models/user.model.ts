@@ -3,6 +3,19 @@ import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
 import passport from 'koa-passport';
 
+export interface IUserDocument extends mongoose.Document {
+  username: string;
+  password?: string;
+  salt?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  checkPassword(password: string): boolean;
+}
+
+export interface IUserModel extends mongoose.Model<IUserDocument> {
+  isRegistrable(object: any): boolean;
+}
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -39,9 +52,8 @@ userSchema.virtual('password')
   });
 
 userSchema.methods.checkPassword = function (password: string) {
-  if (!password) return false;
-  if (!this.passwordHash) return false;
-  return bcrypt.hashSync(password, this.salt) === password;
+  if (!(password && this.passwordHash)) return false;
+  return bcrypt.hashSync(password, this.salt) === this.passwordHash;
 }
 
 userSchema.static('isRegistrable', function(object: any): any {
@@ -54,11 +66,13 @@ let _modelName = 'User';
  * Export part
  */
 
-let User: mongoose.Model<mongoose.Document>;
+let User: IUserModel;
 let _connection: mongoose.Connection | typeof mongoose;
 
-const initializer: IModelInitializer = {
-  bindToConnection(connection: mongoose.Connection | typeof mongoose, modelName: string = _modelName): mongoose.Model<mongoose.Document> {
+export interface IUserInitializer extends IModelInitializer<IUserModel, IUserDocument> {}
+
+const initializer: IUserInitializer = {
+  bindToConnection(connection: mongoose.Connection | typeof mongoose, modelName = _modelName) {
     if (User) {
       throw new TypeError('User is already bound to connection');
     }
@@ -75,7 +89,7 @@ const initializer: IModelInitializer = {
     return User;
   },
 
-  isBoundToConnection(connection: mongoose.Connection | typeof mongoose = _connection): boolean {
+  isBoundToConnection(connection = _connection): boolean {
     return User && connection === _connection;
   },
 

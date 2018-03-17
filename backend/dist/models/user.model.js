@@ -25,7 +25,6 @@ const userSchema = new mongoose_1.default.Schema({
         }
     }
 });
-mongoose_1.default.model('string', userSchema);
 userSchema.virtual('password')
     .set(function (password) {
     this._password = password + '';
@@ -41,12 +40,13 @@ userSchema.virtual('password')
     return this._password;
 });
 userSchema.methods.checkPassword = function (password) {
-    if (!password)
+    if (!(password && this.passwordHash))
         return false;
-    if (!this.passwordHash)
-        return false;
-    return bcrypt_1.default.hashSync(password, this.salt) === password;
+    return bcrypt_1.default.hashSync(password, this.salt) === this.passwordHash;
 };
+userSchema.static('isRegistrable', function (object) {
+    return typeof object === 'object' && typeof object.username === 'string' && typeof object.password === 'string';
+});
 let _modelName = 'User';
 /**
  * Export part

@@ -1,24 +1,24 @@
 import { Context } from 'koa';
 import mongoose, { Schema } from 'mongoose';
 import jwt from 'jsonwebtoken'
-import UserInitializer from '../models/user.model';
-import SessionInitializer from '../models/session.model';
+import UserInitializer, { IUserModel, IUserDocument } from '../models/user.model';
+import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/session.model';
 import config from 'config';
 
 export interface IAuthenticationService {
   getResponse(ctx: Context): any;
-  createUser(object: any): Promise<mongoose.Document>;
-  generateToken(user: mongoose.Document): string;
-  createSession(token: string, user: mongoose.Document): Promise<mongoose.Document>;
+  createUser(object: any): Promise<IUserDocument>;
+  generateToken(user: IUserDocument): string;
+  createSession(token: string, user: IUserDocument): Promise<ISessionDocument>;
 } 
 
 const secret = config.get<string>('jwtSecret');
-let User: mongoose.Model<mongoose.Document> = null;
-let Session: mongoose.Model<mongoose.Document> = null;
+let User: IUserModel = null;
+let Session: ISessionModel = null;
 
-export let service: IAuthenticationService = null;
+let service: IAuthenticationService = null;
 
-export function initialize(): IAuthenticationService {
+export function getService(): IAuthenticationService {
   if (service) {
     return service;
   }
@@ -36,7 +36,7 @@ export function initialize(): IAuthenticationService {
     generateToken(user) {
       if (user instanceof User) {
         const token = jwt.sign({
-          id: (user as any)._id,
+          id: user._id,
           date: Date.now()
         }, secret); //FIXME: investigate if any options are needed
         return token;
@@ -49,7 +49,7 @@ export function initialize(): IAuthenticationService {
       if (user instanceof User && token.trim()) {
         const session = new Session({
           token,
-          userId: new Schema.Types.ObjectId((user as any)._id)
+          userId: new Schema.Types.ObjectId(user._id)
         });
         await session.save();
         return session;
@@ -63,9 +63,9 @@ export function initialize(): IAuthenticationService {
      * @param object Object obtained from request
      */
     createUser(object) {
-      return new Promise<mongoose.Document>(async (resolve, reject) => {
+      return new Promise<IUserDocument>(async (resolve, reject) => {
         try {
-          if (!(User as any).isRegistrable(object)) {
+          if (!User.isRegistrable(object)) {
             return reject("Bad registration object");
           }
           let user = await User.findOne({username: object.username});

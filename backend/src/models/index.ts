@@ -14,9 +14,9 @@ export function initialize(connection: mongoose.Connection | typeof mongoose): I
   return models;
 }
 
-export interface IModelInitializer {
-  bindToConnection(connection: mongoose.Connection | typeof mongoose, name?: string): mongoose.Model<mongoose.Document>;
-  getModel(): mongoose.Model<mongoose.Document>;
+export interface IModelInitializer<IModel extends mongoose.Model<IDocument>, IDocument extends mongoose.Document> {
+  bindToConnection(connection: mongoose.Connection | typeof mongoose, name?: string): IModel;
+  getModel(): IModel;
   isBoundToConnection(connection?: mongoose.Connection | typeof mongoose): boolean;
   getModelName(): string;
 }

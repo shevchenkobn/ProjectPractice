@@ -1,17 +1,18 @@
 import { Middleware } from 'koa';
 import mongoose from 'mongoose';
 import passport from 'passport';
-import UserInitializer from '../models/user.model';
-import { initialize as initAuthService, service as authService } from '../services/authentication.service';
+import UserInitializer, { IUserModel } from '../models/user.model';
+import { getService, IAuthenticationService } from '../services/authentication.service';
 
-let User: mongoose.Model<mongoose.Document>;
+let User: IUserModel;
+let authService: IAuthenticationService
 export class AuthController {
   constructor() {
     if (!User) {
       User = UserInitializer.getModel();
     }
     if (!authService) {
-      initAuthService();
+      authService = getService();
     }
   }
 
