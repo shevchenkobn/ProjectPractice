@@ -5,6 +5,8 @@ export interface ISessionDocument extends Document {
   token: string;
   userId: Schema.Types.ObjectId;
   gameId: null | Schema.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
   status: 'active' | 'outdated';
 }
 

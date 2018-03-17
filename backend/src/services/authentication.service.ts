@@ -5,8 +5,15 @@ import UserInitializer, { IUserModel, IUserDocument } from '../models/user.model
 import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/session.model';
 import config from 'config';
 
+export interface ILoginResponse {
+  user: IUserDocument;
+  token: string;
+}
+
 export interface IAuthenticationService {
-  getResponse(ctx: Context): any;
+  getResponse(ctx: Context): any; // TODO: json schema
+  login(loginObject: any): Promise<ISessionDocument>;
+  authenticate(ctx: Context, token: string): Promise<Context>;
   createUser(object: any): Promise<IUserDocument>;
   generateToken(user: IUserDocument): string;
   createSession(token: string, user: IUserDocument): Promise<ISessionDocument>;
@@ -27,10 +34,50 @@ export function getService(): IAuthenticationService {
   service = {
     getResponse(ctx) {
       if (ctx.isAuthenticated()) {
-        return ctx.state.user;
+        return {
+          token: ctx.state.session.token,
+          user: ctx.state.user
+        };
       } else {
         return null;
       }
+    },
+
+    async login(loginObject) {
+      if (!User.isConstructionDoc(loginObject)) {
+        throw "Bad login object";
+      }
+      const user = await User.findOne(loginObject.username);
+      if (!(user && user.checkPassword(loginObject.password))) {
+        throw "Bad username or password";
+      }
+      const token = service.generateToken(user);
+      const session = new Session({
+        token,
+        userId: user._id
+      });
+      await session.save();
+      return session;
+    },
+
+    async authenticate(ctx, token) {
+      if (!(ctx && token)) {
+        throw new Error("ctx or token is empty");
+      }
+      const session = await Session.findOne({token});
+      if (!session) {
+        throw "Invalid Token";
+      }
+      const user = await User.findById(session.userId);
+      if (!user) {
+        throw new Error("In-session user is not found!");
+      }
+      await ctx.login(user);
+      if (!ctx.isAuthenticated()) {
+        throw new Error("Undefined login error");
+      }
+      ctx.state.session = session;
+      return ctx;
     },
 
     generateToken(user) {
@@ -41,7 +88,7 @@ export function getService(): IAuthenticationService {
         }, secret); //FIXME: investigate if any options are needed
         return token;
       } else {
-        throw new Error('user is not a User model');
+        throw new Error('user is not a User document');
       }
     },
 
@@ -65,7 +112,7 @@ export function getService(): IAuthenticationService {
     createUser(object) {
       return new Promise<IUserDocument>(async (resolve, reject) => {
         try {
-          if (!User.isRegistrable(object)) {
+          if (!User.isConstructionDoc(object)) {
             return reject("Bad registration object");
           }
           let user = await User.findOne({username: object.username});

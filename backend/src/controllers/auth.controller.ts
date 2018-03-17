@@ -22,8 +22,13 @@ export class AuthController {
     }
     try {
       const user = await authService.createUser(ctx.request.body);
-      await ctx.login(user);
+      const token = authService.generateToken(user);
+      const session = await authService.createSession(token, user);
+      await authService.authenticate(ctx, token);
       ctx.body = authService.getResponse(ctx);
+      if (!ctx.body) {
+        throw new Error("User is not logged in!");
+      }
     } catch (err) {
       if (err instanceof Error) {
         ctx.throw(500);
@@ -38,9 +43,17 @@ export class AuthController {
     if (ctx.isAuthenticated()) {
       ctx.throw(400, "User is logged in");
     }
-    const user = await User.findOne({username: ctx.request.body.username});
-    await ctx.login(user);
-    ctx.body = ctx.state.user;
+    try {
+      const session = await authService.login(ctx.request.body);
+      await authService.authenticate(ctx, session.token);
+      ctx.body = authService.getResponse(ctx);
+    } catch (err) {
+      if (err instanceof Error) {
+        ctx.throw(500);
+      } else {
+        ctx.throw(400, err);
+      }
+    }
   }
 
   logout: Middleware = async (ctx, next) => {
