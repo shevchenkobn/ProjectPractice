@@ -14,50 +14,61 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_model_1 = __importDefault(require("../models/user.model"));
 const authentication_service_1 = require("../services/authentication.service");
 let User;
+let authService;
 class AuthController {
     constructor() {
-        this.register = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        this.register = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
             if (ctx.isAuthenticated()) {
-                ctx.throw(400, "User is logged in");
+                throw "User is logged in";
             }
-            try {
-                const user = yield authentication_service_1.service.createUser(ctx.request.body);
-                yield ctx.login(user);
-                ctx.body = authentication_service_1.service.getResponse(ctx);
-            }
-            catch (err) {
-                if (err instanceof Error) {
-                    ctx.throw(500);
-                }
-                else {
-                    ctx.throw(400, err);
-                }
+            const user = yield authService.createUser(ctx.request.body);
+            const token = authService.generateToken(user);
+            const session = yield authService.createSession(token, user);
+            yield authService.saveState(ctx, user, session);
+            ctx.body = authService.getResponse(ctx);
+            if (!ctx.body) {
+                throw new Error("User is not logged in!");
             }
             yield next();
-        });
-        this.login = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        }));
+        this.login = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
             if (ctx.isAuthenticated()) {
-                ctx.throw(400, "User is logged in");
+                throw "User is logged in";
             }
-            const user = yield User.findOne({ username: ctx.request.body.username });
-            yield ctx.login(user);
-            ctx.body = ctx.state.user;
-        });
-        this.logout = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            ctx.logout();
+            const state = yield authService.login(ctx.request.body);
+            yield authService.saveState(ctx, state.user, state.session);
+            ctx.body = authService.getResponse(ctx);
+        }));
+        this.logout = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+            yield authService.logout(ctx);
             ctx.body = {
                 "action": "logout",
                 "status": "ok"
             };
             yield next();
-        });
+        }));
         if (!User) {
             User = user_model_1.default.getModel();
         }
-        if (!authentication_service_1.service) {
-            authentication_service_1.initialize();
+        if (!authService) {
+            authService = authentication_service_1.getService();
         }
     }
 }
 exports.AuthController = AuthController;
+function handleError(middleware) {
+    return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield middleware(ctx, next);
+        }
+        catch (err) {
+            if (err instanceof Error) {
+                ctx.throw(500, err);
+            }
+            else {
+                ctx.throw(400, err);
+            }
+        }
+    });
+}
 //# sourceMappingURL=auth.controller.js.map

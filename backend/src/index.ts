@@ -15,7 +15,7 @@ const models = initializeModels(dbConnection);
 const passport = initializePassport(models[UserInititializer.getModelName()]);
 
 const middlewares: Array<Middleware> = [];
-middlewares.push(passport.initialize(), passport.session());
+middlewares.push(passport.initialize());
 
 try {
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));

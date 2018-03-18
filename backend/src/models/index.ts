@@ -9,7 +9,7 @@ export function initialize(connection: mongoose.Connection | typeof mongoose): I
   }
   models = {
     [UserInitializer.getModelName()]: UserInitializer.bindToConnection(connection),
-    [SessionInitializer.getModelName()]: UserInitializer.bindToConnection(connection)
+    [SessionInitializer.getModelName()]: SessionInitializer.bindToConnection(connection)
   };
   return models;
 }

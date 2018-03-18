@@ -1,4 +1,4 @@
-import { Middleware } from 'koa';
+import { Middleware, Context } from 'koa';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import UserInitializer, { IUserModel } from '../models/user.model';
@@ -16,52 +16,50 @@ export class AuthController {
     }
   }
 
-  register: Middleware = async (ctx, next) => {
+  register: Middleware = handleError(async (ctx, next) => {
     if (ctx.isAuthenticated()) {
-      ctx.throw(400, "User is logged in");
+      throw "User is logged in";
     }
-    try {
-      const user = await authService.createUser(ctx.request.body);
-      const token = authService.generateToken(user);
-      const session = await authService.createSession(token, user);
-      await authService.authenticate(ctx, token);
-      ctx.body = authService.getResponse(ctx);
-      if (!ctx.body) {
-        throw new Error("User is not logged in!");
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        ctx.throw(500);
-      } else {
-        ctx.throw(400, err);
-      }
+    const user = await authService.createUser(ctx.request.body);
+    const token = authService.generateToken(user);
+    const session = await authService.createSession(token, user);
+    await authService.saveState(ctx, user, session);
+    ctx.body = authService.getResponse(ctx);
+    if (!ctx.body) {
+      throw new Error("User is not logged in!");
     }
     await next();
-  }
+  })
 
-  login: Middleware = async (ctx, next) => {
+  login: Middleware = handleError(async (ctx, next) => {
     if (ctx.isAuthenticated()) {
-      ctx.throw(400, "User is logged in");
+      throw "User is logged in";
     }
-    try {
-      const session = await authService.login(ctx.request.body);
-      await authService.authenticate(ctx, session.token);
-      ctx.body = authService.getResponse(ctx);
-    } catch (err) {
-      if (err instanceof Error) {
-        ctx.throw(500);
-      } else {
-        ctx.throw(400, err);
-      }
-    }
-  }
+    const state = await authService.login(ctx.request.body);
+    await authService.saveState(ctx, state.user, state.session);
+    ctx.body = authService.getResponse(ctx);
+  })
 
-  logout: Middleware = async (ctx, next) => {
-    ctx.logout();
-    ctx.body = {
+  logout: Middleware = handleError(async (ctx, next) => {
+    await authService.logout(ctx);
+    ctx.body = { //TODO: json schema
       "action": "logout",
       "status": "ok"
     };
     await next();
-  }
+  })
+}
+
+function handleError(middleware: Middleware): Middleware {
+  return async (ctx: Context, next: () => Promise<any>) => {
+    try {
+      await middleware(ctx, next);
+    } catch (err) {
+      if (err instanceof Error) {
+        ctx.throw(500, err);
+      } else {
+        ctx.throw(400, err);
+      }
+    }
+  };
 }

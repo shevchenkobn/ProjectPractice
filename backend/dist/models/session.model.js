@@ -12,8 +12,7 @@ const sessionSchema = new mongoose_1.Schema({
         required: true
     },
     gameId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        default: null
+        type: mongoose_1.Schema.Types.ObjectId
     },
     status: {
         type: String,

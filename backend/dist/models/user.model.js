@@ -44,7 +44,7 @@ userSchema.methods.checkPassword = function (password) {
         return false;
     return bcrypt_1.default.hashSync(password, this.salt) === this.passwordHash;
 };
-userSchema.static('isRegistrable', function (object) {
+userSchema.static('isConstructionDoc', function (object) {
     return typeof object === 'object' && typeof object.username === 'string' && typeof object.password === 'string';
 });
 let _modelName = 'User';

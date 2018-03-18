@@ -16,7 +16,7 @@ const dbConnection = database_service_1.initialize(mongoConfig);
 const models = models_1.initialize(dbConnection);
 const passport = passport_service_1.initialize(models[user_model_1.default.getModelName()]);
 const middlewares = [];
-middlewares.push(passport.initialize(), passport.session());
+middlewares.push(passport.initialize());
 try {
     const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
     const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));

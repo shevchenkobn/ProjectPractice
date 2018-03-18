@@ -23,8 +23,7 @@ const sessionSchema = new Schema({
     required: true
   },
   gameId: {
-    type: Schema.Types.ObjectId,
-    default: null
+    type: Schema.Types.ObjectId
   },
   status: {
     type: String,

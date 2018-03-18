@@ -12,7 +12,7 @@ function initialize(connection) {
     }
     models = {
         [user_model_1.default.getModelName()]: user_model_1.default.bindToConnection(connection),
-        [session_model_1.default.getModelName()]: user_model_1.default.bindToConnection(connection)
+        [session_model_1.default.getModelName()]: session_model_1.default.bindToConnection(connection)
     };
     return models;
 }
