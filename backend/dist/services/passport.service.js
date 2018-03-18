@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const koa_passport_1 = __importDefault(require("koa-passport"));
 const passport_jwt_1 = require("passport-jwt");
+const passport_google_oauth_1 = require("passport-google-oauth");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const authentication_service_1 = require("./authentication.service");
 const config_1 = __importDefault(require("config"));
@@ -21,6 +22,7 @@ let User;
 let Session;
 let initialized = false;
 let authService;
+let googleOauthOptions;
 function initialize(userModel = user_model_1.default.getModel()) {
     if (initialized) {
         return koa_passport_1.default;
@@ -28,8 +30,9 @@ function initialize(userModel = user_model_1.default.getModel()) {
     User = userModel;
     Session = session_model_1.default.getModel();
     authService = authentication_service_1.getService();
+    googleOauthOptions = config_1.default.get('auth.oauth.google.strategyOptions');
     koa_passport_1.default.use('jwt', new passport_jwt_1.Strategy({
-        secretOrKey: config_1.default.get('jwtSecret'),
+        secretOrKey: config_1.default.get('auth.jwtSecret'),
         jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()
     }, (jwtPayload, done) => __awaiter(this, void 0, void 0, function* () {
         try {
@@ -53,6 +56,10 @@ function initialize(userModel = user_model_1.default.getModel()) {
             done(err);
         }
     })));
+    koa_passport_1.default.use('google', new passport_google_oauth_1.OAuth2Strategy(googleOauthOptions, function (accessToken, refreshToken, profile, done) {
+        console.log(arguments);
+        debugger;
+    }));
     /**
      * The thing about passport that sucks is mandatory session making
      */

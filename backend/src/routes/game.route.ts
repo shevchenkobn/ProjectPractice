@@ -12,11 +12,17 @@ export function initialize(): KoaRouter {
   router = new KoaRouter({
     prefix: '/game'
   });
-  router.get('/', (ctx, next) => passport.authenticate('jwt', function(err, state: IState, info, status) {
+  router.get('/', (ctx, next) => passport.authenticate('jwt', async function(err, state: IState, info, status) {
     if (err) {
       ctx.throw(500, err);
     }
+    await ctx.login(state);
     ctx.body = arguments;
+    next();
+  })(ctx, next));
+  router.get('/g', (ctx, next) => passport.authenticate('google', async function() {
+    console.log(arguments);
+    debugger;
   })(ctx, next));
   return router;
 }

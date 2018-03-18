@@ -30,6 +30,7 @@
     "@types/koa-router": "^7.0.27",
     "@types/mongodb": "^3.0.5",
     "@types/mongoose": "^5.0.3",
+    "@types/passport-google-oauth": "^1.0.37",
     "@types/passport-jwt": "^3.0.1",
     "@types/socket.io": "^1.4.31",
     "app-root-path": "^2.0.1",
@@ -43,6 +44,7 @@
     "koa-router": "^7.4.0",
     "mongodb": "^3.0.3",
     "mongoose": "^5.0.7",
+    "passport-google-oauth": "^1.0.0",
     "passport-jwt": "^4.0.0",
     "socket.io": "^2.0.4",
     "swagger2-koa": "0.0.44"

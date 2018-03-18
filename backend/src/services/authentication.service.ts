@@ -26,7 +26,7 @@ export interface IAuthenticationService {
   logout(ctx: Context, token?: string): Promise<void>;
 } 
 
-let _secret = config.get<string>('jwtSecret');
+let _secret = config.get<string>('auth.jwtSecret');
 let User: IUserModel = null;
 let Session: ISessionModel = null;
 
