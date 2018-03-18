@@ -19,8 +19,8 @@ const userSchema = new mongoose_1.default.Schema({
     toObject: {
         transform(doc, ret) {
             return {
-                _id: ret._id,
-                username: ret.username
+                id: doc.id,
+                username: doc.username
             };
         }
     }

@@ -22,8 +22,7 @@ class AuthController {
                 throw "User is logged in";
             }
             const user = yield authService.createUser(ctx.request.body);
-            const token = authService.generateToken(user);
-            const session = yield authService.createSession(token, user);
+            const session = yield authService.createSession(user);
             yield authService.saveState(ctx, user, session);
             ctx.body = authService.getResponse(ctx);
             if (!ctx.body) {
@@ -31,15 +30,15 @@ class AuthController {
             }
             yield next();
         }));
-        this.login = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        this.getToken = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
             if (ctx.isAuthenticated()) {
                 throw "User is logged in";
             }
-            const state = yield authService.login(ctx.request.body);
+            const state = yield authService.getToken(ctx.request.body);
             yield authService.saveState(ctx, state.user, state.session);
             ctx.body = authService.getResponse(ctx);
         }));
-        this.logout = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        this.invalidateToken = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
             yield authService.logout(ctx);
             ctx.body = {
                 "action": "logout",

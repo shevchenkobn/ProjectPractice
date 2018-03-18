@@ -4,20 +4,25 @@ import jwt from 'jsonwebtoken'
 import UserInitializer, { IUserModel, IUserDocument } from '../models/user.model';
 import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/session.model';
 import config from 'config';
-
+import { ExtractJwt } from 'passport-jwt';
 export interface IState {
   user: IUserDocument;
   session: ISessionDocument
 }
 
+export interface IJwtPayload {
+  id: string
+}
+
 export interface IAuthenticationService {
   getResponse(ctx: Context): any; // TODO: json schema
-  login(loginObject: any): Promise<IState>;
+  getToken(credentials: any): Promise<IState>;
+  generateToken(session: ISessionDocument): string;
   saveState(ctx: Context, user: IUserDocument, session: ISessionDocument): Promise<void>;
+  getState(ctx: Context): IState;
   authenticate(ctx: Context, token: string): Promise<Context>;
   createUser(object: any): Promise<IUserDocument>;
-  generateToken(user: IUserDocument): string;
-  createSession(token: string, user: IUserDocument): Promise<ISessionDocument>;
+  createSession(user: IUserDocument): Promise<ISessionDocument>;
   logout(ctx: Context, token?: string): Promise<void>;
 } 
 
@@ -27,39 +32,42 @@ let Session: ISessionModel = null;
 
 let service: IAuthenticationService = null;
 
-export function getService(secret?: string): IAuthenticationService {
+export function getService(): IAuthenticationService {
   if (service) {
     return service;
-  }
-  if (secret) {
-    _secret = secret;
   }
   User = UserInitializer.getModel();
   Session = SessionInitializer.getModel();
   service = {
+    generateToken(session) {
+      const payload: IJwtPayload = {
+        id: session.id
+      };
+      return jwt.sign(payload, _secret);
+    },
+
     getResponse(ctx) {
       if (ctx.isAuthenticated()) {
         return {
-          token: ctx.state.session.token,
-          user: ctx.state.user
+          token: service.generateToken(ctx.state.user.session),
+          user: ctx.state.user.user
         };
       } else {
         return null;
       }
     },
 
-    async login(loginObject) {
-      if (!User.isConstructionDoc(loginObject)) {
+    async getToken(credentials) {
+      if (!User.isConstructionDoc(credentials)) {
         throw "Bad login object";
       }
       const user = await User.findOne({
-        username: loginObject.username
+        username: credentials.username
       });
-      if (!(user && user.checkPassword(loginObject.password))) {
+      if (!(user && user.checkPassword(credentials.password))) {
         throw "Bad username or password";
       }
-      const token = service.generateToken(user);
-      const session = await service.createSession(token, user);
+      const session = await service.createSession(user);
       return {
         user,
         session
@@ -67,14 +75,17 @@ export function getService(secret?: string): IAuthenticationService {
     },
 
     async saveState(ctx, user, session) {
-      await ctx.login(user);
+      await ctx.login({user, session});
       if (ctx.isUnauthenticated()) {
         throw new Error("Undefined login error");
       }
-      ctx.state.session = session;
     },
 
-    async authenticate(ctx, token) {
+    getState(ctx) {
+      return ctx.state.user;
+    },
+
+    async authenticate(ctx, token) { // FIXME:
       if (!(ctx && token)) {
         throw new Error("ctx or token is empty");
       }
@@ -93,22 +104,9 @@ export function getService(secret?: string): IAuthenticationService {
       return ctx;
     },
 
-    generateToken(user) {
+    async createSession(user) {
       if (user instanceof User) {
-        const token = jwt.sign({
-          id: user._id,
-          date: Date.now()
-        }, _secret); //FIXME: investigate if any options are needed
-        return token;
-      } else {
-        throw new Error('user is not a User document');
-      }
-    },
-
-    async createSession(token, user) {
-      if (user instanceof User && token.trim()) {
         const session = new Session({
-          token,
           userId: new mongoose.Types.ObjectId(user._id)
         });
         await session.save();
@@ -147,31 +145,37 @@ export function getService(secret?: string): IAuthenticationService {
         token = getToken(ctx);
       }
       const session = await Session.findOne({
-        token,
+        _id: (jwt.verify(token, _secret) as IJwtPayload).id,
         status: 'active'
       });
       if (!session) {
         throw 'Invalid Token';
       }
       session.status = 'outdated';
-      session.save();
+      await session.save();
       ctx.logout();
-      ctx.state = {};
     }
   };
   return service;
 }
 
+// const jwtExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
 function getToken(ctx: Context): string {
   const header = ctx.get('Authorization'); 
-  if (!header) {
-    throw 'No token found';
+  if (!header.trim()) {
+    if (typeof ctx.request.body === 'object' && ctx.request.body &&
+      typeof ctx.request.body.token === 'string' && ctx.request.body.token.trim()) {
+      return ctx.request.body.token.trim();
+    } else {
+      throw 'No token found';
+    }
   }
   const parts = header.split(/\s+/);
   let i = 0;
   for (; !parts[i].length; i++);
-  if (parts[i] !== 'Bearer') {
+  if (parts[i].toLocaleLowerCase() !== 'bearer') {
     throw 'Not a Bearer authentication';
   }
   return parts[i + 1];
+  // return jwtExtractor(ctx.req);
 }

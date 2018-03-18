@@ -2,11 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const sessionSchema = new mongoose_1.Schema({
-    token: {
-        type: String,
-        required: true,
-        unique: true
-    },
     userId: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true

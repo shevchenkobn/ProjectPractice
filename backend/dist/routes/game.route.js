@@ -3,22 +3,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+const koa_passport_1 = __importDefault(require("koa-passport"));
 const koa_router_1 = __importDefault(require("koa-router"));
-const auth_controller_1 = require("../controllers/auth.controller");
 let router;
-let controller;
 function initialize() {
     if (router) {
         return router;
     }
     router = new koa_router_1.default({
-        prefix: '/auth'
+        prefix: '/game'
     });
-    controller = new auth_controller_1.AuthController();
-    router.post('/', controller.getToken);
-    router.post('/invalidate', controller.invalidateToken);
-    router.post('/register', controller.register);
+    router.get('/', (ctx, next) => koa_passport_1.default.authenticate('jwt', function (err, state, info, status) {
+        if (err) {
+            ctx.throw(500, err);
+        }
+        ctx.body = arguments;
+    })(ctx, next));
     return router;
 }
 exports.initialize = initialize;
-//# sourceMappingURL=auth.route.js.map
+//# sourceMappingURL=game.route.js.map

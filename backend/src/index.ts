@@ -5,14 +5,14 @@ import { Middleware } from 'koa';
 import { SwaggerApp } from './app';
 import { initialize as initializeRoutes } from './routes/index';
 import { initialize as initializeModels } from './models';
-import UserInititializer from './models/user.model';
+import UserInititializer, { IUserModel } from './models/user.model';
 import { initialize as initializeMongoose, IMongoConfig, terminateSignal } from './services/database.service';
 import { initialize as initializePassport } from './services/passport.service';
 
 const mongoConfig = config.get<IMongoConfig>('mongodb');
 const dbConnection = initializeMongoose(mongoConfig);
 const models = initializeModels(dbConnection);
-const passport = initializePassport(models[UserInititializer.getModelName()]);
+const passport = initializePassport(models[UserInititializer.getModelName()] as IUserModel);
 
 const middlewares: Array<Middleware> = [];
 middlewares.push(passport.initialize());

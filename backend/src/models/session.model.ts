@@ -13,11 +13,6 @@ export interface ISessionDocument extends Document {
 export interface ISessionModel extends Model<ISessionDocument> {}
 
 const sessionSchema = new Schema({
-  token: {
-    type: String,
-    required: true,
-    unique: true
-  },
   userId: {
     type: Schema.Types.ObjectId,
     required: true

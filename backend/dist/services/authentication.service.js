@@ -20,40 +20,42 @@ let _secret = config_1.default.get('jwtSecret');
 let User = null;
 let Session = null;
 let service = null;
-function getService(secret) {
+function getService() {
     if (service) {
         return service;
-    }
-    if (secret) {
-        _secret = secret;
     }
     User = user_model_1.default.getModel();
     Session = session_model_1.default.getModel();
     service = {
+        generateToken(session) {
+            const payload = {
+                id: session.id
+            };
+            return jsonwebtoken_1.default.sign(payload, _secret);
+        },
         getResponse(ctx) {
             if (ctx.isAuthenticated()) {
                 return {
-                    token: ctx.state.session.token,
-                    user: ctx.state.user
+                    token: service.generateToken(ctx.state.user.session),
+                    user: ctx.state.user.user
                 };
             }
             else {
                 return null;
             }
         },
-        login(loginObject) {
+        getToken(credentials) {
             return __awaiter(this, void 0, void 0, function* () {
-                if (!User.isConstructionDoc(loginObject)) {
+                if (!User.isConstructionDoc(credentials)) {
                     throw "Bad login object";
                 }
                 const user = yield User.findOne({
-                    username: loginObject.username
+                    username: credentials.username
                 });
-                if (!(user && user.checkPassword(loginObject.password))) {
+                if (!(user && user.checkPassword(credentials.password))) {
                     throw "Bad username or password";
                 }
-                const token = service.generateToken(user);
-                const session = yield service.createSession(token, user);
+                const session = yield service.createSession(user);
                 return {
                     user,
                     session
@@ -62,12 +64,14 @@ function getService(secret) {
         },
         saveState(ctx, user, session) {
             return __awaiter(this, void 0, void 0, function* () {
-                yield ctx.login(user);
+                yield ctx.login({ user, session });
                 if (ctx.isUnauthenticated()) {
                     throw new Error("Undefined login error");
                 }
-                ctx.state.session = session;
             });
+        },
+        getState(ctx) {
+            return ctx.state.user;
         },
         authenticate(ctx, token) {
             return __awaiter(this, void 0, void 0, function* () {
@@ -89,23 +93,10 @@ function getService(secret) {
                 return ctx;
             });
         },
-        generateToken(user) {
-            if (user instanceof User) {
-                const token = jsonwebtoken_1.default.sign({
-                    id: user._id,
-                    date: Date.now()
-                }, _secret); //FIXME: investigate if any options are needed
-                return token;
-            }
-            else {
-                throw new Error('user is not a User document');
-            }
-        },
-        createSession(token, user) {
+        createSession(user) {
             return __awaiter(this, void 0, void 0, function* () {
-                if (user instanceof User && token.trim()) {
+                if (user instanceof User) {
                     const session = new Session({
-                        token,
                         userId: new mongoose_1.default.Types.ObjectId(user._id)
                     });
                     yield session.save();
@@ -147,34 +138,41 @@ function getService(secret) {
                     token = getToken(ctx);
                 }
                 const session = yield Session.findOne({
-                    token,
+                    _id: jsonwebtoken_1.default.verify(token, _secret).id,
                     status: 'active'
                 });
                 if (!session) {
                     throw 'Invalid Token';
                 }
                 session.status = 'outdated';
-                session.save();
+                yield session.save();
                 ctx.logout();
-                ctx.state = {};
             });
         }
     };
     return service;
 }
 exports.getService = getService;
+// const jwtExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
 function getToken(ctx) {
     const header = ctx.get('Authorization');
-    if (!header) {
-        throw 'No token found';
+    if (!header.trim()) {
+        if (typeof ctx.request.body === 'object' && ctx.request.body &&
+            typeof ctx.request.body.token === 'string' && ctx.request.body.token.trim()) {
+            return ctx.request.body.token.trim();
+        }
+        else {
+            throw 'No token found';
+        }
     }
     const parts = header.split(/\s+/);
     let i = 0;
     for (; !parts[i].length; i++)
         ;
-    if (parts[i] !== 'Bearer') {
+    if (parts[i].toLocaleLowerCase() !== 'bearer') {
         throw 'Not a Bearer authentication';
     }
     return parts[i + 1];
+    // return jwtExtractor(ctx.req);
 }
 //# sourceMappingURL=authentication.service.js.map

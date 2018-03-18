@@ -21,8 +21,7 @@ export class AuthController {
       throw "User is logged in";
     }
     const user = await authService.createUser(ctx.request.body);
-    const token = authService.generateToken(user);
-    const session = await authService.createSession(token, user);
+    const session = await authService.createSession(user);
     await authService.saveState(ctx, user, session);
     ctx.body = authService.getResponse(ctx);
     if (!ctx.body) {
@@ -31,16 +30,16 @@ export class AuthController {
     await next();
   })
 
-  login: Middleware = handleError(async (ctx, next) => {
+  getToken: Middleware = handleError(async (ctx, next) => {
     if (ctx.isAuthenticated()) {
       throw "User is logged in";
     }
-    const state = await authService.login(ctx.request.body);
+    const state = await authService.getToken(ctx.request.body);
     await authService.saveState(ctx, state.user, state.session);
     ctx.body = authService.getResponse(ctx);
   })
 
-  logout: Middleware = handleError(async (ctx, next) => {
+  invalidateToken: Middleware = handleError(async (ctx, next) => {
     await authService.logout(ctx);
     ctx.body = { //TODO: json schema
       "action": "logout",

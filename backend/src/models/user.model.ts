@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema({
   toObject: {
     transform(doc, ret) {
       return {
-        _id: ret._id,
-        username: ret.username  
+        id: doc.id,
+        username: doc.username  
       };
     }
   }

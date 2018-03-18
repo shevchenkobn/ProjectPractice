@@ -1,43 +1,58 @@
 import passport from 'koa-passport';
 import mongoose from 'mongoose';
-import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import UserInitializer from '../models/user.model';
+import { IUserModel } from '../models/user.model';
+import { IAuthenticationService, getService, IState, IJwtPayload } from './authentication.service';
+import config from 'config';
+import SessionInitializer, { ISessionModel } from '../models/session.model';
 
-let User: any;
+let User: IUserModel;
+let Session: ISessionModel;
 let initialized = false;
+let authService: IAuthenticationService;
 
-export function initialize(userModel: mongoose.Model<mongoose.Document> = UserInitializer.getModel()): typeof passport {
+export function initialize(userModel: IUserModel = UserInitializer.getModel()): typeof passport {
   if (initialized) {
     return passport;
   }
   User = userModel;
-  passport.use('local', new LocalStrategy(async (username, password, done) => {
+  Session = SessionInitializer.getModel();
+  authService = getService();
+
+  passport.use('jwt', new JwtStrategy({
+    secretOrKey: config.get<string>('jwtSecret'),
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+  }, async (jwtPayload: IJwtPayload, done: VerifiedCallback) => {
     try {
-      const user = await User.findOne({ username });
+      const session = await Session.findOne({
+        _id: jwtPayload.id,
+        status: 'active'
+      });
+      if (!session) {
+        return done(null, false, 'Invalid Token');
+      }
+      const user = await User.findById(session.userId);
       if (!user) {
-        return done(null, false, new TypeError('Username is invalid'));
+        throw new Error('Non-existing user');
       }
-      if (await user.checkPassword(password)) {
-        done(null, user);
-      } else {
-        done(null, false, new TypeError('Password is invalid'));
-      }
+      done(null, {
+        user,
+        session
+      });
     } catch (err) {
       done(err);
     }
   }));
 
-  passport.serializeUser<any, string>((user, done) => {
-    done(null, user._id);
+  /**
+   * The thing about passport that sucks is mandatory session making
+   */
+  passport.serializeUser<any, any>((user, done) => {
+    done(null, 1);
   });
-
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch (err) {
-      done(err);
-    }
+  passport.deserializeUser<any, any>((id, done) => {
+    done(null, 1);
   });
 
   initialized = true;

@@ -12,8 +12,8 @@ export function initialize(): KoaRouter {
   });
   
   controller = new AuthController();
-  router.post('/', controller.login);
-  router.post('/logout', controller.logout);
+  router.post('/', controller.getToken);
+  router.post('/invalidate', controller.invalidateToken);
   router.post('/register', controller.register);
   return router;
 }
