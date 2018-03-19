@@ -8,6 +8,9 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const session_model_1 = __importDefault(require("../models/session.model"));
 const config_1 = __importDefault(require("config"));
+class ClientError extends Error {
+}
+exports.ClientError = ClientError;
 let _secret = config_1.default.get('auth.jwtSecret');
 let User = null;
 let Session = null;
@@ -38,13 +41,13 @@ function getService() {
         },
         async getToken(credentials) {
             if (!User.isConstructionDoc(credentials)) {
-                throw "Bad login object";
+                throw new ClientError("Bad login object");
             }
             const user = await User.findOne({
                 username: credentials.username
             });
             if (!(user && user.checkPassword(credentials.password))) {
-                throw "Bad username or password";
+                throw new ClientError("Bad username or password");
             }
             const session = await service.createSession(user);
             return {
@@ -54,15 +57,12 @@ function getService() {
         },
         async saveState(ctx, user, session) {
             await ctx.login({ user, session });
-            if (ctx.isUnauthenticated()) {
-                throw new Error("Undefined login error");
-            }
         },
         getState(ctx) {
             return ctx.state.user;
         },
-        async authenticate(ctx, token) {
-            if (!(ctx && token)) {
+        async authenticate(token) {
+            if (!token.trim()) {
                 throw new Error("ctx or token is empty");
             }
             const session = await Session.findOne({
@@ -70,14 +70,13 @@ function getService() {
                 status: 'active'
             });
             if (!session) {
-                throw "Invalid Token";
+                throw new ClientError("Invalid Token");
             }
             const user = await User.findById(session.userId);
-            if (!user) {
-                throw new Error("In-session user is not found!");
-            }
-            await service.saveState(ctx, user, session);
-            return ctx;
+            return {
+                user,
+                session
+            };
         },
         async createSession(user) {
             if (user instanceof User) {
@@ -99,7 +98,7 @@ function getService() {
             return new Promise(async (resolve, reject) => {
                 try {
                     if (!User.isConstructionDoc(object)) {
-                        return reject("Bad registration object");
+                        return reject(new ClientError("Bad registration object"));
                     }
                     let user = await User.findOne({ username: object.username });
                     if (!user) {
@@ -108,7 +107,7 @@ function getService() {
                         resolve(user);
                     }
                     else {
-                        reject("Username is occupied");
+                        reject(new ClientError("Username is occupied"));
                     }
                 }
                 catch (err) {
@@ -125,7 +124,7 @@ function getService() {
                 status: 'active'
             });
             if (!session) {
-                throw 'Invalid Token';
+                throw new ClientError('Invalid Token');
             }
             session.status = 'outdated';
             await session.save();
@@ -144,7 +143,7 @@ function getToken(ctx) {
             return ctx.request.body.token.trim();
         }
         else {
-            throw 'No token found';
+            throw new ClientError('No token found');
         }
     }
     const parts = header.split(/\s+/);

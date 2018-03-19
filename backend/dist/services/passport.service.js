@@ -28,24 +28,16 @@ function initialize(userModel = user_model_1.default.getModel()) {
         jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()
     }, async (jwtPayload, done) => {
         try {
-            const session = await Session.findOne({
-                _id: jwtPayload.id,
-                status: 'active'
-            });
-            if (!session) {
-                return done(null, false, 'Invalid Token');
-            }
-            const user = await User.findById(session.userId);
-            if (!user) {
-                throw new Error('Non-existing user');
-            }
-            done(null, {
-                user,
-                session
-            });
+            const state = authService.authenticate(jwtPayload.id);
+            done(null, state);
         }
         catch (err) {
-            done(err);
+            if (err instanceof authentication_service_1.ClientError) {
+                done(null, false, err);
+            }
+            else {
+                done(err);
+            }
         }
     }));
     koa_passport_1.default.use('google', new passport_google_oauth_1.OAuth2Strategy(googleOauthOptions, function (accessToken, refreshToken, profile, done) {

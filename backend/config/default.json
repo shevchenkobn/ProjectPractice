@@ -12,9 +12,9 @@
   "auth": {
     "basePath": "/auth",
     "basic": {
-      "getToken": "/",
+      "issueToken": "/",
       "register": "/register",
-      "invalidateToken": "/invalidate"
+      "revokeToken": "/revoke"
     },
     "oauth": {
       "google": {

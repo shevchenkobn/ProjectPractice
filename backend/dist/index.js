@@ -30,6 +30,4 @@ function softExit(err) {
     console.error(err);
     process.kill(process.pid, database_service_1.terminateSignal);
 }
-const deleteMe_1 = require("./deleteMe");
-console.log(deleteMe_1.foo);
 //# sourceMappingURL=index.js.map

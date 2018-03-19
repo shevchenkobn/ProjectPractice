@@ -4,8 +4,7 @@ import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-
 import {OAuth2Strategy as GoogleStrategy} from 'passport-google-oauth';
 import UserInitializer from '../models/user.model';
 import { IUserModel } from '../models/user.model';
-import { IAuthenticationService, getService, IState, IJwtPayload } from './authentication.service';
-import config from 'config';
+import { IAuthenticationService, getService, IState, IJwtPayload, ClientError, authConfig } from './authentication.service';
 import SessionInitializer, { ISessionModel } from '../models/session.model';
 
 export interface IGoogleOAuth2Options {
@@ -27,30 +26,21 @@ export function initialize(userModel: IUserModel = UserInitializer.getModel()): 
   User = userModel;
   Session = SessionInitializer.getModel();
   authService = getService();
-  googleOauthOptions = config.get('auth.oauth.google.strategyOptions');
+  googleOauthOptions = authConfig.oauth.google.strategyOptions;
 
   passport.use('jwt', new JwtStrategy({
-    secretOrKey: config.get<string>('auth.jwtSecret'),
+    secretOrKey: authConfig.jwtSecret,
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
   }, async (jwtPayload: IJwtPayload, done: VerifiedCallback) => {
     try {
-      const session = await Session.findOne({
-        _id: jwtPayload.id,
-        status: 'active'
-      });
-      if (!session) {
-        return done(null, false, 'Invalid Token');
-      }
-      const user = await User.findById(session.userId);
-      if (!user) {
-        throw new Error('Non-existing user');
-      }
-      done(null, {
-        user,
-        session
-      });
+      const state = authService.authenticate(jwtPayload.id);
+      done(null, state);
     } catch (err) {
-      done(err);
+      if (err instanceof ClientError) {
+        done(null, false, err);
+      } else {
+        done(err);
+      }
     }
   }));
 

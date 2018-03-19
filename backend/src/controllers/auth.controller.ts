@@ -2,51 +2,59 @@ import { Middleware, Context } from 'koa';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import UserInitializer, { IUserModel } from '../models/user.model';
-import { getService, IAuthenticationService } from '../services/authentication.service';
+import { getService, IAuthenticationService, ClientError } from '../services/authentication.service';
 
 let User: IUserModel;
-let authService: IAuthenticationService
-export class AuthController {
-  constructor() {
-    if (!User) {
-      User = UserInitializer.getModel();
-    }
-    if (!authService) {
-      authService = getService();
-    }
+let authService: IAuthenticationService;
+let controller: IAuthController;
+
+export interface IAuthController {
+  register: Middleware;
+  issueToken: Middleware;
+  revokeToken: Middleware;
+}
+
+export function getController(): IAuthController {
+  if (controller) {
+    return controller;
   }
+  User = UserInitializer.getModel();
+  authService = getService();
+  controller = {
+    register: handleError(async (ctx, next) => {
+      if (ctx.isAuthenticated()) {
+        throw new ClientError("User is logged in");
+      }
+      const user = await authService.createUser(ctx.request.body);
+      const session = await authService.createSession(user);
+      await authService.saveState(ctx, user, session);
+      ctx.body = authService.getResponse(ctx);
+      if (!ctx.body) {
+        throw new Error("User is not logged in!");
+      }
+      await next();
+    }),
 
-  register: Middleware = handleError(async (ctx, next) => {
-    if (ctx.isAuthenticated()) {
-      throw "User is logged in";
-    }
-    const user = await authService.createUser(ctx.request.body);
-    const session = await authService.createSession(user);
-    await authService.saveState(ctx, user, session);
-    ctx.body = authService.getResponse(ctx);
-    if (!ctx.body) {
-      throw new Error("User is not logged in!");
-    }
-    await next();
-  })
+    issueToken: handleError(async (ctx, next) => {
+      if (ctx.isAuthenticated()) {
+        throw new ClientError("User is logged in");
+      }
+      const state = await authService.getToken(ctx.request.body);
+      await authService.saveState(ctx, state.user, state.session);
+      ctx.body = authService.getResponse(ctx);
+    }),
 
-  issueToken: Middleware = handleError(async (ctx, next) => {
-    if (ctx.isAuthenticated()) {
-      throw "User is logged in";
-    }
-    const state = await authService.getToken(ctx.request.body);
-    await authService.saveState(ctx, state.user, state.session);
-    ctx.body = authService.getResponse(ctx);
-  })
+    revokeToken: handleError(async (ctx, next) => {
+      await authService.logout(ctx);
+      ctx.body = { //TODO: json schema
+        "action": "logout",
+        "status": "ok"
+      };
+      await next();
+    })
+  };
 
-  revokeToken: Middleware = handleError(async (ctx, next) => {
-    await authService.logout(ctx);
-    ctx.body = { //TODO: json schema
-      "action": "logout",
-      "status": "ok"
-    };
-    await next();
-  })
+  return controller;
 }
 
 function handleError(middleware: Middleware): Middleware {
@@ -54,10 +62,10 @@ function handleError(middleware: Middleware): Middleware {
     try {
       await middleware(ctx, next);
     } catch (err) {
-      if (err instanceof Error) {
-        ctx.throw(500, err);
-      } else {
+      if (err instanceof ClientError) {
         ctx.throw(400, err);
+      } else {
+        ctx.throw(500, err);
       }
     }
   };

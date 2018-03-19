@@ -4,7 +4,30 @@ import jwt from 'jsonwebtoken'
 import UserInitializer, { IUserModel, IUserDocument } from '../models/user.model';
 import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/session.model';
 import config from 'config';
-import { ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
+
+export class ClientError extends Error {}
+
+export interface IAuthPaths {
+  basePath: string,
+  basic: {
+    issueToken: string,
+    register: string,
+    revokeToken: string
+  },
+  oauth: {
+    google: {
+      path: string,
+      strategyOptions: {
+        clientID: string,
+        clientSecret: string,
+        callbackURL: string
+      }
+    }
+  },
+  jwtSecret: string
+}
+
 export interface IState {
   user: IUserDocument;
   session: ISessionDocument
@@ -20,13 +43,15 @@ export interface IAuthenticationService {
   generateToken(session: ISessionDocument): string;
   saveState(ctx: Context, user: IUserDocument, session: ISessionDocument): Promise<void>;
   getState(ctx: Context): IState;
-  authenticate(ctx: Context, token: string): Promise<Context>;
+  authenticate(token: string): Promise<IState>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
   logout(ctx: Context, token?: string): Promise<void>;
 } 
 
-let _secret = config.get<string>('auth.jwtSecret');
+export const authConfig = config.get<IAuthPaths>('auth');
+let _secret = authConfig.jwtSecret;
+let tokenExtractor: JwtFromRequestFunction;
 let User: IUserModel = null;
 let Session: ISessionModel = null;
 
@@ -38,6 +63,7 @@ export function getService(): IAuthenticationService {
   }
   User = UserInitializer.getModel();
   Session = SessionInitializer.getModel();
+  tokenExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
   service = {
     generateToken(session) {
       const payload: IJwtPayload = {
@@ -59,13 +85,13 @@ export function getService(): IAuthenticationService {
 
     async getToken(credentials) {
       if (!User.isConstructionDoc(credentials)) {
-        throw "Bad login object";
+        throw new ClientError("Bad login object");
       }
       const user = await User.findOne({
         username: credentials.username
       });
       if (!(user && user.checkPassword(credentials.password))) {
-        throw "Bad username or password";
+        throw new ClientError("Bad username or password");
       }
       const session = await service.createSession(user);
       return {
@@ -76,17 +102,14 @@ export function getService(): IAuthenticationService {
 
     async saveState(ctx, user, session) {
       await ctx.login({user, session});
-      if (ctx.isUnauthenticated()) {
-        throw new Error("Undefined login error");
-      }
     },
 
     getState(ctx) {
       return ctx.state.user;
     },
 
-    async authenticate(ctx, token) { // FIXME:
-      if (!(ctx && token)) {
+    async authenticate(token) {
+      if (!token.trim()) {
         throw new Error("ctx or token is empty");
       }
       const session = await Session.findOne({
@@ -94,14 +117,13 @@ export function getService(): IAuthenticationService {
         status: 'active'
       });
       if (!session) {
-        throw "Invalid Token";
+        throw new ClientError("Invalid Token");
       }
       const user = await User.findById(session.userId);
-      if (!user) {
-        throw new Error("In-session user is not found!");
-      }
-      await service.saveState(ctx, user, session);
-      return ctx;
+      return {
+        user,
+        session
+      };
     },
 
     async createSession(user) {
@@ -124,7 +146,7 @@ export function getService(): IAuthenticationService {
       return new Promise<IUserDocument>(async (resolve, reject) => {
         try {
           if (!User.isConstructionDoc(object)) {
-            return reject("Bad registration object");
+            return reject(new ClientError("Bad registration object"));
           }
           let user = await User.findOne({username: object.username});
           if (!user) {
@@ -132,7 +154,7 @@ export function getService(): IAuthenticationService {
             await user.save();
             resolve(user);
           } else {
-            reject("Username is occupied")
+            reject(new ClientError("Username is occupied"));
           }
         } catch (err) {
           reject(err);
@@ -149,7 +171,7 @@ export function getService(): IAuthenticationService {
         status: 'active'
       });
       if (!session) {
-        throw 'Invalid Token';
+        throw new ClientError('Invalid Token');
       }
       session.status = 'outdated';
       await session.save();
@@ -161,21 +183,21 @@ export function getService(): IAuthenticationService {
 
 // const jwtExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
 function getToken(ctx: Context): string {
-  const header = ctx.get('Authorization'); 
-  if (!header.trim()) {
-    if (typeof ctx.request.body === 'object' && ctx.request.body &&
-      typeof ctx.request.body.token === 'string' && ctx.request.body.token.trim()) {
-      return ctx.request.body.token.trim();
-    } else {
-      throw 'No token found';
-    }
-  }
-  const parts = header.split(/\s+/);
-  let i = 0;
-  for (; !parts[i].length; i++);
-  if (parts[i].toLocaleLowerCase() !== 'bearer') {
-    throw 'Not a Bearer authentication';
-  }
-  return parts[i + 1];
-  // return jwtExtractor(ctx.req);
+  // const header = ctx.get('Authorization'); 
+  // if (!header.trim()) {
+  //   if (typeof ctx.request.body === 'object' && ctx.request.body &&
+  //     typeof ctx.request.body.token === 'string' && ctx.request.body.token.trim()) {
+  //     return ctx.request.body.token.trim();
+  //   } else {
+  //     throw new ClientError('No token found');
+  //   }
+  // }
+  // const parts = header.split(/\s+/);
+  // let i = 0;
+  // for (; !parts[i].length; i++);
+  // if (parts[i].toLocaleLowerCase() !== 'bearer') {
+  //   throw 'Not a Bearer authentication';
+  // }
+  // return parts[i + 1];
+  return tokenExtractor(<any>ctx.req);
 }

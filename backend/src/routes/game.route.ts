@@ -24,5 +24,9 @@ export function initialize(): KoaRouter {
     console.log(arguments);
     debugger;
   })(ctx, next));
+  router.get('/g/callback', (ctx, next) => passport.authenticate('google', async function() {
+    console.log(arguments);
+    debugger;
+  })(ctx, next));
   return router;
 }
