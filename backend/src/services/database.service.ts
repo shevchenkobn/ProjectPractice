@@ -20,6 +20,7 @@ export function initialize(config: IMongoConfig): mongoose.Connection {
 
   process.on(terminateSignal, () => {
     dbConnection.close();
+    process.kill(process.pid, terminateSignal);
   });
 
   dbConnection.on('disconnect', () => {

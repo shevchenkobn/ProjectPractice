@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
@@ -44,83 +36,75 @@ function getService() {
                 return null;
             }
         },
-        getToken(credentials) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!User.isConstructionDoc(credentials)) {
-                    throw "Bad login object";
-                }
-                const user = yield User.findOne({
-                    username: credentials.username
-                });
-                if (!(user && user.checkPassword(credentials.password))) {
-                    throw "Bad username or password";
-                }
-                const session = yield service.createSession(user);
-                return {
-                    user,
-                    session
-                };
+        async getToken(credentials) {
+            if (!User.isConstructionDoc(credentials)) {
+                throw "Bad login object";
+            }
+            const user = await User.findOne({
+                username: credentials.username
             });
+            if (!(user && user.checkPassword(credentials.password))) {
+                throw "Bad username or password";
+            }
+            const session = await service.createSession(user);
+            return {
+                user,
+                session
+            };
         },
-        saveState(ctx, user, session) {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield ctx.login({ user, session });
-                if (ctx.isUnauthenticated()) {
-                    throw new Error("Undefined login error");
-                }
-            });
+        async saveState(ctx, user, session) {
+            await ctx.login({ user, session });
+            if (ctx.isUnauthenticated()) {
+                throw new Error("Undefined login error");
+            }
         },
         getState(ctx) {
             return ctx.state.user;
         },
-        authenticate(ctx, token) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!(ctx && token)) {
-                    throw new Error("ctx or token is empty");
-                }
-                const session = yield Session.findOne({
-                    token,
-                    status: 'active'
-                });
-                if (!session) {
-                    throw "Invalid Token";
-                }
-                const user = yield User.findById(session.userId);
-                if (!user) {
-                    throw new Error("In-session user is not found!");
-                }
-                yield service.saveState(ctx, user, session);
-                return ctx;
+        async authenticate(ctx, token) {
+            if (!(ctx && token)) {
+                throw new Error("ctx or token is empty");
+            }
+            const session = await Session.findOne({
+                token,
+                status: 'active'
             });
+            if (!session) {
+                throw "Invalid Token";
+            }
+            const user = await User.findById(session.userId);
+            if (!user) {
+                throw new Error("In-session user is not found!");
+            }
+            await service.saveState(ctx, user, session);
+            return ctx;
         },
-        createSession(user) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (user instanceof User) {
-                    const session = new Session({
-                        userId: new mongoose_1.default.Types.ObjectId(user._id)
-                    });
-                    yield session.save();
-                    return session;
-                }
-                else {
-                    throw new Error('user is not a model or token is empty');
-                }
-            });
+        async createSession(user) {
+            if (user instanceof User) {
+                const session = new Session({
+                    userId: new mongoose_1.default.Types.ObjectId(user._id)
+                });
+                await session.save();
+                return session;
+            }
+            else {
+                throw new Error('user is not a model or token is empty');
+            }
         },
         /**
          * Rejects either with string (user error) or Error (server error)
          * @param object Object obtained from request
          */
         createUser(object) {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            return new Promise(async (resolve, reject) => {
                 try {
                     if (!User.isConstructionDoc(object)) {
                         return reject("Bad registration object");
                     }
-                    let user = yield User.findOne({ username: object.username });
+                    let user = await User.findOne({ username: object.username });
                     if (!user) {
                         user = new User(object);
-                        yield user.save();
+                        await user.save();
                         resolve(user);
                     }
                     else {
@@ -130,24 +114,22 @@ function getService() {
                 catch (err) {
                     reject(err);
                 }
-            }));
-        },
-        logout(ctx, token = '') {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!token.trim()) {
-                    token = getToken(ctx);
-                }
-                const session = yield Session.findOne({
-                    _id: jsonwebtoken_1.default.verify(token, _secret).id,
-                    status: 'active'
-                });
-                if (!session) {
-                    throw 'Invalid Token';
-                }
-                session.status = 'outdated';
-                yield session.save();
-                ctx.logout();
             });
+        },
+        async logout(ctx, token = '') {
+            if (!token.trim()) {
+                token = getToken(ctx);
+            }
+            const session = await Session.findOne({
+                _id: jsonwebtoken_1.default.verify(token, _secret).id,
+                status: 'active'
+            });
+            if (!session) {
+                throw 'Invalid Token';
+            }
+            session.status = 'outdated';
+            await session.save();
+            ctx.logout();
         }
     };
     return service;

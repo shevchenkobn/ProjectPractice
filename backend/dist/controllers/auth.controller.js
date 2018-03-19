@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
@@ -17,35 +9,35 @@ let User;
 let authService;
 class AuthController {
     constructor() {
-        this.register = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        this.register = handleError(async (ctx, next) => {
             if (ctx.isAuthenticated()) {
                 throw "User is logged in";
             }
-            const user = yield authService.createUser(ctx.request.body);
-            const session = yield authService.createSession(user);
-            yield authService.saveState(ctx, user, session);
+            const user = await authService.createUser(ctx.request.body);
+            const session = await authService.createSession(user);
+            await authService.saveState(ctx, user, session);
             ctx.body = authService.getResponse(ctx);
             if (!ctx.body) {
                 throw new Error("User is not logged in!");
             }
-            yield next();
-        }));
-        this.getToken = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+            await next();
+        });
+        this.getToken = handleError(async (ctx, next) => {
             if (ctx.isAuthenticated()) {
                 throw "User is logged in";
             }
-            const state = yield authService.getToken(ctx.request.body);
-            yield authService.saveState(ctx, state.user, state.session);
+            const state = await authService.getToken(ctx.request.body);
+            await authService.saveState(ctx, state.user, state.session);
             ctx.body = authService.getResponse(ctx);
-        }));
-        this.invalidateToken = handleError((ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            yield authService.logout(ctx);
+        });
+        this.invalidateToken = handleError(async (ctx, next) => {
+            await authService.logout(ctx);
             ctx.body = {
                 "action": "logout",
                 "status": "ok"
             };
-            yield next();
-        }));
+            await next();
+        });
         if (!User) {
             User = user_model_1.default.getModel();
         }
@@ -56,9 +48,9 @@ class AuthController {
 }
 exports.AuthController = AuthController;
 function handleError(middleware) {
-    return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+    return async (ctx, next) => {
         try {
-            yield middleware(ctx, next);
+            await middleware(ctx, next);
         }
         catch (err) {
             if (err instanceof Error) {
@@ -68,6 +60,6 @@ function handleError(middleware) {
                 ctx.throw(400, err);
             }
         }
-    });
+    };
 }
 //# sourceMappingURL=auth.controller.js.map

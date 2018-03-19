@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
@@ -34,16 +26,16 @@ function initialize(userModel = user_model_1.default.getModel()) {
     koa_passport_1.default.use('jwt', new passport_jwt_1.Strategy({
         secretOrKey: config_1.default.get('auth.jwtSecret'),
         jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()
-    }, (jwtPayload, done) => __awaiter(this, void 0, void 0, function* () {
+    }, async (jwtPayload, done) => {
         try {
-            const session = yield Session.findOne({
+            const session = await Session.findOne({
                 _id: jwtPayload.id,
                 status: 'active'
             });
             if (!session) {
                 return done(null, false, 'Invalid Token');
             }
-            const user = yield User.findById(session.userId);
+            const user = await User.findById(session.userId);
             if (!user) {
                 throw new Error('Non-existing user');
             }
@@ -55,7 +47,7 @@ function initialize(userModel = user_model_1.default.getModel()) {
         catch (err) {
             done(err);
         }
-    })));
+    }));
     koa_passport_1.default.use('google', new passport_google_oauth_1.OAuth2Strategy(googleOauthOptions, function (accessToken, refreshToken, profile, done) {
         console.log(arguments);
         debugger;

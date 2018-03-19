@@ -12,24 +12,24 @@ const user_model_1 = __importDefault(require("./models/user.model"));
 const database_service_1 = require("./services/database.service");
 const passport_service_1 = require("./services/passport.service");
 const mongoConfig = config_1.default.get('mongodb');
-const dbConnection = database_service_1.initialize(mongoConfig);
-const models = models_1.initialize(dbConnection);
-const passport = passport_service_1.initialize(models[user_model_1.default.getModelName()]);
-const middlewares = [];
-middlewares.push(passport.initialize());
-try {
+let dbConnection = database_service_1.initialize(mongoConfig);
+(async () => {
+    dbConnection = await dbConnection;
+    const models = models_1.initialize(dbConnection);
+    const passport = passport_service_1.initialize(models[user_model_1.default.getModelName()]);
+    const middlewares = [];
+    middlewares.push(passport.initialize());
     const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
     const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
     const app = new app_1.SwaggerApp(swaggerConfigPath, index_1.initialize(), uploadDir, middlewares);
     app.listen(config_1.default.get('port'), (app) => {
         console.log('listening');
     });
-}
-catch (err) {
-    softExit(err);
-}
+})().catch(softExit);
 function softExit(err) {
     console.error(err);
     process.kill(process.pid, database_service_1.terminateSignal);
 }
+const deleteMe_1 = require("./deleteMe");
+console.log(deleteMe_1.foo);
 //# sourceMappingURL=index.js.map

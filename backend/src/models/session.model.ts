@@ -2,7 +2,6 @@ import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
 
 export interface ISessionDocument extends Document {
-  token: string;
   userId: Schema.Types.ObjectId;
   gameId: null | Schema.Types.ObjectId;
   createdAt: Date;

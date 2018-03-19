@@ -10,14 +10,15 @@ import { initialize as initializeMongoose, IMongoConfig, terminateSignal } from 
 import { initialize as initializePassport } from './services/passport.service';
 
 const mongoConfig = config.get<IMongoConfig>('mongodb');
-const dbConnection = initializeMongoose(mongoConfig);
-const models = initializeModels(dbConnection);
-const passport = initializePassport(models[UserInititializer.getModelName()] as IUserModel);
+let dbConnection = initializeMongoose(mongoConfig);
+(async () => {
+  dbConnection = await dbConnection;
+  const models = initializeModels(dbConnection);
+  const passport = initializePassport(models[UserInititializer.getModelName()] as IUserModel);
 
-const middlewares: Array<Middleware> = [];
-middlewares.push(passport.initialize());
+  const middlewares: Array<Middleware> = [];
+  middlewares.push(passport.initialize());
 
-try {
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));
   const uploadDir = appRoot.resolve(config.get<string>('uploadDir'));
   const app = new SwaggerApp(swaggerConfigPath, initializeRoutes(), uploadDir, middlewares);
@@ -25,9 +26,7 @@ try {
   app.listen(config.get<number>('port'), (app) => {
     console.log('listening');
   })
-} catch (err) {
-  softExit(err);
-}
+})().catch(softExit);
 
 function softExit(err: any) {
   console.error(err);

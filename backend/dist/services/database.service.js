@@ -16,6 +16,7 @@ function initialize(config) {
     dbConnection = mongoose_1.default.createConnection(config.host + ':' + config.port + '/' + config.dbName);
     process.on(exports.terminateSignal, () => {
         dbConnection.close();
+        process.kill(process.pid, exports.terminateSignal);
     });
     dbConnection.on('disconnect', () => {
         dbConnection = null;

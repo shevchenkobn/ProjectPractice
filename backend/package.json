@@ -2,20 +2,24 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "npm i pm2 -g",
-    "buildWin": "if exist \".\\dist\\\" (rd /s /q .\\dist\\ && tsc) else tsc",
-    "startWatchWin": "nodemon --watch src/**/*.* --exec \"npm run startDevWin\"",
+    "installGlobals": "npm i pm2 -g",
+    "buildWin": "(if exist \".\\dist\\\" rd /s /q .\\dist\\)&&tsc",
+    "build": "if [ ! -d \"$DIRECTORY\" ]; then rm -rf ./dist; fi ; tsc # not sure if it is operable",
     "startDevWin": "npm run buildWin && node --inspect ./dist/",
-    "startWin": "set NODE_ENV=\"production\" npm run buildWin && node ./dist/"
+    "startTsNodeDev": "ts-node-dev ./src/ --inspect --respawn",
+    "start": "cross-env NODE_ENV=\"production\" npm run buildWin && node ./dist/"
   },
   "keywords": [],
-  "author": "",
+  "author": "Bogdan Shevchenko",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^5.1.4",
     "nodemon": "^1.17.1",
+    "ts-node": "^5.0.1",
+    "ts-node-dev": "^1.0.0-pre.18",
     "typescript": "^2.7.2"
   },
   "dependencies": {
@@ -49,7 +53,5 @@
     "socket.io": "^2.0.4",
     "swagger2-koa": "0.0.44"
   },
-  "optionalDependencies": {
-    "path-to-regexp": "^2.1.0"
-  }
+  "optionalDependencies": {}
 }

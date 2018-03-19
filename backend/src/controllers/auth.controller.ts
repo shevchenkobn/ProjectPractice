@@ -30,7 +30,7 @@ export class AuthController {
     await next();
   })
 
-  getToken: Middleware = handleError(async (ctx, next) => {
+  issueToken: Middleware = handleError(async (ctx, next) => {
     if (ctx.isAuthenticated()) {
       throw "User is logged in";
     }
@@ -39,7 +39,7 @@ export class AuthController {
     ctx.body = authService.getResponse(ctx);
   })
 
-  invalidateToken: Middleware = handleError(async (ctx, next) => {
+  revokeToken: Middleware = handleError(async (ctx, next) => {
     await authService.logout(ctx);
     ctx.body = { //TODO: json schema
       "action": "logout",

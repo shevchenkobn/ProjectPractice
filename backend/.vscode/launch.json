@@ -8,7 +8,25 @@
       "type": "node",
       "request": "launch",
       "name": "Tests File",
-      "program": "${workspaceFolder}/tests/file"
+      "program": "${workspaceFolder}/tests/file",
+      "skipFiles": [
+        "node_modules/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach by Process ID",
+      "processId": "${command:PickProcess}",
+      "outFiles": [
+        "${workspaceRoot}/dist/"
+      ],
+      "skipFiles": [
+        "node_modules/**/*.js",
+        "<node_internals>/**/*.js"
+      ],
+      "smartStep": true
     }
   ]
 }
