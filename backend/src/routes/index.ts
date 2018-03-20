@@ -1,5 +1,5 @@
 import KoaRouter from 'koa-router';
-import { initialize as authRouterInitialize } from './auth.route';
+import { _initialize as authRouterInitialize } from './auth.route';
 import { initialize as gameRouterInitialize } from './game.route';
 
 let apiRoutes: Array<KoaRouter>;

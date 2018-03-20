@@ -1,4 +1,4 @@
-import { Middleware, Context } from 'koa';
+import { Handler } from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import UserInitializer, { IUserModel } from '../models/user.model';
@@ -9,9 +9,9 @@ let authService: IAuthenticationService;
 let controller: IAuthController;
 
 export interface IAuthController {
-  register: Middleware;
-  issueToken: Middleware;
-  revokeToken: Middleware;
+  register: Handler;
+  issueToken: Handler;
+  revokeToken: Handler;
 }
 
 export function getController(): IAuthController {

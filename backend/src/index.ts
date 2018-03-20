@@ -20,8 +20,8 @@ let dbConnection = initializeMongoose(mongoConfig);
   middlewares.push(passport.initialize());
 
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));
-  const uploadDir _koaSwaggerAppresolve(config.get<string>('uploadDir'));
-  const app = new SwaggerApp(swaggerConfigPath, initializeRoutes(), uploadDir, middlewares);
+  const uploadDir = appRoot.resolve(config.get<string>('uploadDir'));
+  const app = new _koaSwaggerApp(swaggerConfigPath, initializeRoutes(), uploadDir, middlewares);
 
   app.listen(config.get<number>('port'), (app) => {
     console.log('listening');
