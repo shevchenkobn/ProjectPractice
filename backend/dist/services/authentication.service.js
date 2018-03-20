@@ -8,10 +8,13 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const session_model_1 = __importDefault(require("../models/session.model"));
 const config_1 = __importDefault(require("config"));
+const passport_jwt_1 = require("passport-jwt");
 class ClientError extends Error {
 }
 exports.ClientError = ClientError;
-let _secret = config_1.default.get('auth.jwtSecret');
+exports.authConfig = config_1.default.get('auth');
+let _secret = exports.authConfig.jwtSecret;
+let tokenExtractor;
 let User = null;
 let Session = null;
 let service = null;
@@ -21,6 +24,7 @@ function getService() {
     }
     User = user_model_1.default.getModel();
     Session = session_model_1.default.getModel();
+    tokenExtractor = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken();
     service = {
         generateToken(session) {
             const payload = {
@@ -136,24 +140,22 @@ function getService() {
 exports.getService = getService;
 // const jwtExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
 function getToken(ctx) {
-    const header = ctx.get('Authorization');
-    if (!header.trim()) {
-        if (typeof ctx.request.body === 'object' && ctx.request.body &&
-            typeof ctx.request.body.token === 'string' && ctx.request.body.token.trim()) {
-            return ctx.request.body.token.trim();
-        }
-        else {
-            throw new ClientError('No token found');
-        }
-    }
-    const parts = header.split(/\s+/);
-    let i = 0;
-    for (; !parts[i].length; i++)
-        ;
-    if (parts[i].toLocaleLowerCase() !== 'bearer') {
-        throw 'Not a Bearer authentication';
-    }
-    return parts[i + 1];
-    // return jwtExtractor(ctx.req);
+    // const header = ctx.get('Authorization'); 
+    // if (!header.trim()) {
+    //   if (typeof ctx.request.body === 'object' && ctx.request.body &&
+    //     typeof ctx.request.body.token === 'string' && ctx.request.body.token.trim()) {
+    //     return ctx.request.body.token.trim();
+    //   } else {
+    //     throw new ClientError('No token found');
+    //   }
+    // }
+    // const parts = header.split(/\s+/);
+    // let i = 0;
+    // for (; !parts[i].length; i++);
+    // if (parts[i].toLocaleLowerCase() !== 'bearer') {
+    //   throw 'Not a Bearer authentication';
+    // }
+    // return parts[i + 1];
+    return tokenExtractor(ctx.req);
 }
 //# sourceMappingURL=authentication.service.js.map

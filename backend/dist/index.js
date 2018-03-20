@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("config"));
 const app_root_path_1 = __importDefault(require("app-root-path"));
-const app_1 = require("./app");
 const index_1 = require("./routes/index");
 const models_1 = require("./models");
 const user_model_1 = __importDefault(require("./models/user.model"));
@@ -20,8 +19,9 @@ let dbConnection = database_service_1.initialize(mongoConfig);
     const middlewares = [];
     middlewares.push(passport.initialize());
     const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
-    const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
-    const app = new app_1.SwaggerApp(swaggerConfigPath, index_1.initialize(), uploadDir, middlewares);
+    const uploadDir, _koaSwaggerAppresolve;
+    (config_1.default.get('uploadDir'));
+    const app = new SwaggerApp(swaggerConfigPath, index_1.initialize(), uploadDir, middlewares);
     app.listen(config_1.default.get('port'), (app) => {
         console.log('listening');
     });

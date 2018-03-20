@@ -8,7 +8,6 @@ const passport_jwt_1 = require("passport-jwt");
 const passport_google_oauth_1 = require("passport-google-oauth");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const authentication_service_1 = require("./authentication.service");
-const config_1 = __importDefault(require("config"));
 const session_model_1 = __importDefault(require("../models/session.model"));
 let User;
 let Session;
@@ -22,9 +21,9 @@ function initialize(userModel = user_model_1.default.getModel()) {
     User = userModel;
     Session = session_model_1.default.getModel();
     authService = authentication_service_1.getService();
-    googleOauthOptions = config_1.default.get('auth.oauth.google.strategyOptions');
+    googleOauthOptions = authentication_service_1.authConfig.oauth.google.strategyOptions;
     koa_passport_1.default.use('jwt', new passport_jwt_1.Strategy({
-        secretOrKey: config_1.default.get('auth.jwtSecret'),
+        secretOrKey: authentication_service_1.authConfig.jwtSecret,
         jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()
     }, async (jwtPayload, done) => {
         try {

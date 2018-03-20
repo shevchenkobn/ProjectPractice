@@ -2,7 +2,7 @@ import config from 'config';
 import appRoot from 'app-root-path';
 import { Middleware } from 'koa';
 
-import { SwaggerApp } from './app';
+import { _koaSwaggerApp } from './app';
 import { initialize as initializeRoutes } from './routes/index';
 import { initialize as initializeModels } from './models';
 import UserInititializer, { IUserModel } from './models/user.model';
@@ -20,7 +20,7 @@ let dbConnection = initializeMongoose(mongoConfig);
   middlewares.push(passport.initialize());
 
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));
-  const uploadDir = appRoot.resolve(config.get<string>('uploadDir'));
+  const uploadDir _koaSwaggerAppresolve(config.get<string>('uploadDir'));
   const app = new SwaggerApp(swaggerConfigPath, initializeRoutes(), uploadDir, middlewares);
 
   app.listen(config.get<number>('port'), (app) => {

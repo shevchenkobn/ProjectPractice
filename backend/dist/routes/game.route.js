@@ -25,6 +25,10 @@ function initialize() {
         console.log(arguments);
         debugger;
     })(ctx, next));
+    router.get('/g/callback', (ctx, next) => koa_passport_1.default.authenticate('google', async function () {
+        console.log(arguments);
+        debugger;
+    })(ctx, next));
     return router;
 }
 exports.initialize = initialize;
