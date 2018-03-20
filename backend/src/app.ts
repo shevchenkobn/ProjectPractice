@@ -8,14 +8,10 @@ import ExpressApp, {Express, Router, Handler} from 'express';
 import BodyParser from 'body-parser';
 import Multer from 'multer';
 import { Server } from 'http';
+import { EventEmitter } from 'events';
 
 import SwaggerTools from 'swagger-tools';
 import { loadSwaggerDocument } from './services/swagger.service';
-import { EventEmitter } from 'events';
-
-SwaggerTools.initializeMiddleware(null, middleware => {
-  
-});
 
 export class App {
   protected readonly _app: Express;
@@ -65,7 +61,7 @@ export class SwaggerApp extends App {
     this._swaggerDocument = loadSwaggerDocument(this._swaggerConfigPath);
 
     this._initializingSwagger = true;
-    SwaggerTools.initializeMiddleware(null, middleware => {
+    SwaggerTools.initializeMiddleware(this._swaggerConfigPath, middleware => {
       // do stuff ...
       this.executeTasks();
     });
