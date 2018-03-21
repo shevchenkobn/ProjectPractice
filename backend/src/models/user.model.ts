@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
-import passport from 'koa-passport';
 
 export interface IUserDocument extends mongoose.Document {
   username: string;

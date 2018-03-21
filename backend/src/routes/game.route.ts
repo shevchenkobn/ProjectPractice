@@ -1,32 +1,47 @@
-import { Middleware } from 'koa';
-import passport from 'koa-passport';
-import { IState } from '../services/authentication.service';
-import KoaRouter from 'koa-router';
+import passport from 'passport';
+import { IAuthState } from '../services/authentication.service';
+import { Router } from 'express';
+import { IReadyRouter } from '.';
 
-let router: KoaRouter;
+let readyRouter: IReadyRouter;
 
-export function initialize(): KoaRouter {
-  if (router) {
-    return router;
+export function initialize(): IReadyRouter {
+  if (readyRouter) {
+    return readyRouter;
   }
-  router = new KoaRouter({
-    prefix: '/game'
-  });
-  router.get('/', (ctx, next) => passport.authenticate('jwt', async function(err, state: IState, info, status) {
-    if (err) {
-      ctx.throw(500, err);
+
+  const router = Router();
+
+  router.get(
+    '/',
+    (req, res, next) => passport.authenticate('jwt', function(err, state: IAuthState, info) {
+      if (err) {
+        next(err);
+      }
+      if (!state) {
+        next(info);
+      }
+      req.login(state, next);
+    })(req, res, next),
+    (req, res, next) => {
+      res.json(req.user);
     }
-    await ctx.login(state);
-    ctx.body = arguments;
-    next();
-  })(ctx, next));
-  router.get('/g', (ctx, next) => passport.authenticate('google', async function() {
+  );
+  router.get(
+    '/g',
+    passport.authenticate('google', async function() {
+      console.log(arguments);
+      debugger;
+    })
+  );
+  router.get('/g/callback', passport.authenticate('google', async function() {
     console.log(arguments);
     debugger;
-  })(ctx, next));
-  router.get('/g/callback', (ctx, next) => passport.authenticate('google', async function() {
-    console.log(arguments);
-    debugger;
-  })(ctx, next));
-  return router;
+  }));
+
+  readyRouter = {
+    path: '/game',
+    router: router
+  };
+  return readyRouter;
 }

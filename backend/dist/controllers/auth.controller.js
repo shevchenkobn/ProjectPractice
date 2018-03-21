@@ -15,52 +15,56 @@ function getController() {
     User = user_model_1.default.getModel();
     authService = authentication_service_1.getService();
     controller = {
-        register: handleError(async (ctx, next) => {
-            if (ctx.isAuthenticated()) {
-                throw new authentication_service_1.ClientError("User is logged in");
+        register: async (req, res, next) => {
+            if (req.isAuthenticated()) {
+                next(new authentication_service_1.ClientAuthError("User is logged in"));
             }
-            const user = await authService.createUser(ctx.request.body);
-            const session = await authService.createSession(user);
-            await authService.saveState(ctx, user, session);
-            ctx.body = authService.getResponse(ctx);
-            if (!ctx.body) {
-                throw new Error("User is not logged in!");
+            try {
+                const user = await authService.createUser(req.body);
+                const session = await authService.createSession(user);
+                req.login({ user, session }, err => {
+                    if (err) {
+                        next(err);
+                    }
+                    const body = authService.getResponse(req);
+                    if (!body) {
+                        next(new Error("User is not logged in!"));
+                    }
+                    res.json(body);
+                });
             }
-            await next();
-        }),
-        issueToken: handleError(async (ctx, next) => {
-            if (ctx.isAuthenticated()) {
-                throw new authentication_service_1.ClientError("User is logged in");
+            catch (err) {
+                next(err);
             }
-            const state = await authService.getToken(ctx.request.body);
-            await authService.saveState(ctx, state.user, state.session);
-            ctx.body = authService.getResponse(ctx);
-        }),
-        revokeToken: handleError(async (ctx, next) => {
-            await authService.logout(ctx);
-            ctx.body = {
-                "action": "logout",
-                "status": "ok"
-            };
-            await next();
-        })
+        },
+        issueToken: async (req, res, next) => {
+            if (req.isAuthenticated()) {
+                next(new authentication_service_1.ClientAuthError("User is logged in"));
+            }
+            try {
+                const state = await authService.getToken(req.body);
+                req.login(state, err => {
+                    if (err) {
+                        next(err);
+                    }
+                    const body = authService.getResponse(req);
+                    res.json(body);
+                });
+            }
+            catch (err) {
+                next(err);
+            }
+        },
+        revokeToken: (req, res, next) => {
+            authService.logout(req).then(() => {
+                res.json({
+                    "action": "logout",
+                    "status": "ok"
+                });
+            }).catch(next);
+        }
     };
     return controller;
 }
 exports.getController = getController;
-function handleError(middleware) {
-    return async (ctx, next) => {
-        try {
-            await middleware(ctx, next);
-        }
-        catch (err) {
-            if (err instanceof authentication_service_1.ClientError) {
-                ctx.throw(400, err);
-            }
-            else {
-                ctx.throw(500, err);
-            }
-        }
-    };
-}
 //# sourceMappingURL=auth.controller.js.map

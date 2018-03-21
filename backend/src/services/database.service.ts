@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 
 export interface IMongoConfig {
   host: string,
@@ -8,10 +8,10 @@ export interface IMongoConfig {
 
 export const terminateSignal = 'SIGINT';
 export const reconnectTimeout = 5000;
-let dbConnection: mongoose.Connection;
+let dbConnection: Connection;
 let _config: IMongoConfig;
 
-export function initialize(config: IMongoConfig): mongoose.Connection {
+export function initialize(config: IMongoConfig): Connection {
   if (dbConnection) {
     return dbConnection;
   }
@@ -30,7 +30,7 @@ export function initialize(config: IMongoConfig): mongoose.Connection {
   return dbConnection;
 }
 
-export function getConnection(): mongoose.Connection {
+export function getConnection(): Connection {
   if (!dbConnection) {
     throw new Error('Connection is not created!');
   }

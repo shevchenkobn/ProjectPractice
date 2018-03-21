@@ -1,10 +1,10 @@
-import passport from 'koa-passport';
+import passport from 'passport';
 import mongoose from 'mongoose';
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import {OAuth2Strategy as GoogleStrategy} from 'passport-google-oauth';
 import UserInitializer from '../models/user.model';
 import { IUserModel } from '../models/user.model';
-import { IAuthenticationService, getService, IState, IJwtPayload, ClientError, authConfig } from './authentication.service';
+import { IAuthenticationService, getService, IAuthState, IJwtPayload, ClientAuthError, authConfig } from './authentication.service';
 import SessionInitializer, { ISessionModel } from '../models/session.model';
 
 export interface IGoogleOAuth2Options {
@@ -28,15 +28,16 @@ export function initialize(userModel: IUserModel = UserInitializer.getModel()): 
   authService = getService();
   googleOauthOptions = authConfig.oauth.google.strategyOptions;
 
-  passport.use('jwt', new JwtStrategy({
+  passport.use('jwt', new JwtStrategy(<any>{
     secretOrKey: authConfig.jwtSecret,
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    session: false
   }, async (jwtPayload: IJwtPayload, done: VerifiedCallback) => {
     try {
-      const state = authService.authenticate(jwtPayload.id);
+      const state = await authService.authenticate(jwtPayload.id);
       done(null, state);
     } catch (err) {
-      if (err instanceof ClientError) {
+      if (err instanceof ClientAuthError) {
         done(null, false, err);
       } else {
         done(err);

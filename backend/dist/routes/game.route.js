@@ -3,33 +3,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const koa_passport_1 = __importDefault(require("koa-passport"));
-const koa_router_1 = __importDefault(require("koa-router"));
-let router;
+const passport_1 = __importDefault(require("passport"));
+const express_1 = require("express");
+let readyRouter;
 function initialize() {
-    if (router) {
-        return router;
+    if (readyRouter) {
+        return readyRouter;
     }
-    router = new koa_router_1.default({
-        prefix: '/game'
-    });
-    router.get('/', (ctx, next) => koa_passport_1.default.authenticate('jwt', async function (err, state, info, status) {
+    const router = express_1.Router();
+    router.get('/', (req, res, next) => passport_1.default.authenticate('jwt', function (err, state, info) {
         if (err) {
-            ctx.throw(500, err);
+            next(err);
         }
-        await ctx.login(state);
-        ctx.body = arguments;
+        if (!state) {
+            next(info);
+        }
+        req.user;
         next();
-    })(ctx, next));
-    router.get('/g', (ctx, next) => koa_passport_1.default.authenticate('google', async function () {
+    })(req, res, next), (req, res, next) => {
+        res.json(req.user);
+    });
+    router.get('/g', passport_1.default.authenticate('google', async function () {
         console.log(arguments);
         debugger;
-    })(ctx, next));
-    router.get('/g/callback', (ctx, next) => koa_passport_1.default.authenticate('google', async function () {
+    }));
+    router.get('/g/callback', passport_1.default.authenticate('google', async function () {
         console.log(arguments);
         debugger;
-    })(ctx, next));
-    return router;
+    }));
+    readyRouter = {
+        path: '/game',
+        router: router
+    };
+    return readyRouter;
 }
 exports.initialize = initialize;
 //# sourceMappingURL=game.route.js.map

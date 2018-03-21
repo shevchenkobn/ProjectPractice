@@ -1,10 +1,15 @@
-import KoaRouter from 'koa-router';
-import { _initialize as authRouterInitialize } from './auth.route';
+import { initialize as authRouterInitialize } from './auth.route';
 import { initialize as gameRouterInitialize } from './game.route';
+import { Router } from 'express';
 
-let apiRoutes: Array<KoaRouter>;
+export interface IReadyRouter {
+  path: string;
+  router: Router
+}
 
-export function initialize(): Array<KoaRouter> {
+let apiRoutes: Array<IReadyRouter>;
+
+export function initialize(): Array<IReadyRouter> {
   if (apiRoutes) {
     return apiRoutes;
   }
