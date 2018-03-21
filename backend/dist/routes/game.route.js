@@ -5,22 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
 const express_1 = require("express");
+const passport_service_1 = require("../services/passport.service");
 let readyRouter;
 function initialize() {
     if (readyRouter) {
         return readyRouter;
     }
+    const { jwtAuthenticate } = passport_service_1.getMiddlewares();
     const router = express_1.Router();
-    router.get('/', (req, res, next) => passport_1.default.authenticate('jwt', function (err, state, info) {
-        if (err) {
-            next(err);
-        }
-        if (!state) {
-            next(info);
-        }
-        req.user;
-        next();
-    })(req, res, next), (req, res, next) => {
+    router.get('/', jwtAuthenticate, (req, res, next) => {
         res.json(req.user);
     });
     router.get('/g', passport_1.default.authenticate('google', async function () {

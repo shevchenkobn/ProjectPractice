@@ -26,11 +26,7 @@ function getController() {
                     if (err) {
                         next(err);
                     }
-                    const body = authService.getResponse(req);
-                    if (!body) {
-                        next(new Error("User is not logged in!"));
-                    }
-                    res.json(body);
+                    res.json(req.user);
                 });
             }
             catch (err) {
@@ -47,8 +43,7 @@ function getController() {
                     if (err) {
                         next(err);
                     }
-                    const body = authService.getResponse(req);
-                    res.json(body);
+                    res.json(req.user);
                 });
             }
             catch (err) {

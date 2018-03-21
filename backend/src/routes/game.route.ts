@@ -1,7 +1,8 @@
 import passport from 'passport';
 import { IAuthState } from '../services/authentication.service';
-import { Router } from 'express';
+import { Router, Handler } from 'express';
 import { IReadyRouter } from '.';
+import { getMiddlewares } from '../services/passport.service';
 
 let readyRouter: IReadyRouter;
 
@@ -10,19 +11,13 @@ export function initialize(): IReadyRouter {
     return readyRouter;
   }
 
+  const { jwtAuthenticate } = getMiddlewares();
+
   const router = Router();
 
   router.get(
     '/',
-    (req, res, next) => passport.authenticate('jwt', function(err, state: IAuthState, info) {
-      if (err) {
-        next(err);
-      }
-      if (!state) {
-        next(info);
-      }
-      req.login(state, next);
-    })(req, res, next),
+    jwtAuthenticate,
     (req, res, next) => {
       res.json(req.user);
     }

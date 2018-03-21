@@ -33,17 +33,6 @@ function getService() {
             };
             return jsonwebtoken_1.default.sign(payload, _secret);
         },
-        getResponse(req) {
-            if (req.isAuthenticated()) {
-                return {
-                    token: service.generateToken(req.user.session),
-                    user: req.user.user
-                };
-            }
-            else {
-                return null;
-            }
-        },
         async getToken(credentials) {
             if (!User.isConstructionDoc(credentials)) {
                 throw new ClientAuthError("Bad login object");

@@ -13,7 +13,40 @@ let User;
 let Session;
 let initialized = false;
 let authService;
-let googleOauthOptions;
+let googleStrategyOpts;
+let googleInited = false;
+const middlewares = {
+    jwtAuthenticate(req, res, next) {
+        passport_1.default.authenticate('jwt', { session: false }, function (err, state, info) {
+            if (err) {
+                next(err);
+            }
+            if (!state) {
+                next(info);
+            }
+            req.login(state, next);
+        })(req, res, next);
+    },
+    addGoogleLogin(router, method = 'get') {
+        if (googleInited) {
+            throw new Error('Google authentication is already implemented');
+        }
+        router[method](authentication_service_1.authConfig.oauth.google.path, passport_1.default.authenticate('google', {
+            scope: [
+                'https://www.googleapis.com/auth/plus.login',
+                'https://www.googleapis.com/auth/plus.profile.emails.read'
+            ]
+        }), async function () {
+            console.log(arguments);
+            debugger;
+        });
+        router[method](authentication_service_1.authConfig.oauth.google.path + googleStrategyOpts.callbackURL, passport_1.default.authenticate('google', async function () {
+            console.log(arguments);
+            debugger;
+        }));
+        return router;
+    }
+};
 function initialize(userModel = user_model_1.default.getModel()) {
     if (initialized) {
         return passport_1.default;
@@ -21,7 +54,7 @@ function initialize(userModel = user_model_1.default.getModel()) {
     User = userModel;
     Session = session_model_1.default.getModel();
     authService = authentication_service_1.getService();
-    googleOauthOptions = authentication_service_1.authConfig.oauth.google.strategyOptions;
+    googleStrategyOpts = JSON.parse(JSON.stringify(authentication_service_1.authConfig.oauth.google.strategyOptions));
     passport_1.default.use('jwt', new passport_jwt_1.Strategy({
         secretOrKey: authentication_service_1.authConfig.jwtSecret,
         jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -40,7 +73,10 @@ function initialize(userModel = user_model_1.default.getModel()) {
             }
         }
     }));
-    passport_1.default.use('google', new passport_google_oauth_1.OAuth2Strategy(googleOauthOptions, function (accessToken, refreshToken, profile, done) {
+    googleStrategyOpts.callbackURL = authentication_service_1.authConfig.basePath
+        + authentication_service_1.authConfig.oauth.google.path
+        + googleStrategyOpts.callbackURL;
+    passport_1.default.use('google', new passport_google_oauth_1.OAuth2Strategy(googleStrategyOpts, function (accessToken, refreshToken, profile, done) {
         console.log(arguments);
         debugger;
     }));
@@ -57,4 +93,11 @@ function initialize(userModel = user_model_1.default.getModel()) {
     return passport_1.default;
 }
 exports.initialize = initialize;
+function getMiddlewares() {
+    if (!initialized) {
+        throw new Error('Passport service is uninitialized');
+    }
+    return middlewares;
+}
+exports.getMiddlewares = getMiddlewares;
 //# sourceMappingURL=passport.service.js.map
