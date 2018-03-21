@@ -7,6 +7,7 @@ export interface IUserDocument extends mongoose.Document {
   password?: string;
   passwordHash?: string;
   salt?: string;
+  google?: IGoogleInfo;
   createdAt: Date;
   updatedAt: Date;
   checkPassword(password: string): boolean;
@@ -14,6 +15,40 @@ export interface IUserDocument extends mongoose.Document {
 
 export interface IUserModel extends mongoose.Model<IUserDocument> {
   isConstructionDoc(object: Object): boolean;
+}
+
+export interface IGoogleInfo {
+  id: string;
+  displayName: string;
+  name: {
+    familyName: string;
+    givenName: string;
+  };
+  gender: 'male' | 'female';
+  emails: Array<{
+    value: string;
+    type: 'account' | string;
+  }>;
+  photos: Array<{
+    url: string
+    isProfile: boolean;
+    isDefault?: boolean;
+  }>;
+  profileUrl: string;
+  organizations?: Array<{
+    name: string;
+    type: 'school' | string;
+    endDate: string;
+    primary: boolean;
+  }>;
+  placesLived?: Array<{
+    value: string;
+    primary: boolean;
+  }>;
+  isPlusUser: boolean;
+  circledByCount: boolean;
+  verified: boolean;
+  domain?: string
 }
 
 const userSchema = new mongoose.Schema({
@@ -24,14 +59,67 @@ const userSchema = new mongoose.Schema({
     trim: true
   },
   passwordHash: String,
-  salt: String
+  salt: String,
+  google: {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
+    displayName: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
+    name: {
+      familyName: String,
+      givenName: String
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female']
+    },
+    emails: [{
+      value: String,
+      type: String
+    }],
+    photos: [{
+      url: {
+        type: String,
+        required: true
+      },
+      isProfile: {
+        type: Boolean,
+        required: true
+      },
+      isDefault: Boolean
+    }],
+    profileUrl: String,
+    organizations: [{
+      name: String,
+      type: String,
+      endDate: String,
+      primary: String
+    }],
+    placesLived: [{
+      value: String,
+      primary: Boolean
+    }],
+    isPlusUser: Boolean,
+    circledByCount: Boolean,
+    verified: Boolean,
+    domain: String
+  }
 }, {
   timestamps: true,
   toObject: {
     transform(doc, ret) {
       return {
         id: doc.id,
-        username: doc.username  
+        username: doc.username,
+        google: doc.google 
       };
     }
   }
