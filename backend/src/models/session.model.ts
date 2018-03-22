@@ -26,7 +26,14 @@ const sessionSchema = new Schema({
     required: true,
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toObject: {
+    transform: (doc, res) => {
+      return {
+        id: doc.id
+      }
+    }
+  }
 });
 
 /**

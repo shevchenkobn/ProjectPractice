@@ -1,4 +1,4 @@
-import * as swagger from 'swagger2';
+import yaml from 'yamljs';
 import config from 'config';
 import dotProp from 'dot-prop';
 
@@ -13,11 +13,8 @@ const configureProps: Array<any> = [
   ['apiPath', 'basePath']
 ];
 
-export function loadSwaggerDocument(filePath: string): swagger.Document {
-  const document = swagger.loadDocumentSync(filePath);
-  if (!swagger.validateDocument(document)) {
-    throw new TypeError(`${filePath} does not conform to the Swagger 2.0 schema`);
-  }
+export function loadSwaggerDocument(filePath: string): any {
+  const document = yaml.load(filePath);
   for (let propConf of configureProps) {
     if (Array.isArray(propConf)) {
       if (typeof propConf[0] === 'function') {

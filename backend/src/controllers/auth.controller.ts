@@ -2,7 +2,7 @@ import { Handler } from 'express';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import UserInitializer, { IUserModel } from '../models/user.model';
-import { getService, IAuthenticationService, ClientError } from '../services/authentication.service';
+import { getService, IAuthenticationService, ClientAuthError } from '../services/authentication.service';
 
 let User: IUserModel;
 let authService: IAuthenticationService;
@@ -21,52 +21,50 @@ export function getController(): IAuthController {
   User = UserInitializer.getModel();
   authService = getService();
   controller = {
-    register: handleError(async (ctx, next) => {
-      if (ctx.isAuthenticated()) {
-        throw new ClientError("User is logged in");
+    register: async (req, res, next) => {
+      if (req.isAuthenticated()) {
+        next(new ClientAuthError("User is logged in"));
       }
-      const user = await authService.createUser(ctx.request.body);
-      const session = await authService.createSession(user);
-      await authService.saveState(ctx, user, session);
-      ctx.body = authService.getResponse(ctx);
-      if (!ctx.body) {
-        throw new Error("User is not logged in!");
+      try {
+        const user = await authService.createUser(req.body);
+        const session = await authService.createSession(user);
+        req.login({ user, session }, err => {
+          if (err) {
+            next(err);
+          }
+          res.json(authService.getResponse(<any>req.user));
+        });
+      } catch (err) {
+        next(err);
       }
-      await next();
-    }),
+    },
 
-    issueToken: handleError(async (ctx, next) => {
-      if (ctx.isAuthenticated()) {
-        throw new ClientError("User is logged in");
+    issueToken: async (req, res, next) => {
+      if (req.isAuthenticated()) {
+        next(new ClientAuthError("User is logged in"));
       }
-      const state = await authService.getToken(ctx.request.body);
-      await authService.saveState(ctx, state.user, state.session);
-      ctx.body = authService.getResponse(ctx);
-    }),
+      try {
+        const state = await authService.getAuthState(req.body);
+        req.login(state, err => {
+          if (err) {
+            next(err);
+          }
+          res.json(authService.getResponse(<any>req.user));
+        });
+      } catch (err) {
+        next(err);
+      }
+    },
 
-    revokeToken: handleError(async (ctx, next) => {
-      await authService.logout(ctx);
-      ctx.body = { //TODO: json schema
-        "action": "logout",
-        "status": "ok"
-      };
-      await next();
-    })
+    revokeToken: (req, res, next) => {
+      authService.revokeToken(req).then(() => {
+        res.json({ //TODO: json schema
+          "action": "logout",
+          "status": "ok"
+        });
+      }).catch(next);
+    }
   };
 
   return controller;
-}
-
-function handleError(middleware: Middleware): Middleware {
-  return async (ctx: Context, next: () => Promise<any>) => {
-    try {
-      await middleware(ctx, next);
-    } catch (err) {
-      if (err instanceof ClientError) {
-        ctx.throw(400, err);
-      } else {
-        ctx.throw(500, err);
-      }
-    }
-  };
 }

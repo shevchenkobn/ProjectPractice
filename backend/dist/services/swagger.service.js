@@ -1,16 +1,9 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const swagger = __importStar(require("swagger2"));
+const yamljs_1 = __importDefault(require("yamljs"));
 const config_1 = __importDefault(require("config"));
 const dot_prop_1 = __importDefault(require("dot-prop"));
 const configureProps = [
@@ -24,10 +17,7 @@ const configureProps = [
     ['apiPath', 'basePath']
 ];
 function loadSwaggerDocument(filePath) {
-    const document = swagger.loadDocumentSync(filePath);
-    if (!swagger.validateDocument(document)) {
-        throw new TypeError(`${filePath} does not conform to the Swagger 2.0 schema`);
-    }
+    const document = yamljs_1.default.load(filePath);
     for (let propConf of configureProps) {
         if (Array.isArray(propConf)) {
             if (typeof propConf[0] === 'function') {

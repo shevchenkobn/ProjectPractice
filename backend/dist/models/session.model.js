@@ -16,7 +16,14 @@ const sessionSchema = new mongoose_1.Schema({
         required: true,
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    toObject: {
+        transform: (doc, res) => {
+            return {
+                id: doc.id
+            };
+        }
+    }
 });
 /**
  * Export part

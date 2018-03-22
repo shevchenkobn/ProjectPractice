@@ -30,9 +30,6 @@ public class FollowingCamera : MonoBehaviour
     {
         Vector3 futurePoition = target.position + offset;
         transform.position = Vector3.SmoothDamp(transform.position, futurePoition, ref velocity, smoothTime);
-
-        //Vector3 rotation = transform.rotation.eulerAngles + target.rotation.eulerAngles;
-        //transform.rotation = Quaternion.Euler(rotation);
         transform.LookAt(target);
     }
 

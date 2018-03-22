@@ -1,3 +1,9 @@
-const pathToRegexp = require('path-to-regexp');
-const path = '/:name/:id(\\d{0,5})', arr = [], regex = pathToRegexp(path, arr);
-console.log(regex);
+const createError = require('http-errors');
+const { BadRequest, InternalServerError } = createError;
+
+const express = require('express');
+const app = express();
+app.listen(3000);
+app.listen(3001);
+app.listen(3002);
+app.listen(3003);
