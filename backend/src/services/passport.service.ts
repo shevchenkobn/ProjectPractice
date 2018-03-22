@@ -2,7 +2,7 @@ import passport from 'passport';
 import mongoose from 'mongoose';
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import {OAuth2Strategy as GoogleStrategy} from 'passport-google-oauth';
-import UserInitializer, { IGoogleInfo } from '../models/user.model';
+import UserInitializer, { IGoogleInfo, IUserDocument } from '../models/user.model';
 import { IUserModel } from '../models/user.model';
 import { IAuthenticationService, getService, IAuthState, IJwtPayload, ClientAuthError, authConfig } from './authentication.service';
 import SessionInitializer, { ISessionModel } from '../models/session.model';
@@ -52,7 +52,7 @@ export interface IGoogleProfile {
     };
     url: string;
     image: {
-      url: string;
+      value: string;
       isDefault: boolean;
     },
     organizations?: Array<{
@@ -96,10 +96,38 @@ const middlewares: IPassportMiddlewares = {
     if (googleInited) {
       throw new Error('Google authentication is already implemented')
     }
-    router[method](authConfig.oauth.google.path, passport.authenticate('google', {
-      scope: ['email']
-    }));
-    router[method](authConfig.oauth.google.path + googleStrategyOpts.callbackURL, passport.authenticate('google'));
+    router[method](
+      authConfig.oauth.google.path,
+      // (req, res, next) => passport.authenticate('jwt', { session: false }, (err, state, info) => {
+      //   if (err) {
+      //     next(err);
+      //   }  
+      //   if (state) {
+      //     req.login(state, err => {
+      //       if (err) {
+      //         return next(err);
+      //       }
+      //       next(); 
+      //     });
+      //   } else {
+      //     next();
+      //   }
+      // })(req, res, next),
+      (req, res, next) => {
+        const token = authService.getToken(req);
+        passport.authenticate('google', <any>{
+          scope: ['email', 'profile'],
+          state: token || undefined
+        })(req, res, next);
+      }
+    );
+    router[method](
+      authConfig.oauth.google.path + googleStrategyOpts.callbackURL,
+      passport.authenticate('google'),
+      (req, res, next) => {
+        res.json(authService.getResponse(<IAuthState>req.user))
+      }
+    );
     
     return router;
   } 
@@ -137,83 +165,49 @@ export function initialize(userModel: IUserModel = UserInitializer.getModel()): 
   passport.use('google', new GoogleStrategy(
     {
       ...googleStrategyOpts,
-      callbackURL
+      callbackURL,
+      passReqToCallback: true
     },
-    function(accessToken, refreshToken, profile, done) {
-      /* ARGUMENTS:
-      {
-        "0":"ya29.GluFBZq8pJ9s39uUnj8T2GwoKmTSKLofKrYa9--zE6oBwJyNCAKP8YvXcBYweLn4G-umKcAIg0mXy_KKWW2Zx0ESErKgwNt7oSpamew-uQNOv6MrD__nfIMfdpCA",
-        "2":{
-          "id":"106746334478871215654",
-          "displayName":"Богдан Шевченко",
-          "name":{
-            "familyName":"Шевченко",
-            "givenName":"Богдан"
-          },
-          "emails":[
-            {
-              "value":"bohdan.shevchenko1@nure.ua",
-              "type":"account"
-            }
-          ],
-          "photos":[
-            {
-              "value":"https://lh4.googleusercontent.com/-LnqTdC5yRVY/AAAAAAAAAAI/AAAAAAAAAA4/6hF1gZwvoAM/photo.jpg?sz=50"
-            }
-          ],
-          "gender":"male",
-          "provider":"google",
-          "_raw":"{\n \"kind\": \"plus#person\",\n \"etag\": \"\\\"EhMivDE25UysA1ltNG8tqFM2v-A/JmV5LM_39BiFAbEOjQUqsQ-EWxE\\\"\",\n \"gender\": \"male\",\n \"emails\": [\n  {\n   \"value\": \"bohdan.shevchenko1@nure.ua\",\n   \"type\": \"account\"\n  }\n ],\n \"objectType\": \"person\",\n \"id\": \"106746334478871215654\",\n \"displayName\": \"Богдан Шевченко\",\n \"name\": {\n  \"familyName\": \"Шевченко\",\n  \"givenName\": \"Богдан\"\n },\n \"url\": \"https://plus.google.com/106746334478871215654\",\n \"image\": {\n  \"url\": \"https://lh4.googleusercontent.com/-LnqTdC5yRVY/AAAAAAAAAAI/AAAAAAAAAA4/6hF1gZwvoAM/photo.jpg?sz=50\",\n  \"isDefault\": false\n },\n \"organizations\": [\n  {\n
-        \"name\": \"Kharkiv National University of Radioelectronics\",\n   \"type\": \"school\",\n   \"endDate\": \"2016\",\n   \"primary\": false\n  }\n ],\n \"placesLived\": [\n  {\n   \"value\": \"Ukraine\",\n   \"primary\": true\n  }\n
-      ],\n \"isPlusUser\": true,\n \"circledByCount\": 0,\n \"verified\": false,\n \"domain\": \"nure.ua\"\n}\n",
-          "_json":{
-            "kind":"plus#person",
-            "etag":"\"EhMivDE25UysA1ltNG8tqFM2v-A/JmV5LM_39BiFAbEOjQUqsQ-EWxE\"",
-            "gender":"male",
-            "emails":[
-              {
-                "value":"bohdan.shevchenko1@nure.ua",
-                "type":"account"
-              }
-            ],
-            "objectType":"person",
-            "id":"106746334478871215654",
-            "displayName":"Богдан Шевченко",
-            "name":{
-              "familyName":"Шевченко",
-              "givenName":"Богдан"
-            },
-            "url":"https://plus.google.com/106746334478871215654",
-            "image":{
-              "url":"https://lh4.googleusercontent.com/-LnqTdC5yRVY/AAAAAAAAAAI/AAAAAAAAAA4/6hF1gZwvoAM/photo.jpg?sz=50",
-              "isDefault":false
-            },
-            "organizations":[
-              {
-                "name":"Kharkiv National University of Radioelectronics",
-                "type":"school",
-                "endDate":"2016",
-                "primary":false
-              }
-            ],
-            "placesLived":[
-              {
-                "value":"Ukraine",
-                "primary":true
-              }
-            ],
-            "isPlusUser":true,
-            "circledByCount":0,
-            "verified":false,
-            "domain":"nure.ua"
-          }
+    async function(req, accessToken, refreshToken, profile: IGoogleProfile, done) {
+      try {
+        if (!profile) {
+          return done(null, false);
         }
+        const googleInfo = normalizeProfile(profile);
+        if (req.query.state) {
+          const state = await authService.getAuthStateFromToken(req.query.state);
+          const user: IUserDocument = state.user;
+          user.google = googleInfo; // for now just replace google profile without checking IDs
+          await user.save();
+          // const deprecatedUser = await User.findOne({
+          //   'google.id': googleInfo.id
+          // });
+          // if (deprecatedUser) {
+          //   await deprecatedUser.remove();
+          // }
+          done(null, state.user);
+        } else {
+          let user = await User.findOne({
+            'google.id': googleInfo.id
+          });
+          if (user) {
+            user.google = googleInfo;
+          } else {
+            user = new User({
+              username: googleInfo.displayName,
+              google: googleInfo
+            });
+          }
+          await user.save();
+          const session = await authService.createSession(user); // TODO: probably access/refresh tokens are essential in here to save
+          done(null, {
+            session,
+            user
+          });
+        }
+      } catch (err) {
+        done(err);
       }
-      */
-      console.log('STRATEGY AUTH')
-      console.log(JSON.stringify(arguments));
-      
-      debugger;
     }
   ));
 
@@ -241,7 +235,7 @@ export function getMiddlewares(): IPassportMiddlewares {
 function normalizeProfile(profile: IGoogleProfile): IGoogleInfo {
   let photos: Array<any> = profile.photos;
   const avatar = profile._json.image;
-  const avatarIdx = photos.findIndex(photo => photo.url === avatar.url);
+  const avatarIdx = photos.findIndex(photo => photo.url === avatar.value);
   photos = photos.map((photo, i) => {
     photo = {
       url: photo.value.split('?')[0],

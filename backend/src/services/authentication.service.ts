@@ -29,6 +29,11 @@ export interface IAuthPaths {
   jwtSecret: string
 }
 
+export interface IAuthResponse {
+  token: string;
+  user: IUserDocument;
+}
+
 export interface IAuthState {
   user: IUserDocument;
   session: ISessionDocument
@@ -39,13 +44,16 @@ export interface IJwtPayload {
 }
 
 export interface IAuthenticationService {
-  getToken(credentials: any): Promise<IAuthState>;
+  getAuthState(credentials: any): Promise<IAuthState>;
+  getAuthStateFromToken(token: string): Promise<IAuthState>;
+  getResponse(state: IAuthState): IAuthResponse;
   generateToken(session: ISessionDocument): string;
   getState(req: Request): IAuthState;
   authenticate(token: string): Promise<IAuthState>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
-  logout(req: Request, token?: string): Promise<void>;
+  revokeToken(req: Request, token?: string): Promise<void>;
+  getToken(req: Request): string;
 } 
 
 export const authConfig = config.get<IAuthPaths>('auth');
@@ -65,13 +73,22 @@ export function getService(): IAuthenticationService {
   tokenExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
   service = {
     generateToken(session) {
-      const payload: IJwtPayload = {
-        id: session.id
-      };
+      const payload: IJwtPayload = session.toObject();
       return jwt.sign(payload, _secret);
     },
 
-    async getToken(credentials) {
+    async getAuthStateFromToken(token) {
+      return await service.authenticate((<IJwtPayload>jwt.verify(token, _secret)).id);
+    },
+
+    getResponse(state) {
+      return {
+        token: service.generateToken(state.session),
+        user: state.user
+      };
+    },
+
+    async getAuthState(credentials) {
       if (!User.isConstructionDoc(credentials)) {
         throw new ClientAuthError("Bad login object");
       }
@@ -146,9 +163,9 @@ export function getService(): IAuthenticationService {
       });
     },
 
-    async logout(req, token = '') {
+    async revokeToken(req, token = '') {
       if (!token.trim()) {
-        token = getToken(req);
+        token = service.getToken(req);
       }
       const session = await Session.findOne({
         _id: (jwt.verify(token, _secret) as IJwtPayload).id,
@@ -160,11 +177,11 @@ export function getService(): IAuthenticationService {
       session.status = 'outdated';
       await session.save();
       req.logout();
+    },
+
+    getToken(req: Request): string {
+      return tokenExtractor(req);
     }
   };
   return service;
-}
-
-function getToken(req: Request): string {
-  return tokenExtractor(req);
-}
+} 

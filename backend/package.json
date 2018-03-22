@@ -9,6 +9,7 @@
     "buildWin": "(if exist \".\\dist\\\" rd /s /q .\\dist\\)&&tsc",
     "build": "if [ ! -d \"$DIRECTORY\" ]; then rm -rf ./dist; fi ; tsc # not sure if it is operable",
     "startDevWin": "npm run buildWin && node --inspect ./dist/",
+    "nodemon": "nodemon -w src/**/*.* -x \"npm run startDevWin\"",
     "startDevWinBrk": "npm run buildWin && node --inspect-brk ./dist/",
     "startTsNodeDev": "ts-node-dev ./src/ --inspect --respawn",
     "startTsNode": "ts-node ./src/ --inspect",

@@ -28,12 +28,19 @@ function getService() {
     tokenExtractor = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken();
     service = {
         generateToken(session) {
-            const payload = {
-                id: session.id
-            };
+            const payload = session.toObject();
             return jsonwebtoken_1.default.sign(payload, _secret);
         },
-        async getToken(credentials) {
+        async getAuthStateFromToken(token) {
+            return await service.authenticate(jsonwebtoken_1.default.verify(token, _secret).id);
+        },
+        getResponse(state) {
+            return {
+                token: service.generateToken(state.session),
+                user: state.user
+            };
+        },
+        async getAuthState(credentials) {
             if (!User.isConstructionDoc(credentials)) {
                 throw new ClientAuthError("Bad login object");
             }
@@ -106,9 +113,9 @@ function getService() {
                 }
             });
         },
-        async logout(req, token = '') {
+        async revokeToken(req, token = '') {
             if (!token.trim()) {
-                token = getToken(req);
+                token = service.getToken(req);
             }
             const session = await Session.findOne({
                 _id: jsonwebtoken_1.default.verify(token, _secret).id,
@@ -120,12 +127,12 @@ function getService() {
             session.status = 'outdated';
             await session.save();
             req.logout();
+        },
+        getToken(req) {
+            return tokenExtractor(req);
         }
     };
     return service;
 }
 exports.getService = getService;
-function getToken(req) {
-    return tokenExtractor(req);
-}
 //# sourceMappingURL=authentication.service.js.map

@@ -32,7 +32,7 @@ export function getController(): IAuthController {
           if (err) {
             next(err);
           }
-          res.json(req.user);
+          res.json(authService.getResponse(<any>req.user));
         });
       } catch (err) {
         next(err);
@@ -44,12 +44,12 @@ export function getController(): IAuthController {
         next(new ClientAuthError("User is logged in"));
       }
       try {
-        const state = await authService.getToken(req.body);
+        const state = await authService.getAuthState(req.body);
         req.login(state, err => {
           if (err) {
             next(err);
           }
-          res.json(req.user);
+          res.json(authService.getResponse(<any>req.user));
         });
       } catch (err) {
         next(err);
@@ -57,7 +57,7 @@ export function getController(): IAuthController {
     },
 
     revokeToken: (req, res, next) => {
-      authService.logout(req).then(() => {
+      authService.revokeToken(req).then(() => {
         res.json({ //TODO: json schema
           "action": "logout",
           "status": "ok"

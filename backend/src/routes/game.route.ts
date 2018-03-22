@@ -22,18 +22,7 @@ export function initialize(): IReadyRouter {
       res.json(req.user);
     }
   );
-  router.get(
-    '/g',
-    passport.authenticate('google', async function() {
-      console.log(arguments);
-      debugger;
-    })
-  );
-  router.get('/g/callback', passport.authenticate('google', async function() {
-    console.log(arguments);
-    debugger;
-  }));
-
+  
   readyRouter = {
     path: '/game',
     router: router

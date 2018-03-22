@@ -26,7 +26,7 @@ function getController() {
                     if (err) {
                         next(err);
                     }
-                    res.json(req.user);
+                    res.json(authService.getResponse(req.user));
                 });
             }
             catch (err) {
@@ -38,12 +38,12 @@ function getController() {
                 next(new authentication_service_1.ClientAuthError("User is logged in"));
             }
             try {
-                const state = await authService.getToken(req.body);
+                const state = await authService.getAuthState(req.body);
                 req.login(state, err => {
                     if (err) {
                         next(err);
                     }
-                    res.json(req.user);
+                    res.json(authService.getResponse(req.user));
                 });
             }
             catch (err) {
@@ -51,7 +51,7 @@ function getController() {
             }
         },
         revokeToken: (req, res, next) => {
-            authService.logout(req).then(() => {
+            authService.revokeToken(req).then(() => {
                 res.json({
                     "action": "logout",
                     "status": "ok"

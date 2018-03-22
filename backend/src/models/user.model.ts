@@ -51,6 +51,29 @@ export interface IGoogleInfo {
   domain?: string
 }
 
+const emailSchema = new mongoose.Schema({
+  value: String,
+  type: {
+    type: String,
+  }
+}, {
+  _id: false
+});
+
+const photoSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true
+  },
+  isProfile: {
+    type: Boolean,
+    required: true
+  },
+  isDefault: Boolean
+}, {
+  _id: false
+})
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -81,21 +104,8 @@ const userSchema = new mongoose.Schema({
       type: String,
       enum: ['male', 'female']
     },
-    emails: [{
-      value: String,
-      type: String
-    }],
-    photos: [{
-      url: {
-        type: String,
-        required: true
-      },
-      isProfile: {
-        type: Boolean,
-        required: true
-      },
-      isDefault: Boolean
-    }],
+    emails: [emailSchema],
+    photos: [photoSchema],
     profileUrl: String,
     organizations: [{
       name: String,

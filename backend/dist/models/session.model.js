@@ -19,7 +19,9 @@ const sessionSchema = new mongoose_1.Schema({
     timestamps: true,
     toObject: {
         transform: (doc, res) => {
-            return doc.id;
+            return {
+                id: doc.id
+            };
         }
     }
 });
