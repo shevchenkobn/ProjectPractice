@@ -1,3 +1,4 @@
+import { IGoogleInfo } from './user.model';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
@@ -72,7 +73,49 @@ const photoSchema = new mongoose.Schema({
   isDefault: Boolean
 }, {
   _id: false
-})
+});
+
+const googleInfoSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  displayName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  name: {
+    familyName: String,
+    givenName: String
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female']
+  },
+  emails: [emailSchema],
+  photos: [photoSchema],
+  profileUrl: String,
+  organizations: [{
+    name: String,
+    type: String,
+    endDate: String,
+    primary: String
+  }],
+  placesLived: [{
+    value: String,
+    primary: Boolean
+  }],
+  isPlusUser: Boolean,
+  circledByCount: Boolean,
+  verified: Boolean,
+  domain: String
+}, {
+  _id: false
+});
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -83,45 +126,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: String,
   salt: String,
-  google: {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true
-    },
-    displayName: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true
-    },
-    name: {
-      familyName: String,
-      givenName: String
-    },
-    gender: {
-      type: String,
-      enum: ['male', 'female']
-    },
-    emails: [emailSchema],
-    photos: [photoSchema],
-    profileUrl: String,
-    organizations: [{
-      name: String,
-      type: String,
-      endDate: String,
-      primary: String
-    }],
-    placesLived: [{
-      value: String,
-      primary: Boolean
-    }],
-    isPlusUser: Boolean,
-    circledByCount: Boolean,
-    verified: Boolean,
-    domain: String
-  }
+  google: googleInfoSchema
 }, {
   timestamps: true,
   toObject: {

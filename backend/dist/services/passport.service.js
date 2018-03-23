@@ -97,16 +97,25 @@ function initialize(userModel = user_model_1.default.getModel()) {
             const googleInfo = normalizeProfile(profile);
             if (req.query.state) {
                 const state = await authService.getAuthStateFromToken(req.query.state);
-                const user = state.user;
+                let user = await User.findOne({
+                    'google.id': googleInfo.id,
+                    id: {
+                        $ne: state.user.id
+                    }
+                }); // TODO: merge all statistics of the user
+                if (user) {
+                    await Session.find({
+                        userId: user.id
+                    }).remove().exec();
+                    await user.remove();
+                }
+                user = state.user;
+                if (user.google) {
+                    await user.google.remove();
+                }
                 user.google = googleInfo; // for now just replace google profile without checking IDs
                 await user.save();
-                const deprecatedUser = await User.findOne({
-                    'google.id': googleInfo.id
-                });
-                if (deprecatedUser) {
-                    await deprecatedUser.remove();
-                }
-                done(null, state.user);
+                done(null, state);
             }
             else {
                 let user = await User.findOne({

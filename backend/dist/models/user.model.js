@@ -26,6 +26,47 @@ const photoSchema = new mongoose_1.default.Schema({
 }, {
     _id: false
 });
+const googleInfoSchema = new mongoose_1.default.Schema({
+    id: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    displayName: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    name: {
+        familyName: String,
+        givenName: String
+    },
+    gender: {
+        type: String,
+        enum: ['male', 'female']
+    },
+    emails: [emailSchema],
+    photos: [photoSchema],
+    profileUrl: String,
+    organizations: [{
+            name: String,
+            type: String,
+            endDate: String,
+            primary: String
+        }],
+    placesLived: [{
+            value: String,
+            primary: Boolean
+        }],
+    isPlusUser: Boolean,
+    circledByCount: Boolean,
+    verified: Boolean,
+    domain: String
+}, {
+    _id: false
+});
 const userSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
@@ -35,45 +76,7 @@ const userSchema = new mongoose_1.default.Schema({
     },
     passwordHash: String,
     salt: String,
-    google: {
-        id: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true
-        },
-        displayName: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true
-        },
-        name: {
-            familyName: String,
-            givenName: String
-        },
-        gender: {
-            type: String,
-            enum: ['male', 'female']
-        },
-        emails: [emailSchema],
-        photos: [photoSchema],
-        profileUrl: String,
-        organizations: [{
-                name: String,
-                type: String,
-                endDate: String,
-                primary: String
-            }],
-        placesLived: [{
-                value: String,
-                primary: Boolean
-            }],
-        isPlusUser: Boolean,
-        circledByCount: Boolean,
-        verified: Boolean,
-        domain: String
-    }
+    google: googleInfoSchema
 }, {
     timestamps: true,
     toObject: {
