@@ -5,7 +5,8 @@ import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/s
 import config from 'config';
 import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
 import { Request } from 'express';
-import { ClientRequestError } from './error-handler.service';
+import { ClientRequestError, AccessError } from './error-handler.service';
+import { SwaggerSecurityHandler } from 'swagger-tools';
 
 export class ClientAuthError extends ClientRequestError {}
 
@@ -49,11 +50,12 @@ export interface IAuthenticationService {
   getResponse(state: IAuthState): IAuthResponse;
   generateToken(session: ISessionDocument): string;
   getState(req: Request): IAuthState;
-  authenticate(token: string): Promise<IAuthState>;
+  authenticate(sessionId: string): Promise<IAuthState>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
   revokeToken(req: Request, token?: string | boolean): Promise<void>;
   getToken(req: Request, fromBody?: boolean): string;
+  swaggerBearerJwtChecker: SwaggerSecurityHandler;
 } 
 
 export const authConfig = config.get<IAuthPaths>('auth');
@@ -78,7 +80,13 @@ export function getService(): IAuthenticationService {
     },
 
     async getAuthStateFromToken(token) {
-      return await service.authenticate((<IJwtPayload>jwt.verify(token, _secret)).id);
+      let decoded;
+      try {
+        decoded = <IJwtPayload>jwt.verify(token, _secret);
+      } catch (err) {
+        throw new AccessError('Bad token');
+      }
+      return await service.authenticate(decoded.id);
     },
 
     getResponse(state) {
@@ -188,6 +196,22 @@ export function getService(): IAuthenticationService {
 
     getToken(req: Request, fromBody = false): string {
       return fromBody && req.body && req.body.token && (req.body.token + '').trim() || tokenExtractor(req);
+    },
+
+    async swaggerBearerJwtChecker(req: Request, authOrSecDef, scopesOrApiKey, callback) {
+      try {
+        const token = service.getToken(req);
+        if (!token || typeof token === 'string' && !token.trim()) {
+          return callback(new AccessError('Access token must be provided'));
+        }
+        const state = await service.getAuthStateFromToken(token);
+        req.login(state, err => {
+          if (err) callback(err);
+          callback();
+        });
+      } catch (err) {
+        callback(err);
+      }
     }
   };
   return service;

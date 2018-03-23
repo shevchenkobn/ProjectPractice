@@ -4,16 +4,86 @@ info:
   description: Non-game Web API of Feodal Monopoly project
   version: 1.0.0
 
+host: localhost:3000
+basePath: "/api/v1"
 schemes:
   - http
-
+produces:
+  - application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    
 paths:
-  /users:
+  /games/{path}:
+    x-swagger-router-controller: "game.controller"
     get:
+      operationId: getAll
       summary: ...
       description: ...
+      security: 
+        - Bearer: []
+      x-security-scopes:
+        - user
       produces:
         - application/json
+      parameters:
+        - name: path
+          in: path
+          description: ...
+          required: true
+          type: integer
+        - name: q
+          in: query
+          description: ...
+          required: false
+          type: string
       responses:
         200:
           description: OK
+          schema:
+            $ref: "#/definitions/Game"
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
+
+definitions:
+  Error:
+    properties: 
+      message:
+        type: string
+    required:
+      - message
+  Element:
+    properties:
+      type: 
+        type: string
+        minLength: 2
+      code: 
+        type: integer
+        minimum: 0
+      array:
+        type: array
+        items:
+          type: 
+            - integer
+            - string
+        maxItems: 4
+  Game:
+    properties:
+      element:
+        $ref: "#/definitions/Element"
+      elements:
+        type: array
+        items:
+          $ref: "#/definitions/Element"
+      req:
+        type: string
+    required:
+      - element
+      - elements
+
+      

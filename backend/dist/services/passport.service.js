@@ -31,23 +31,7 @@ const middlewares = {
         if (googleInited) {
             throw new Error('Google authentication is already implemented');
         }
-        router[method](authentication_service_1.authConfig.oauth.google.path, 
-        // (req, res, next) => passport.authenticate('jwt', { session: false }, (err, state, info) => {
-        //   if (err) {
-        //     next(err);
-        //   }  
-        //   if (state) {
-        //     req.login(state, err => {
-        //       if (err) {
-        //         return next(err);
-        //       }
-        //       next(); 
-        //     });
-        //   } else {
-        //     next();
-        //   }
-        // })(req, res, next),
-        (req, res, next) => {
+        router[method](authentication_service_1.authConfig.oauth.google.path, (req, res, next) => {
             const token = authService.getToken(req);
             passport_1.default.authenticate('google', {
                 scope: ['email', 'profile'],
@@ -189,12 +173,12 @@ function normalizeProfile(profile) {
         emails.push(JSON.parse(JSON.stringify(profile.emails[i])));
     }
     return {
+        emails,
+        photos,
         id: profile.id,
         displayName: profile.displayName,
         name: profile.name,
         gender: profile.gender,
-        emails,
-        photos,
         profileUrl: profile._json.url,
         organizations: profile._json.organizations,
         placesLived: profile._json.placesLived,

@@ -8,6 +8,7 @@ import { IAuthenticationService, getService, IAuthState, IJwtPayload, ClientAuth
 import SessionInitializer, { ISessionModel } from '../models/session.model';
 import { Handler, Router } from 'express';
 import { IReadyRouter } from '../routes';
+import { SwaggerSecurityHandler } from 'swagger-tools';
 
 export interface IGoogleStrategyOpts {
   clientID: string;
@@ -98,21 +99,6 @@ const middlewares: IPassportMiddlewares = {
     }
     router[method](
       authConfig.oauth.google.path,
-      // (req, res, next) => passport.authenticate('jwt', { session: false }, (err, state, info) => {
-      //   if (err) {
-      //     next(err);
-      //   }  
-      //   if (state) {
-      //     req.login(state, err => {
-      //       if (err) {
-      //         return next(err);
-      //       }
-      //       next(); 
-      //     });
-      //   } else {
-      //     next();
-      //   }
-      // })(req, res, next),
       (req, res, next) => {
         const token = authService.getToken(req);
         passport.authenticate('google', <any>{
@@ -130,7 +116,7 @@ const middlewares: IPassportMiddlewares = {
     );
     
     return router;
-  } 
+  }
 }
 
 export function initialize(userModel: IUserModel = UserInitializer.getModel()): typeof passport {
@@ -270,12 +256,12 @@ function normalizeProfile(profile: IGoogleProfile): IGoogleInfo {
   }
 
   return {
+    emails,
+    photos,
     id: profile.id,
     displayName: profile.displayName,
     name: profile.name,
     gender: profile.gender,
-    emails,
-    photos,
     profileUrl: profile._json.url,
     organizations: profile._json.organizations,
     placesLived: profile._json.placesLived,

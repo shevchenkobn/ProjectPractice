@@ -138,6 +138,19 @@ function getService() {
         },
         getToken(req, fromBody = false) {
             return fromBody && req.body && req.body.token && (req.body.token + '').trim() || tokenExtractor(req);
+        },
+        async swaggerBearerJwtChecker(req, authOrSecDef, scopesOrApiKey, callback) {
+            try {
+                const state = await service.authenticate(service.getToken(req));
+                req.login(state, err => {
+                    if (err)
+                        callback(err);
+                    callback();
+                });
+            }
+            catch (err) {
+                callback(err);
+            }
         }
     };
     return service;

@@ -1,5 +1,6 @@
 import config from 'config'; 
 import appRoot from 'app-root-path';
+import path from 'path';
 
 import { SwaggerApp, IHandlersArray } from './app';
 import { initialize as initializeRoutes } from './routes/index';
@@ -9,6 +10,7 @@ import { initialize as initializeMongoose, IMongoConfig, terminateSignal } from 
 import { initialize as initializePassport } from './services/passport.service';
 import { errorHandler } from './services/error-handler.service';
 import { Handler, ErrorRequestHandler } from 'express';
+import { getService } from './services/authentication.service';
 
 const mongoConfig = config.get<IMongoConfig>('mongodb');
 let dbConnection = initializeMongoose(mongoConfig);
@@ -24,11 +26,28 @@ let dbConnection = initializeMongoose(mongoConfig);
 
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));
   const uploadDir = appRoot.resolve(config.get<string>('uploadDir'));
-  const app = new SwaggerApp(swaggerConfigPath, middlewares, uploadDir, initializeRoutes());
+  const app = new SwaggerApp({
+    middlewares,
+    uploadDir,
+    routes: initializeRoutes(),
+    swagger: {
+      filepath: swaggerConfigPath,
+      securityOptions: {
+        Bearer: getService().swaggerBearerJwtChecker
+      },
+      routerOptions: {
+        controllers: path.resolve(__dirname, './api/controllers'),
+        // useStubs: true
+      },
+      validatorOptions: {
+        validateResponse: true
+      }
+    }
+  });
 
-  app.listen(config.get<number>('port'), app => {
+  await app.listen(config.get<number>('port'), app => {
     console.log('listening');
-  })
+  });
 })().catch(softExit);
 
 function softExit(err: any) {

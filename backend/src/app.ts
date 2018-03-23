@@ -1,10 +1,11 @@
+import appRoot from 'app-root-path';
 import ExpressApp, {Express, Router, Handler, ErrorRequestHandler} from 'express';
 import BodyParser from 'body-parser';
 import Multer from 'multer';
 import { Server } from 'http';
 import { EventEmitter } from 'events';
 
-import SwaggerTools from 'swagger-tools';
+import SwaggerTools, { SwaggerRouter20Options, SwaggerValidatorOptions, SwaggerUiOptions, SwaggerSecurityOptions } from 'swagger-tools';
 import { loadSwaggerDocument } from './services/swagger.service';
 import { IReadyRouter } from './routes';
 
@@ -31,8 +32,15 @@ export class App {
       }),
       BodyParser.json(),
       BodyParser.raw(),
-      Multer().any()
+      
     );
+    if (uploadDir) {
+      this._app.use(
+        Multer({
+          dest: uploadDir
+        }).any()
+      );
+    }
 
     this.useMiddlewares(this._middlewares.before);
 
@@ -58,23 +66,52 @@ export class App {
   }
 }
 
+export interface ISwaggerConfig {
+  filepath: string;
+  routerOptions: SwaggerRouter20Options;
+  validatorOptions?: SwaggerValidatorOptions;
+  securityOptions?: SwaggerSecurityOptions;
+  uiOptions?: SwaggerUiOptions;
+}
+
+export interface ISwaggerAppConfig {
+  swagger: ISwaggerConfig;
+  middlewares: IHandlersArray;
+  uploadDir?: string;
+  routes?: Array<IReadyRouter>;
+}
+
 export class SwaggerApp extends App {
-  private readonly _swaggerConfigPath: string
+  private readonly _swaggerConfig: ISwaggerConfig
   private readonly _swaggerDocument: any
 
   private _initializingSwagger: boolean = false;
   private readonly _eventEmitter: EventEmitter = new EventEmitter();
   private _listenTasks: Array<Promise<Server>> = [];
 
-  constructor(swaggerConfigPath: string, middlewares: IHandlersArray, uploadDir?: string, routes: Array<IReadyRouter> = []) {
-    super(middlewares, uploadDir, routes);
+  //constructor(swaggerConfigPath: string, middlewares: IHandlersArray, uploadDir?: string, routes: Array<IReadyRouter> = []) {
+  constructor(config: ISwaggerAppConfig) {
+    super(config.middlewares, config.uploadDir, config.routes);
 
-    this._swaggerConfigPath = swaggerConfigPath;
-    this._swaggerDocument = loadSwaggerDocument(this._swaggerConfigPath);
+    this._swaggerConfig = config.swagger;
+    this._swaggerDocument = loadSwaggerDocument(this._swaggerConfig.filepath);
 
     this._initializingSwagger = true;
     SwaggerTools.initializeMiddleware(this._swaggerDocument, middleware => {
-      // do stuff ...
+      this._app.use(middleware.swaggerMetadata());
+
+      if (this._swaggerConfig.securityOptions) {
+        this._app.use(middleware.swaggerSecurity(this._swaggerConfig.securityOptions));
+      }
+
+      this._app.use(middleware.swaggerValidator(this._swaggerConfig.validatorOptions));
+      
+      this._app.use(middleware.swaggerRouter(this._swaggerConfig.routerOptions));
+
+      if (this._swaggerConfig.uiOptions) {
+        this._app.use(middleware.swaggerUi(this._swaggerConfig.uiOptions));
+      }
+      
       this.executeTasks();
     });
   }
