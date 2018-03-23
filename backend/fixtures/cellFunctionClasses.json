@@ -1,0 +1,10 @@
+[
+  {
+    "_id": "ObjectId: precious",
+    "type": "building",
+    "functions": [],
+    "descriptor": {
+      "feeMonopolyFactor": 2
+    }
+  }
+]

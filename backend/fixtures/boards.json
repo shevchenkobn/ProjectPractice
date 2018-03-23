@@ -1,0 +1,171 @@
+[
+  {
+    "_id": "ObjectId: enFMBoard",
+    "rulesId": "ObjectId: en/FeodalMonopoly",
+    "localizations": [
+      "ObjectId: en/FeodalMonopoly"
+    ],
+    "cells": [
+      {
+        "cellId": 0,
+        "functionId": "ObjectId: start"
+      },
+      {
+        "cellId": 1,
+        "functionId": "ObjectId: silverMine"
+      },
+      {
+        "cellId": 2,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 3,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 4,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 5,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 6,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 7,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 8,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 9,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 10,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 11,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 12,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 13,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 14,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 15,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 16,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 17,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 18,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 19,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 20,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 21,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 22,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 23,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 24,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 25,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 26,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 27,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 28,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 29,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 30,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 31,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 32,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 33,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 34,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 35,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 36,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 37,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 38,
+        "functionId": "ObjectId"
+      },
+      {
+        "cellId": 39,
+        "functionId": "ObjectId"
+      }
+    ]
+  }
+]

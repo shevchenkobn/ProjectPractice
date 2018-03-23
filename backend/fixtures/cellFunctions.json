@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "ObjectId: start",
+    "event": {
+      "triggers": [
+        "hover",
+        "stop"
+      ],
+      "action": {
+        "cash": "+500"
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: silverMine",
+    "building": {
+      "class": "ObjectId: precious//TODO:"
+    }
+  }
+]
