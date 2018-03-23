@@ -57,7 +57,7 @@ export function getController(): IAuthController {
     },
 
     revokeToken: (req, res, next) => {
-      authService.revokeToken(req).then(() => {
+      authService.revokeToken(req, true).then(() => {
         res.json({ //TODO: json schema
           "action": "logout",
           "status": "ok"

@@ -114,8 +114,16 @@ function getService() {
             });
         },
         async revokeToken(req, token = '') {
-            if (!token.trim()) {
-                token = service.getToken(req);
+            if (token === true) {
+                token = service.getToken(req, token);
+            }
+            else if (typeof token === 'string') {
+                if (token = !token.trim()) {
+                    token = service.getToken(req);
+                }
+            }
+            if (!token) {
+                throw new ClientAuthError('Authorization token must be provided either in body or in "Authorization" header');
             }
             const session = await Session.findOne({
                 _id: jsonwebtoken_1.default.verify(token, _secret).id,
@@ -128,8 +136,8 @@ function getService() {
             await session.save();
             req.logout();
         },
-        getToken(req) {
-            return tokenExtractor(req);
+        getToken(req, fromBody = false) {
+            return fromBody && req.body && req.body.token && (req.body.token + '').trim() || tokenExtractor(req);
         }
     };
     return service;

@@ -52,8 +52,8 @@ export interface IAuthenticationService {
   authenticate(token: string): Promise<IAuthState>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
-  revokeToken(req: Request, token?: string): Promise<void>;
-  getToken(req: Request): string;
+  revokeToken(req: Request, token?: string | boolean): Promise<void>;
+  getToken(req: Request, fromBody?: boolean): string;
 } 
 
 export const authConfig = config.get<IAuthPaths>('auth');
@@ -164,11 +164,18 @@ export function getService(): IAuthenticationService {
     },
 
     async revokeToken(req, token = '') {
-      if (!token.trim()) {
-        token = service.getToken(req);
+      if (token === true) {
+        token = service.getToken(req, token);
+      } else if (typeof token === 'string') {
+        if (token = !token.trim()) {
+          token = service.getToken(req);
+        }
+      }
+      if (!token) {
+        throw new ClientAuthError('Authorization token must be provided either in body or in "Authorization" header');
       }
       const session = await Session.findOne({
-        _id: (jwt.verify(token, _secret) as IJwtPayload).id,
+        _id: (jwt.verify(<string>token, _secret) as IJwtPayload).id,
         status: 'active'
       });
       if (!session) {
@@ -179,8 +186,8 @@ export function getService(): IAuthenticationService {
       req.logout();
     },
 
-    getToken(req: Request): string {
-      return tokenExtractor(req);
+    getToken(req: Request, fromBody = false): string {
+      return fromBody && req.body && req.body.token && (req.body.token + '').trim() || tokenExtractor(req);
     }
   };
   return service;

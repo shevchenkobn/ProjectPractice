@@ -51,7 +51,7 @@ function getController() {
             }
         },
         revokeToken: (req, res, next) => {
-            authService.revokeToken(req).then(() => {
+            authService.revokeToken(req, true).then(() => {
                 res.json({
                     "action": "logout",
                     "status": "ok"
