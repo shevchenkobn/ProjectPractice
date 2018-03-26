@@ -10,7 +10,8 @@ import { initialize as initializeMongoose, IMongoConfig, terminateSignal } from 
 import { initialize as initializePassport } from './services/passport.service';
 import { errorHandler } from './services/error-handler.service';
 import { Handler, ErrorRequestHandler } from 'express';
-import { getService } from './services/authentication.service';
+import { getService as getAuthService } from './services/authentication.service';
+import { getConfig as getSocketIoConfig } from './socketio-api';
 
 const mongoConfig = config.get<IMongoConfig>('mongodb');
 let dbConnection = initializeMongoose(mongoConfig);
@@ -27,16 +28,21 @@ let dbConnection = initializeMongoose(mongoConfig);
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));
   const uploadDir = appRoot.resolve(config.get<string>('uploadDir'));
   const app = new SwaggerApp({
-    middlewares,
-    uploadDir,
-    routes: initializeRoutes(),
+    appConfig: {
+      express: {
+        middlewares,
+        uploadDir,
+        routes: initializeRoutes()
+      },
+      socketio: getSocketIoConfig()
+    },
     swagger: {
       filepath: swaggerConfigPath,
       securityOptions: {
-        Bearer: getService().swaggerBearerJwtChecker
+        Bearer: getAuthService().swaggerBearerJwtChecker
       },
       routerOptions: {
-        controllers: path.resolve(__dirname, './api/controllers'),
+        controllers: path.resolve(__dirname, './rest-api/controllers'),
         // useStubs: true
       },
       validatorOptions: {
@@ -45,9 +51,10 @@ let dbConnection = initializeMongoose(mongoConfig);
     }
   });
 
-  await app.listen(config.get<number>('port'), app => {
+  const server = await app.listen(config.get<number>('port'), app => {
     console.log('listening');
   });
+  app.socketIOListen(config.get<number>('socketIOPort'));
 })().catch(softExit);
 
 function softExit(err: any) {

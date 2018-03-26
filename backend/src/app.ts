@@ -1,13 +1,42 @@
 import appRoot from 'app-root-path';
 import ExpressApp, {Express, Router, Handler, ErrorRequestHandler} from 'express';
 import BodyParser from 'body-parser';
+import cors from 'cors';
 import Multer from 'multer';
 import { Server } from 'http';
 import { EventEmitter } from 'events';
 
+import Socket from 'socket.io';
+import Path from 'path';
+
 import SwaggerTools, { SwaggerRouter20Options, SwaggerValidatorOptions, SwaggerUiOptions, SwaggerSecurityOptions } from 'swagger-tools';
 import { loadSwaggerDocument } from './services/swagger.service';
 import { IReadyRouter } from './routes';
+import { SocketHandler, SocketMiddleware, ISocketIOConfig } from './socketio-api/@types';
+
+export interface ISwaggerConfig {
+  filepath: string;
+  routerOptions: SwaggerRouter20Options;
+  validatorOptions?: SwaggerValidatorOptions;
+  securityOptions?: SwaggerSecurityOptions;
+  uiOptions?: SwaggerUiOptions;
+}
+
+export interface IAppConfig {
+  express: IExpressConfig;
+  socketio?: ISocketIOConfig;
+}
+
+export interface IExpressConfig {
+  middlewares?: IHandlersArray;
+  uploadDir?: string;
+  routes?: Array<IReadyRouter>;
+}
+
+export interface ISwaggerAppConfig {
+  swagger: ISwaggerConfig;
+  appConfig: IAppConfig;
+}
 
 export interface IHandlersArray {
   before: Array<Handler | ErrorRequestHandler>;
@@ -16,15 +45,25 @@ export interface IHandlersArray {
 
 export class App {
   protected readonly _app: Express;
-  protected readonly _routers: Array<IReadyRouter>;
-  protected readonly _middlewares: IHandlersArray;
+  protected _server: Server;
+  protected _socketIo: SocketIO.Server;
+  protected readonly _expressConfig: IExpressConfig;
+  protected readonly _socketIoConfig: ISocketIOConfig;
 
   private _middlewaresInUse: boolean;
 
-  constructor(middlewares: IHandlersArray, uploadDir?: string, routes: Array<IReadyRouter> = []) {
+  constructor(config: IAppConfig) {
     this._app = ExpressApp();
-    this._routers = routes;
-    this._middlewares = middlewares;
+    this._expressConfig = config.express;
+    if (!this._expressConfig.middlewares) {
+      this._expressConfig.middlewares = {
+        before: [],
+        after: []
+      };
+    }
+    if (this._expressConfig.routes) {
+      this._expressConfig.routes = [];
+    }
 
     this._app.use(
       BodyParser.urlencoded({
@@ -32,21 +71,28 @@ export class App {
       }),
       BodyParser.json(),
       BodyParser.raw(),
-      
+      cors()
     );
-    if (uploadDir) {
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+      this._app.use('/debug', (req, res, next) => {
+        res.sendFile(Path.resolve(__dirname, '../debug/index.html'));
+      });
+    }
+    if (this._expressConfig.uploadDir) {
       this._app.use(
         Multer({
-          dest: uploadDir
+          dest: this._expressConfig.uploadDir
         }).any()
       );
     }
 
-    this.useMiddlewares(this._middlewares.before);
+    this.useMiddlewares(this._expressConfig.middlewares.before);
 
-    for (let router of this._routers) {
+    for (let router of this._expressConfig.routes) {
       this._app.use(router.path, router.router);
     }
+    //// socket io initialization
+    this._socketIoConfig = config.socketio;
   }
 
   private useMiddlewares(middlewares: Array<Handler | ErrorRequestHandler>) {
@@ -57,28 +103,34 @@ export class App {
     }
   }
 
+  socketIOListen(port: number) {
+    if (this._socketIoConfig) {
+      // server = server || this._server;
+      // if (!server) {
+      //   throw new Error('No server provided nor found in class');
+      // }
+      this._socketIo = Socket(this._socketIoConfig.serverOptions);
+      if (this._socketIoConfig.middlewares && this._socketIoConfig.middlewares.length) {
+        for (let middleware of this._socketIoConfig.middlewares) {
+          this._socketIo.use(middleware);
+        }
+      }
+      this._socketIo.on('connection', this._socketIoConfig.connectionHandler);
+      this._socketIo.listen(port);
+    }
+  }
+
   listen(port: number, callback?: (app: Express) => void): Promise<Server> {
     if (!this._middlewaresInUse) {
-      this.useMiddlewares(this._middlewares.after);
+      this.useMiddlewares(this._expressConfig.middlewares.after);
       this._middlewaresInUse = true;
     }
-    return Promise.resolve(this._app.listen(port, () => callback && callback(this._app)));
+    const server = this._app.listen(port, () => callback && callback(this._app));
+    if (!this._server) {
+      this._server = server;
+    }
+    return Promise.resolve(server);
   }
-}
-
-export interface ISwaggerConfig {
-  filepath: string;
-  routerOptions: SwaggerRouter20Options;
-  validatorOptions?: SwaggerValidatorOptions;
-  securityOptions?: SwaggerSecurityOptions;
-  uiOptions?: SwaggerUiOptions;
-}
-
-export interface ISwaggerAppConfig {
-  swagger: ISwaggerConfig;
-  middlewares: IHandlersArray;
-  uploadDir?: string;
-  routes?: Array<IReadyRouter>;
 }
 
 export class SwaggerApp extends App {
@@ -91,7 +143,7 @@ export class SwaggerApp extends App {
 
   //constructor(swaggerConfigPath: string, middlewares: IHandlersArray, uploadDir?: string, routes: Array<IReadyRouter> = []) {
   constructor(config: ISwaggerAppConfig) {
-    super(config.middlewares, config.uploadDir, config.routes);
+    super(config.appConfig);
 
     this._swaggerConfig = config.swagger;
     this._swaggerDocument = loadSwaggerDocument(this._swaggerConfig.filepath);

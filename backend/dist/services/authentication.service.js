@@ -32,7 +32,14 @@ function getService() {
             return jsonwebtoken_1.default.sign(payload, _secret);
         },
         async getAuthStateFromToken(token) {
-            return await service.authenticate(jsonwebtoken_1.default.verify(token, _secret).id);
+            let decoded;
+            try {
+                decoded = jsonwebtoken_1.default.verify(token, _secret);
+            }
+            catch (err) {
+                throw new error_handler_service_1.AccessError('Bad token');
+            }
+            return await service.authenticate(decoded.id);
         },
         getResponse(state) {
             return {
@@ -141,7 +148,11 @@ function getService() {
         },
         async swaggerBearerJwtChecker(req, authOrSecDef, scopesOrApiKey, callback) {
             try {
-                const state = await service.authenticate(service.getToken(req));
+                const token = service.getToken(req);
+                if (!token || typeof token === 'string' && !token.trim()) {
+                    return callback(new error_handler_service_1.AccessError('Access token must be provided'));
+                }
+                const state = await service.getAuthStateFromToken(token);
                 req.login(state, err => {
                     if (err)
                         callback(err);

@@ -15,7 +15,6 @@ exports.getAll = (req, res) => {
                 'asf',
                 55,
                 44,
-                4.4
             ]
         };
         res.json({

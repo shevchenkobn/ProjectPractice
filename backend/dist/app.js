@@ -5,27 +5,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const cors_1 = __importDefault(require("cors"));
 const multer_1 = __importDefault(require("multer"));
 const events_1 = require("events");
+const socket_io_1 = __importDefault(require("socket.io"));
+const path_1 = __importDefault(require("path"));
 const swagger_tools_1 = __importDefault(require("swagger-tools"));
 const swagger_service_1 = require("./services/swagger.service");
 class App {
-    constructor(middlewares, uploadDir, routes = []) {
+    constructor(config) {
         this._app = express_1.default();
-        this._routers = routes;
-        this._middlewares = middlewares;
+        this._expressConfig = config.express;
+        if (!this._expressConfig.middlewares) {
+            this._expressConfig.middlewares = {
+                before: [],
+                after: []
+            };
+        }
+        if (this._expressConfig.routes) {
+            this._expressConfig.routes = [];
+        }
         this._app.use(body_parser_1.default.urlencoded({
             extended: true
-        }), body_parser_1.default.json(), body_parser_1.default.raw());
-        if (uploadDir) {
+        }), body_parser_1.default.json(), body_parser_1.default.raw(), cors_1.default());
+        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+            this._app.use('/debug', (req, res, next) => {
+                res.sendFile(path_1.default.resolve(__dirname, '../debug/index.html'));
+            });
+        }
+        if (this._expressConfig.uploadDir) {
             this._app.use(multer_1.default({
-                dest: uploadDir
+                dest: this._expressConfig.uploadDir
             }).any());
         }
-        this.useMiddlewares(this._middlewares.before);
-        for (let router of this._routers) {
+        this.useMiddlewares(this._expressConfig.middlewares.before);
+        for (let router of this._expressConfig.routes) {
             this._app.use(router.path, router.router);
         }
+        //// socket io initialization
+        this._socketIoConfig = config.socketio;
     }
     useMiddlewares(middlewares) {
         if (middlewares && middlewares.length) {
@@ -34,19 +52,39 @@ class App {
             }
         }
     }
+    socketIOListen(port) {
+        if (this._socketIoConfig) {
+            // server = server || this._server;
+            // if (!server) {
+            //   throw new Error('No server provided nor found in class');
+            // }
+            this._socketIo = socket_io_1.default(this._socketIoConfig.serverOptions);
+            if (this._socketIoConfig.middlewares && this._socketIoConfig.middlewares.length) {
+                for (let middleware of this._socketIoConfig.middlewares) {
+                    this._socketIo.use(middleware);
+                }
+            }
+            this._socketIo.on('connection', this._socketIoConfig.connectionHandler);
+            this._socketIo.listen(port);
+        }
+    }
     listen(port, callback) {
         if (!this._middlewaresInUse) {
-            this.useMiddlewares(this._middlewares.after);
+            this.useMiddlewares(this._expressConfig.middlewares.after);
             this._middlewaresInUse = true;
         }
-        return Promise.resolve(this._app.listen(port, () => callback && callback(this._app)));
+        const server = this._app.listen(port, () => callback && callback(this._app));
+        if (!this._server) {
+            this._server = server;
+        }
+        return Promise.resolve(server);
     }
 }
 exports.App = App;
 class SwaggerApp extends App {
     //constructor(swaggerConfigPath: string, middlewares: IHandlersArray, uploadDir?: string, routes: Array<IReadyRouter> = []) {
     constructor(config) {
-        super(config.middlewares, config.uploadDir, config.routes);
+        super(config.appConfig);
         this._initializingSwagger = false;
         this._eventEmitter = new events_1.EventEmitter();
         this._listenTasks = [];

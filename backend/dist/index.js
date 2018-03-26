@@ -14,6 +14,7 @@ const database_service_1 = require("./services/database.service");
 const passport_service_1 = require("./services/passport.service");
 const error_handler_service_1 = require("./services/error-handler.service");
 const authentication_service_1 = require("./services/authentication.service");
+const socketio_api_1 = require("./socketio-api");
 const mongoConfig = config_1.default.get('mongodb');
 let dbConnection = database_service_1.initialize(mongoConfig);
 (async () => {
@@ -27,25 +28,31 @@ let dbConnection = database_service_1.initialize(mongoConfig);
     const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
     const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
     const app = new app_1.SwaggerApp({
-        middlewares,
-        uploadDir,
-        routes: index_1.initialize(),
+        appConfig: {
+            express: {
+                middlewares,
+                uploadDir,
+                routes: index_1.initialize()
+            },
+            socketio: socketio_api_1.getConfig()
+        },
         swagger: {
             filepath: swaggerConfigPath,
             securityOptions: {
                 Bearer: authentication_service_1.getService().swaggerBearerJwtChecker
             },
             routerOptions: {
-                controllers: path_1.default.resolve(__dirname, './api/controllers'),
+                controllers: path_1.default.resolve(__dirname, './rest-api/controllers'),
             },
             validatorOptions: {
                 validateResponse: true
             }
         }
     });
-    await app.listen(config_1.default.get('port'), app => {
+    const server = await app.listen(config_1.default.get('port'), app => {
         console.log('listening');
     });
+    app.socketIOListen(config_1.default.get('socketIOPort'));
 })().catch(softExit);
 function softExit(err) {
     console.error(err);
