@@ -1,10 +1,11 @@
 [
   {
-    "_id": "ObjectId: precious",
+    "_id": "ObjectId: valuable",
     "type": "building",
-    "functions": [],
+    "functions": ["ObjectId: silverMine"],
     "descriptor": {
-      "feeMonopolyFactor": 2
+      "name": "valuable",
+      "monopolyFeeFactor": 2
     }
   }
 ]

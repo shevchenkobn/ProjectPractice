@@ -14,7 +14,46 @@
   {
     "_id": "ObjectId: silverMine",
     "building": {
-      "class": "ObjectId: precious//TODO:"
+      "class": "ObjectId: valuable",
+      "price": 1000,
+      "lapProfit": 10,
+      "fee": 100,
+      "improvements": {
+        "type": "level",
+        "levels": [
+          {
+            "price": 1000,
+            "additionalFee": 100,
+            "additionalLapProfit": 10
+          },
+          {
+            "price": 2000,
+            "additionalFee": 200,
+            "additionalLapProfit": 20
+          },
+          {
+            "price": 2500,
+            "additionalFee": 300,
+            "additionalLapProfit": 30
+          },
+          {
+            "price": 3000,
+            "additionalFee": 400,
+            "additionalLapProfit": 40
+          },
+          {
+            "price": 4000,
+            "additionalFee": 500,
+            "additionalLapProfit": 50
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: event",
+    "event": {
+      "options": "ObjectId: eventOptions//TODO:"
     }
   }
 ]
