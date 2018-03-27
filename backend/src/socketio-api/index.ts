@@ -20,7 +20,7 @@ export function getConfig(): ISocketIOConfig {
       '/games': {
         middlewares: gameMiddlewares,
         connectionHandler: (socket) => {
-          console.log('connected: ', socket);          
+          // console.log('connected: ', socket);          
         }
       }
     },
