@@ -4,8 +4,8 @@ import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-
 import {OAuth2Strategy as GoogleStrategy} from 'passport-google-oauth';
 import UserInitializer, { IGoogleInfo, IUserDocument } from '../models/user.model';
 import { IUserModel } from '../models/user.model';
-import { IAuthenticationService, getService, IAuthState, IJwtPayload, ClientAuthError, authConfig } from './authentication.service';
-import SessionInitializer, { ISessionModel } from '../models/session.model';
+import { IAuthenticationService, getService, IJwtPayload, ClientAuthError, authConfig } from './authentication.service';
+import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/session.model';
 import { Handler, Router } from 'express';
 import { IReadyRouter } from '../routes';
 import { SwaggerSecurityHandler } from 'swagger-tools';
@@ -82,7 +82,7 @@ let googleStrategyOpts: IGoogleStrategyOpts;
 let googleInited = false;
 const middlewares: IPassportMiddlewares = {
   jwtAuthenticate(req, res, next) {
-    passport.authenticate('jwt', { session: false }, function(err, state: IAuthState, info) {
+    passport.authenticate('jwt', { session: false }, function(err, state: ISessionDocument, info) {
       if (err) {
         next(err);
       }
@@ -111,7 +111,7 @@ const middlewares: IPassportMiddlewares = {
       authConfig.oauth.google.path + googleStrategyOpts.callbackURL,
       passport.authenticate('google'),
       (req, res, next) => {
-        res.json(authService.getResponse(<IAuthState>req.user))
+        res.json(authService.getResponse(<ISessionDocument>req.user))
       }
     );
     
@@ -134,8 +134,8 @@ export function initialize(userModel: IUserModel = UserInitializer.getModel()): 
     session: false
   }, async (jwtPayload: IJwtPayload, done: VerifiedCallback) => {
     try {
-      const state = await authService.authenticate(jwtPayload.id);
-      done(null, state);
+      const session = await authService.authenticate(jwtPayload.id);
+      done(null, session);
     } catch (err) {
       if (err instanceof ClientAuthError) {
         done(null, false, err);
@@ -161,26 +161,26 @@ export function initialize(userModel: IUserModel = UserInitializer.getModel()): 
         }
         const googleInfo = normalizeProfile(profile);
         if (req.query.state) {
-          const state = await authService.getAuthStateFromToken(req.query.state);
+          const session = await authService.getSessionFromToken(req.query.state);
           let user: IUserDocument = await User.findOne({
             'google.id': googleInfo.id,
             id: {
-              $ne: state.user.id
+              $ne: (<IUserDocument>session.user).id
             }
           }); // TODO: merge all statistics of the user
           if (user) {
             await Session.find({
-              userId: user.id
+              user: user.id
             }).remove().exec();
             await user.remove();
           }
-          user = state.user;
+          user = <IUserDocument>session.user;
           if (user.google) {
             await (<any>user.google).remove();
           }
           user.google = googleInfo; // for now just replace google profile without checking IDs
           await user.save();
-          done(null, state);
+          done(null, session);
         } else {
           let user = await User.findOne({
             'google.id': googleInfo.id
@@ -195,10 +195,7 @@ export function initialize(userModel: IUserModel = UserInitializer.getModel()): 
           }
           await user.save();
           const session = await authService.createSession(user); // TODO: probably access/refresh tokens are essential in here to save
-          done(null, {
-            session,
-            user
-          });
+          done(null, session);
         }
       } catch (err) {
         done(err);

@@ -58,8 +58,8 @@ function initialize(userModel = user_model_1.default.getModel()) {
         session: false
     }, async (jwtPayload, done) => {
         try {
-            const state = await authService.authenticate(jwtPayload.id);
-            done(null, state);
+            const session = await authService.authenticate(jwtPayload.id);
+            done(null, session);
         }
         catch (err) {
             if (err instanceof authentication_service_1.ClientAuthError) {
@@ -80,26 +80,26 @@ function initialize(userModel = user_model_1.default.getModel()) {
             }
             const googleInfo = normalizeProfile(profile);
             if (req.query.state) {
-                const state = await authService.getAuthStateFromToken(req.query.state);
+                const session = await authService.getSessionFromToken(req.query.state);
                 let user = await User.findOne({
                     'google.id': googleInfo.id,
                     id: {
-                        $ne: state.user.id
+                        $ne: session.user.id
                     }
                 }); // TODO: merge all statistics of the user
                 if (user) {
                     await Session.find({
-                        userId: user.id
+                        user: user.id
                     }).remove().exec();
                     await user.remove();
                 }
-                user = state.user;
+                user = session.user;
                 if (user.google) {
                     await user.google.remove();
                 }
                 user.google = googleInfo; // for now just replace google profile without checking IDs
                 await user.save();
-                done(null, state);
+                done(null, session);
             }
             else {
                 let user = await User.findOne({
@@ -116,10 +116,7 @@ function initialize(userModel = user_model_1.default.getModel()) {
                 }
                 await user.save();
                 const session = await authService.createSession(user); // TODO: probably access/refresh tokens are essential in here to save
-                done(null, {
-                    session,
-                    user
-                });
+                done(null, session);
             }
         }
         catch (err) {

@@ -35,22 +35,22 @@ export interface IAuthResponse {
   user: IUserDocument;
 }
 
-export interface IAuthState {
-  user: IUserDocument;
-  session: ISessionDocument
-}
+// export interface IAuthState {
+//   user: IUserDocument;
+//   session: ISessionDocument
+// }
 
 export interface IJwtPayload {
   id: string
 }
 
 export interface IAuthenticationService {
-  getAuthState(credentials: any): Promise<IAuthState>;
-  getAuthStateFromToken(token: string): Promise<IAuthState>;
-  getResponse(state: IAuthState): IAuthResponse;
+  getNewSession(credentials: any): Promise<ISessionDocument>;
+  getSessionFromToken(token: string): Promise<ISessionDocument>;
+  getResponse(state: ISessionDocument): IAuthResponse;
   generateToken(session: ISessionDocument): string;
-  getState(req: Request): IAuthState;
-  authenticate(sessionId: string): Promise<IAuthState>;
+  getState(req: Request): ISessionDocument;
+  authenticate(sessionId: string): Promise<ISessionDocument>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
   revokeToken(req: Request, token?: string | boolean): Promise<void>;
@@ -79,7 +79,7 @@ export function getService(): IAuthenticationService {
       return jwt.sign(payload, _secret);
     },
 
-    async getAuthStateFromToken(token) {
+    async getSessionFromToken(token) {
       let decoded;
       try {
         decoded = <IJwtPayload>jwt.verify(token, _secret);
@@ -89,14 +89,17 @@ export function getService(): IAuthenticationService {
       return await service.authenticate(decoded.id);
     },
 
-    getResponse(state) {
+    getResponse(session) {
+      if (!(session.user instanceof User)) {
+        throw new TypeError('Session is not populated with user');
+      }
       return {
-        token: service.generateToken(state.session),
-        user: state.user
+        token: service.generateToken(session),
+        user: <IUserDocument>session.user
       };
     },
 
-    async getAuthState(credentials) {
+    async getNewSession(credentials) {
       if (!User.isConstructionDoc(credentials)) {
         throw new ClientAuthError("Bad login object");
       }
@@ -106,11 +109,8 @@ export function getService(): IAuthenticationService {
       if (!(user && user.checkPassword(credentials.password))) {
         throw new ClientAuthError("Bad username or password");
       }
-      const session = await service.createSession(user);
-      return {
-        user,
-        session
-      };
+      
+      return await service.createSession(user);
     },
 
     getState(req) {
@@ -128,19 +128,17 @@ export function getService(): IAuthenticationService {
       if (!session) {
         throw new ClientAuthError("Invalid Token");
       }
-      const user = await User.findById(session.userId);
-      return {
-        user,
-        session
-      };
+      await session.populate('user').execPopulate();
+      return session;
     },
 
     async createSession(user) {
       if (user instanceof User) {
         const session = new Session({
-          userId: new mongoose.Types.ObjectId(user._id)
+          user: user._id
         });
         await session.save();
+        await session.populate('user').execPopulate();
         return session;
       } else {
         throw new Error('user is not a model or token is empty');
@@ -204,8 +202,8 @@ export function getService(): IAuthenticationService {
         if (!token || typeof token === 'string' && !token.trim()) {
           return callback(new AccessError('Access token must be provided'));
         }
-        const state = await service.getAuthStateFromToken(token);
-        req.login(state, err => {
+        const session = await service.getSessionFromToken(token);
+        req.login(session, err => {
           if (err) callback(err);
           callback();
         });

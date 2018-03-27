@@ -21,7 +21,7 @@ function getConfig() {
             '/games': {
                 middlewares: gameMiddlewares,
                 connectionHandler: (socket) => {
-                    console.log('connected: ', socket);
+                    // console.log('connected: ', socket);          
                 }
             }
         },

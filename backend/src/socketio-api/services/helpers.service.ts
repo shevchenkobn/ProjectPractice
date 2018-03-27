@@ -28,11 +28,11 @@ export function getService() {
     checkAuthAndAccessMiddleware: async (socket, next) => {
       try {
         const req = socket.request;
-        let state = authService.getState(req);
-        if (!state) {
+        let session = authService.getState(req);
+        if (!session) {
           const token = authService.getToken(req);
-          state = await authService.getAuthStateFromToken(token);
-          if (!state) {
+          session = await authService.getSessionFromToken(token);
+          if (!session) {
             return next(new NspMiddlewareError("Invalid Token"));
           }
         }

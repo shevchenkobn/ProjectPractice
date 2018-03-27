@@ -23,7 +23,7 @@ class App {
                 after: []
             };
         }
-        if (this._expressConfig.routes) {
+        if (!this._expressConfig.routes) {
             this._expressConfig.routes = [];
         }
         this._app.use(body_parser_1.default.urlencoded({

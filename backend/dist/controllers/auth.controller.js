@@ -22,7 +22,7 @@ function getController() {
             try {
                 const user = await authService.createUser(req.body);
                 const session = await authService.createSession(user);
-                req.login({ user, session }, err => {
+                req.login(session, err => {
                     if (err) {
                         next(err);
                     }
@@ -38,8 +38,8 @@ function getController() {
                 next(new authentication_service_1.ClientAuthError("User is logged in"));
             }
             try {
-                const state = await authService.getAuthState(req.body);
-                req.login(state, err => {
+                const session = await authService.getNewSession(req.body);
+                req.login(session, err => {
                     if (err) {
                         next(err);
                     }

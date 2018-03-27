@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+const _types_1 = require("./../@types");
 const authentication_service_1 = require("../../services/authentication.service");
 const config_1 = __importDefault(require("config"));
-const error_handler_service_1 = require("../../services/error-handler.service");
 let authService;
 let service;
 function getService() {
@@ -17,17 +17,17 @@ function getService() {
         checkAuthAndAccessMiddleware: async (socket, next) => {
             try {
                 const req = socket.request;
-                let state = authService.getState(req);
-                if (!state) {
+                let session = authService.getState(req);
+                if (!session) {
                     const token = authService.getToken(req);
-                    state = await authService.getAuthStateFromToken(token);
-                    if (!state) {
-                        return next(new authentication_service_1.ClientAuthError("Invalid Token"));
+                    session = await authService.getSessionFromToken(token);
+                    if (!session) {
+                        return next(new _types_1.NspMiddlewareError("Invalid Token"));
                     }
                 }
                 const gameId = getGameId(req.url);
                 if (!gameId) {
-                    return next(new error_handler_service_1.ClientRequestError("Invalid game id"));
+                    return next(new _types_1.NspMiddlewareError("Invalid game id"));
                 }
                 // get the game and do something else
                 next();

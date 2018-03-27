@@ -28,7 +28,7 @@ export function getController(): IAuthController {
       try {
         const user = await authService.createUser(req.body);
         const session = await authService.createSession(user);
-        req.login({ user, session }, err => {
+        req.login(session, err => {
           if (err) {
             next(err);
           }
@@ -44,8 +44,8 @@ export function getController(): IAuthController {
         next(new ClientAuthError("User is logged in"));
       }
       try {
-        const state = await authService.getAuthState(req.body);
-        req.login(state, err => {
+        const session = await authService.getNewSession(req.body);
+        req.login(session, err => {
           if (err) {
             next(err);
           }

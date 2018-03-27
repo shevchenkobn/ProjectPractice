@@ -2,12 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const sessionSchema = new mongoose_1.Schema({
-    userId: {
+    user: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'User'
     },
-    gameId: {
-        type: mongoose_1.Schema.Types.ObjectId
+    game: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Game'
     },
     status: {
         type: String,

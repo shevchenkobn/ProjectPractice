@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const session_model_1 = __importDefault(require("../models/session.model"));
@@ -31,7 +30,7 @@ function getService() {
             const payload = session.toObject();
             return jsonwebtoken_1.default.sign(payload, _secret);
         },
-        async getAuthStateFromToken(token) {
+        async getSessionFromToken(token) {
             let decoded;
             try {
                 decoded = jsonwebtoken_1.default.verify(token, _secret);
@@ -41,13 +40,16 @@ function getService() {
             }
             return await service.authenticate(decoded.id);
         },
-        getResponse(state) {
+        getResponse(session) {
+            if (!(session.user instanceof User)) {
+                throw new TypeError('Session is not populated with user');
+            }
             return {
-                token: service.generateToken(state.session),
-                user: state.user
+                token: service.generateToken(session),
+                user: session.user
             };
         },
-        async getAuthState(credentials) {
+        async getNewSession(credentials) {
             if (!User.isConstructionDoc(credentials)) {
                 throw new ClientAuthError("Bad login object");
             }
@@ -57,11 +59,7 @@ function getService() {
             if (!(user && user.checkPassword(credentials.password))) {
                 throw new ClientAuthError("Bad username or password");
             }
-            const session = await service.createSession(user);
-            return {
-                user,
-                session
-            };
+            return await service.createSession(user);
         },
         getState(req) {
             return req.user;
@@ -77,18 +75,16 @@ function getService() {
             if (!session) {
                 throw new ClientAuthError("Invalid Token");
             }
-            const user = await User.findById(session.userId);
-            return {
-                user,
-                session
-            };
+            await session.populate('user').execPopulate();
+            return session;
         },
         async createSession(user) {
             if (user instanceof User) {
                 const session = new Session({
-                    userId: new mongoose_1.default.Types.ObjectId(user._id)
+                    user: user._id
                 });
                 await session.save();
+                await session.populate('user').execPopulate();
                 return session;
             }
             else {
@@ -152,8 +148,8 @@ function getService() {
                 if (!token || typeof token === 'string' && !token.trim()) {
                     return callback(new error_handler_service_1.AccessError('Access token must be provided'));
                 }
-                const state = await service.getAuthStateFromToken(token);
-                req.login(state, err => {
+                const session = await service.getSessionFromToken(token);
+                req.login(session, err => {
                     if (err)
                         callback(err);
                     callback();
