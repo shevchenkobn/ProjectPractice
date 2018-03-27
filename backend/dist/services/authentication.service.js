@@ -37,7 +37,7 @@ function getService() {
                 decoded = jsonwebtoken_1.default.verify(token, _secret);
             }
             catch (err) {
-                throw new error_handler_service_1.AccessError('Bad token');
+                throw new error_handler_service_1.AccessError('Invalid token');
             }
             return await service.authenticate(decoded.id);
         },

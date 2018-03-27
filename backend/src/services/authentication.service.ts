@@ -84,7 +84,7 @@ export function getService(): IAuthenticationService {
       try {
         decoded = <IJwtPayload>jwt.verify(token, _secret);
       } catch (err) {
-        throw new AccessError('Bad token');
+        throw new AccessError('Invalid token');
       }
       return await service.authenticate(decoded.id);
     },

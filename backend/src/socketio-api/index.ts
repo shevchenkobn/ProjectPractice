@@ -1,13 +1,10 @@
-import { ISocketIOConfig } from './@types';
-import { getService, ISocketIOHelpersService } from './services/helpers.service';
+import { ISocketIOConfig, SocketMiddleware } from './@types';
+import { getService, ISocketIOHelpersService, ISocketIOUrls } from './services/helpers.service';
 import config from 'config';
 
 let helpersService: ISocketIOHelpersService;
 let socketConfig: ISocketIOConfig;
-let upgradeUrl = config.get<string>('socketSwitchUrl');
-if (upgradeUrl[upgradeUrl.length - 1] === '/') {
-  upgradeUrl = upgradeUrl.slice(0, -1);
-}
+const upgradeUrl = config.get<ISocketIOUrls>('socketIO').baseUrl;
 
 export function getConfig(): ISocketIOConfig {
   if (socketConfig) {
@@ -15,16 +12,20 @@ export function getConfig(): ISocketIOConfig {
   }
 
   helpersService = getService();
-  const middlewares = [
+  const gameMiddlewares: Array<SocketMiddleware> = [
     helpersService.checkAuthAndAccessMiddleware 
   ];
   socketConfig = {
-    middlewares,
-    connectionHandler: (socket) => {
-      console.log('connected: ', socket);
+    namespaces: {
+      '/games': {
+        middlewares: gameMiddlewares,
+        connectionHandler: (socket) => {
+          console.log('connected: ', socket);          
+        }
+      }
     },
     serverOptions: {
-      // serveClient: true,
+      serveClient: true,
       path: upgradeUrl
     }
   };

@@ -5,21 +5,19 @@ import { getService as getAuthService, IAuthenticationService, ClientAuthError }
 import config from 'config';
 import { IncomingMessage } from 'http';
 import { NotFound } from 'http-errors';
+import { ClientRequestError } from '../../services/error-handler.service';
 
 export interface ISocketIOHelpersService {
   checkAuthAndAccessMiddleware: SocketMiddleware;
 }
 
+export interface ISocketIOUrls {
+  baseUrl: string,
+  apiSwitch: string
+}
+
 let authService: IAuthenticationService;
 let service: ISocketIOHelpersService;
-
-const gameIdRegex = /^[a-f\d]{24}$/i;
-function isUrlCorrect(url: string) {
-  url = url.split('?')[0];
-  const parts = url.split('/');
-  url = parts[parts.length - 1] || parts[parts.length - 2];
-  return gameIdRegex.test(url);
-}
 
 export function getService() {
   if (service) {
@@ -38,11 +36,12 @@ export function getService() {
             return next(new ClientAuthError("Invalid Token"));
           }
         }
-        if (!isUrlCorrect(req.url)) {
-          return next(new NotFound());
+        const gameId = getGameId(req.url);
+        if (!gameId) {
+          return next(new ClientRequestError("Invalid game id"));
         }
 
-        // do something else
+        // get the game and do something else
         next();
       } catch (err) {
         next(err);
@@ -50,4 +49,15 @@ export function getService() {
     }
   };
   return service;
+}
+
+let urls = config.get<ISocketIOUrls>('socketIO');
+const baseUrl = `/${urls.baseUrl}/${urls.apiSwitch}/`.replace(/\/\//g, '/');
+const gameIdRegex = /^[a-f\d]{24}$/i;
+function getGameId(url: string): string {
+  if (!url.startsWith(baseUrl)) {
+    return null;
+  }
+  const gameId = url.split('?')[0].replace(baseUrl, '').replace(/\//, '');
+  return gameIdRegex.test(gameId) ? gameId : null;
 }

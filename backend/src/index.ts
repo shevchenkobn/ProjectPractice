@@ -54,7 +54,6 @@ let dbConnection = initializeMongoose(mongoConfig);
   const server = await app.listen(config.get<number>('port'), app => {
     console.log('listening');
   });
-  app.socketIOListen(config.get<number>('socketIOPort'));
 })().catch(softExit);
 
 function softExit(err: any) {

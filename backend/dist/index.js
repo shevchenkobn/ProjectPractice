@@ -52,7 +52,6 @@ let dbConnection = database_service_1.initialize(mongoConfig);
     const server = await app.listen(config_1.default.get('port'), app => {
         console.log('listening');
     });
-    app.socketIOListen(config_1.default.get('socketIOPort'));
 })().catch(softExit);
 function softExit(err) {
     console.error(err);

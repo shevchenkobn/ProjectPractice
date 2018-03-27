@@ -3,7 +3,11 @@ export type SocketMiddleware = (socket: SocketIO.Socket, fn: ( err?: any ) => vo
 export type AllowRequestHandler = (request:any, callback: (err: number, success: boolean) => void) => void;
 
 export interface ISocketIOConfig {
-  connectionHandler: SocketHandler;
-  middlewares?: Array<SocketMiddleware>;
   serverOptions?: SocketIO.ServerOptions;
+  namespaces: {
+    [nsp: string]: {
+      connectionHandler: SocketHandler;
+      middlewares?: Array<SocketMiddleware>
+    }
+  }
 }

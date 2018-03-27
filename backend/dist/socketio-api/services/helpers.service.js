@@ -1,16 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const authentication_service_1 = require("../../services/authentication.service");
-const http_errors_1 = require("http-errors");
+const config_1 = __importDefault(require("config"));
+const error_handler_service_1 = require("../../services/error-handler.service");
 let authService;
 let service;
-const gameIdRegex = /^[a-f\d]{24}$/i;
-function isUrlCorrect(url) {
-    url = url.split('?')[0];
-    const parts = url.split('/');
-    url = parts[parts.length - 1] || parts[parts.length - 2];
-    return gameIdRegex.test(url);
-}
 function getService() {
     if (service) {
         return service;
@@ -28,10 +25,11 @@ function getService() {
                         return next(new authentication_service_1.ClientAuthError("Invalid Token"));
                     }
                 }
-                if (!isUrlCorrect(req.url)) {
-                    return next(new http_errors_1.NotFound());
+                const gameId = getGameId(req.url);
+                if (!gameId) {
+                    return next(new error_handler_service_1.ClientRequestError("Invalid game id"));
                 }
-                // do something else
+                // get the game and do something else
                 next();
             }
             catch (err) {
@@ -42,4 +40,14 @@ function getService() {
     return service;
 }
 exports.getService = getService;
+let urls = config_1.default.get('socketIO');
+const baseUrl = `/${urls.baseUrl}/${urls.apiSwitch}/`.replace(/\/\//g, '/');
+const gameIdRegex = /^[a-f\d]{24}$/i;
+function getGameId(url) {
+    if (!url.startsWith(baseUrl)) {
+        return null;
+    }
+    const gameId = url.split('?')[0].replace(baseUrl, '').replace(/\//, '');
+    return gameIdRegex.test(gameId) ? gameId : null;
+}
 //# sourceMappingURL=helpers.service.js.map

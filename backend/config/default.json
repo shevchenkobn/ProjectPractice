@@ -2,7 +2,6 @@
   "protocol": "http",
   "host": "127.0.0.1",
   "port": 3000,
-  "socketIOPort": 5000,
 
   "mongodb": {
     "host": "mongodb://127.0.0.1",
@@ -33,7 +32,10 @@
   "apiPath": "/api/v1",
   "swaggerConfig": "./config/swagger.yml",
   
-  "socketSwitchUrl": "/games",
+  "socketIO": {
+    "baseUrl": "/socket.io",
+    "apiSwitch": "/games"
+  },
   
   "uploadDir": "./uploads"
 }

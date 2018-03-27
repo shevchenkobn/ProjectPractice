@@ -15,6 +15,7 @@ const swagger_service_1 = require("./services/swagger.service");
 class App {
     constructor(config) {
         this._app = express_1.default();
+        this._appServers = {};
         this._expressConfig = config.express;
         if (!this._expressConfig.middlewares) {
             this._expressConfig.middlewares = {
@@ -52,32 +53,41 @@ class App {
             }
         }
     }
-    socketIOListen(port) {
-        if (this._socketIoConfig) {
-            // server = server || this._server;
-            // if (!server) {
-            //   throw new Error('No server provided nor found in class');
-            // }
-            this._socketIo = socket_io_1.default(this._socketIoConfig.serverOptions);
-            if (this._socketIoConfig.middlewares && this._socketIoConfig.middlewares.length) {
-                for (let middleware of this._socketIoConfig.middlewares) {
-                    this._socketIo.use(middleware);
+    initializeSocketIO(server) {
+        if (!this._socketIoConfig) {
+            return null;
+        }
+        if (!server) {
+            throw new Error('No server provided nor found in class');
+        }
+        const socketIo = socket_io_1.default(server, this._socketIoConfig.serverOptions);
+        for (let nspName in this._socketIoConfig.namespaces) {
+            const nspConfig = this._socketIoConfig.namespaces[nspName];
+            const nsp = socketIo.of(nspName);
+            if (nspConfig.middlewares && nspConfig.middlewares.length) {
+                for (let middleware of nspConfig.middlewares) {
+                    nsp.use(middleware);
                 }
             }
-            this._socketIo.on('connection', this._socketIoConfig.connectionHandler);
-            this._socketIo.listen(port);
+            nsp.on('connection', nspConfig.connectionHandler);
         }
+        return socketIo;
     }
     listen(port, callback) {
+        if (this._appServers[port]) {
+            throw new Error('Already listening to the port');
+        }
         if (!this._middlewaresInUse) {
             this.useMiddlewares(this._expressConfig.middlewares.after);
             this._middlewaresInUse = true;
         }
         const server = this._app.listen(port, () => callback && callback(this._app));
-        if (!this._server) {
-            this._server = server;
-        }
-        return Promise.resolve(server);
+        const socketServer = this.initializeSocketIO(server);
+        this._appServers[port] = {
+            express: server,
+            socketio: socketServer
+        };
+        return Promise.resolve(this._appServers[port]);
     }
 }
 exports.App = App;
