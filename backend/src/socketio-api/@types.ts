@@ -11,3 +11,16 @@ export interface ISocketIOConfig {
     }
   }
 }
+
+export class NspMiddlewareError {
+  message: any;
+
+  constructor(message: any, code?: number) {
+    this.message = {
+      message
+    }
+    if (arguments.length > 1) {
+      this.message.code = code;
+    }
+  }
+}

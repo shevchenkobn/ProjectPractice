@@ -1,6 +1,6 @@
 
 import { URL } from 'url';
-import { SocketMiddleware, AllowRequestHandler } from './../@types';
+import { SocketMiddleware, AllowRequestHandler, NspMiddlewareError } from './../@types';
 import { getService as getAuthService, IAuthenticationService, ClientAuthError } from '../../services/authentication.service';
 import config from 'config';
 import { IncomingMessage } from 'http';
@@ -33,12 +33,12 @@ export function getService() {
           const token = authService.getToken(req);
           state = await authService.getAuthStateFromToken(token);
           if (!state) {
-            return next(new ClientAuthError("Invalid Token"));
+            return next(new NspMiddlewareError("Invalid Token"));
           }
         }
         const gameId = getGameId(req.url);
         if (!gameId) {
-          return next(new ClientRequestError("Invalid game id"));
+          return next(new NspMiddlewareError("Invalid game id"));
         }
 
         // get the game and do something else
