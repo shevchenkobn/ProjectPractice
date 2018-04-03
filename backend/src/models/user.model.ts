@@ -1,3 +1,4 @@
+import { IGoogleInfo } from './user.model';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
@@ -51,6 +52,71 @@ export interface IGoogleInfo {
   domain?: string
 }
 
+const emailSchema = new mongoose.Schema({
+  value: String,
+  type: {
+    type: String,
+  }
+}, {
+  _id: false
+});
+
+const photoSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true
+  },
+  isProfile: {
+    type: Boolean,
+    required: true
+  },
+  isDefault: Boolean
+}, {
+  _id: false
+});
+
+const googleInfoSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  displayName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  name: {
+    familyName: String,
+    givenName: String
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female']
+  },
+  emails: [emailSchema],
+  photos: [photoSchema],
+  profileUrl: String,
+  organizations: [{
+    name: String,
+    type: String,
+    endDate: String,
+    primary: String
+  }],
+  placesLived: [{
+    value: String,
+    primary: Boolean
+  }],
+  isPlusUser: Boolean,
+  circledByCount: Boolean,
+  verified: Boolean,
+  domain: String
+}, {
+  _id: false
+});
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -60,58 +126,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: String,
   salt: String,
-  google: {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true
-    },
-    displayName: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true
-    },
-    name: {
-      familyName: String,
-      givenName: String
-    },
-    gender: {
-      type: String,
-      enum: ['male', 'female']
-    },
-    emails: [{
-      value: String,
-      type: String
-    }],
-    photos: [{
-      url: {
-        type: String,
-        required: true
-      },
-      isProfile: {
-        type: Boolean,
-        required: true
-      },
-      isDefault: Boolean
-    }],
-    profileUrl: String,
-    organizations: [{
-      name: String,
-      type: String,
-      endDate: String,
-      primary: String
-    }],
-    placesLived: [{
-      value: String,
-      primary: Boolean
-    }],
-    isPlusUser: Boolean,
-    circledByCount: Boolean,
-    verified: Boolean,
-    domain: String
-  }
+  google: googleInfoSchema
 }, {
   timestamps: true,
   toObject: {

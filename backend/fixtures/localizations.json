@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "ObjectId: en/FeodalMonopoly",
+    "language": "English",
+    "style": "Japanese Feodal",
+    "dictionary": [
+      {
+        "type": "cellFunction| //whatever",
+        "entityId": "ObjectId",
+        "name": "name",
+        "description": "description",
+        "//comment": "what do I have to put here?"
+      }
+    ]
+  }
+]

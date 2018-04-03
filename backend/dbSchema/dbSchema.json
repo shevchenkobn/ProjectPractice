@@ -9,13 +9,12 @@
     ],
     "cells": [
       {
-        "cellId": "0: number //start",
-        "next": 1
+        "cellId": 0,
+        "functionId": "ObjectId"
       },
       {
         "cellId": 1,
-        "function": "ObjectId of function",
-        "next": 2
+        "functionId": "ObjectId"
       }
     ]
   },

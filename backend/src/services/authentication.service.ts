@@ -5,7 +5,8 @@ import SessionInitializer, { ISessionModel, ISessionDocument } from '../models/s
 import config from 'config';
 import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
 import { Request } from 'express';
-import { ClientRequestError } from './error-handler.service';
+import { ClientRequestError, AccessError } from './error-handler.service';
+import { SwaggerSecurityHandler } from 'swagger-tools';
 
 export class ClientAuthError extends ClientRequestError {}
 
@@ -29,23 +30,32 @@ export interface IAuthPaths {
   jwtSecret: string
 }
 
-export interface IAuthState {
+export interface IAuthResponse {
+  token: string;
   user: IUserDocument;
-  session: ISessionDocument
 }
+
+// export interface IAuthState {
+//   user: IUserDocument;
+//   session: ISessionDocument
+// }
 
 export interface IJwtPayload {
   id: string
 }
 
 export interface IAuthenticationService {
-  getToken(credentials: any): Promise<IAuthState>;
+  getNewSession(credentials: any): Promise<ISessionDocument>;
+  getSessionFromToken(token: string): Promise<ISessionDocument>;
+  getResponse(state: ISessionDocument): IAuthResponse;
   generateToken(session: ISessionDocument): string;
-  getState(req: Request): IAuthState;
-  authenticate(token: string): Promise<IAuthState>;
+  getState(req: Request): ISessionDocument;
+  authenticate(sessionId: string): Promise<ISessionDocument>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
-  logout(req: Request, token?: string): Promise<void>;
+  revokeToken(req: Request, token?: string | boolean): Promise<void>;
+  getToken(req: Request, fromBody?: boolean): string;
+  swaggerBearerJwtChecker: SwaggerSecurityHandler;
 } 
 
 export const authConfig = config.get<IAuthPaths>('auth');
@@ -65,13 +75,31 @@ export function getService(): IAuthenticationService {
   tokenExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
   service = {
     generateToken(session) {
-      const payload: IJwtPayload = {
-        id: session.id
-      };
+      const payload: IJwtPayload = session.toObject();
       return jwt.sign(payload, _secret);
     },
 
-    async getToken(credentials) {
+    async getSessionFromToken(token) {
+      let decoded;
+      try {
+        decoded = <IJwtPayload>jwt.verify(token, _secret);
+      } catch (err) {
+        throw new AccessError('Invalid token');
+      }
+      return await service.authenticate(decoded.id);
+    },
+
+    getResponse(session) {
+      if (!(session.user instanceof User)) {
+        throw new TypeError('Session is not populated with user');
+      }
+      return {
+        token: service.generateToken(session),
+        user: <IUserDocument>session.user
+      };
+    },
+
+    async getNewSession(credentials) {
       if (!User.isConstructionDoc(credentials)) {
         throw new ClientAuthError("Bad login object");
       }
@@ -81,11 +109,8 @@ export function getService(): IAuthenticationService {
       if (!(user && user.checkPassword(credentials.password))) {
         throw new ClientAuthError("Bad username or password");
       }
-      const session = await service.createSession(user);
-      return {
-        user,
-        session
-      };
+      
+      return await service.createSession(user);
     },
 
     getState(req) {
@@ -103,19 +128,17 @@ export function getService(): IAuthenticationService {
       if (!session) {
         throw new ClientAuthError("Invalid Token");
       }
-      const user = await User.findById(session.userId);
-      return {
-        user,
-        session
-      };
+      await session.populate('user').execPopulate();
+      return session;
     },
 
     async createSession(user) {
       if (user instanceof User) {
         const session = new Session({
-          userId: new mongoose.Types.ObjectId(user._id)
+          user: user._id
         });
         await session.save();
+        await session.populate('user').execPopulate();
         return session;
       } else {
         throw new Error('user is not a model or token is empty');
@@ -146,12 +169,19 @@ export function getService(): IAuthenticationService {
       });
     },
 
-    async logout(req, token = '') {
-      if (!token.trim()) {
-        token = getToken(req);
+    async revokeToken(req, token = '') {
+      if (token === true) {
+        token = service.getToken(req, token);
+      } else if (typeof token === 'string') {
+        if (token = !token.trim()) {
+          token = service.getToken(req);
+        }
+      }
+      if (!token) {
+        throw new ClientAuthError('Authorization token must be provided either in body or in "Authorization" header');
       }
       const session = await Session.findOne({
-        _id: (jwt.verify(token, _secret) as IJwtPayload).id,
+        _id: (jwt.verify(<string>token, _secret) as IJwtPayload).id,
         status: 'active'
       });
       if (!session) {
@@ -160,11 +190,27 @@ export function getService(): IAuthenticationService {
       session.status = 'outdated';
       await session.save();
       req.logout();
+    },
+
+    getToken(req: Request, fromBody = false): string {
+      return fromBody && req.body && req.body.token && (req.body.token + '').trim() || tokenExtractor(req);
+    },
+
+    async swaggerBearerJwtChecker(req: Request, authOrSecDef, scopesOrApiKey, callback) {
+      try {
+        const token = service.getToken(req);
+        if (!token || typeof token === 'string' && !token.trim()) {
+          return callback(new AccessError('Access token must be provided'));
+        }
+        const session = await service.getSessionFromToken(token);
+        req.login(session, err => {
+          if (err) callback(err);
+          callback();
+        });
+      } catch (err) {
+        callback(err);
+      }
     }
   };
   return service;
-}
-
-function getToken(req: Request): string {
-  return tokenExtractor(req);
-}
+} 

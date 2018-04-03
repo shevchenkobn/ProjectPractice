@@ -1,0 +1,916 @@
+[
+  {
+    "_id": "ObjectId: start",
+    "event": {
+      "triggers": [
+        "hover",
+        "stop"
+      ],
+      "action": {
+        "cash": 200
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: silverMine",
+    "class": "ObjectId: valuable",
+    "building": {
+      "price": 60,
+      "fee": 2,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 10
+          },
+          {
+            "fee": 30
+          },
+          {
+            "fee": 90
+          },
+          {
+            "fee": 160
+          },
+          {
+            "fee": 250
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: event",
+    "event": {
+      "triggers": [
+        "stop"
+      ],
+      "options": [
+        {
+          "optionId": 0,
+          "cash": 200
+        },
+        {
+          "optionId": 1,
+          "cash": 25
+        },
+        {
+          "optionId": 2,
+          "inventory": {
+            "uses": 1,
+            "sellable": true
+          },
+          "set//TODO:": {
+            "imprisoned": false
+          }
+        },
+        {
+          "optionId": 3,
+          "cash": 25
+        },
+        {
+          "optionId": 4,
+          "cash": 100
+        },
+        {
+          "optionId": 5,
+          "cash": 25
+        },
+        {
+          "optionId": 6,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": "20//TODO: prisonCell"
+            }
+          ]
+        },
+        {
+          "optionId": 7,
+          "cash": -50
+        },
+        {
+          "optionId": 8,
+          "cash": 10
+        },
+        {
+          "optionId": 9,
+          "cash": 50
+        },
+        {
+          "optionId": 10,
+          "cash": -100
+        },
+        {
+          "optionId": 11,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 1,
+              "reverse": true
+            }
+          ]
+        },
+        {
+          "optionId": 12,
+          "cash": 100
+        },
+        {
+          "optionId": 13,
+          "otherPlayers": [
+            {
+              "cash": 10,
+              "to//TODO: check if gathering is good": "otherPlayers"
+            }
+          ]
+        },
+        {
+          "optionId": 14,
+          "or": [
+            {
+              "cash": -10
+            },
+            {
+              "event": [
+                {
+                  "boardId": "ObjectId: enFMBoard",
+                  "eventId": "ObjectId: //TODO: chanceEvent"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "optionId": 15,
+          "cash": -50
+        }
+      ]
+    }
+  },
+  {
+    "_id": "ObjectId: goldenMine",
+    "class": "ObjectId: valuable",
+    "building": {
+      "price": 60,
+      "fee": 4,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 20
+          },
+          {
+            "fee": 60
+          },
+          {
+            "fee": 180
+          },
+          {
+            "fee": 320
+          },
+          {
+            "fee": 450
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: mountainPass",
+    "event": {
+      "triggers": [
+        "stop"
+      ],
+      "action": {
+        "or": [
+          {
+            "cash": -200
+          },
+          {
+            "fortune": -0.1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: southPort",
+    "class": "ObjectId: ports"
+  },
+  {
+    "_id": "ObjectId: onsen",
+    "class": "ObjectId: prestige",
+    "building": {
+      "price": 100,
+      "fee": 6,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 30
+          },
+          {
+            "fee": 90
+          },
+          {
+            "fee": 270
+          },
+          {
+            "fee": 400
+          },
+          {
+            "fee": 550
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: yukaku",
+    "class": "ObjectId: prestige",
+    "building": {
+      "price": 100,
+      "fee": 6,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 30
+          },
+          {
+            "fee": 90
+          },
+          {
+            "fee": 270
+          },
+          {
+            "fee": 400
+          },
+          {
+            "fee": 550
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: kabukiTheatre",
+    "class": "ObjectId: prestige",
+    "building": {
+      "price": 120,
+      "fee": 8,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 40
+          },
+          {
+            "fee": 100
+          },
+          {
+            "fee": 300
+          },
+          {
+            "fee": 450
+          },
+          {
+            "fee": 600
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: prison",
+    "event": {
+      "triggers": [
+        "redirect"
+      ],
+      "action": {
+        "or": [
+          {
+            "cash": -50,
+            "then//FIXME: probably fix is needed": "break"
+          },
+          {
+            "skip": 3,
+            "each": {
+              "throw": {
+                "if": "eq",
+                "then": "go"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: pier",
+    "class": "ObjectId: resources",
+    "building": {
+      "price": 140,
+      "fee": 10,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 50
+          },
+          {
+            "fee": 150
+          },
+          {
+            "fee": 450
+          },
+          {
+            "fee": 625
+          },
+          {
+            "fee": 750
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: kanmonStrait",
+    "class": "ObjectId: strait"
+  },
+  {
+    "_id": "ObjectId: sawmill",
+    "class": "ObjectId: resources",
+    "building": {
+      "price": 140,
+      "fee": 10,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 50
+          },
+          {
+            "fee": 150
+          },
+          {
+            "fee": 450
+          },
+          {
+            "fee": 625
+          },
+          {
+            "fee": 750
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: quarry",
+    "class": "ObjectId: resources",
+    "building": {
+      "price": 160,
+      "fee": 12,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 60
+          },
+          {
+            "fee": 180
+          },
+          {
+            "fee": 500
+          },
+          {
+            "fee": 700
+          },
+          {
+            "fee": 900
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: westPort",
+    "class": "ObjectId: ports"
+  },
+  {
+    "_id": "ObjectId: dojo",
+    "class": "ObjectId: mercenaries",
+    "building": {
+      "price": 180,
+      "fee": 14,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 70
+          },
+          {
+            "fee": 200
+          },
+          {
+            "fee": 550
+          },
+          {
+            "fee": 750
+          },
+          {
+            "fee": 950
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: ninjaOutpost",
+    "class": "ObjectId: mercenaries",
+    "building": {
+      "price": 180,
+      "fee": 14,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 70
+          },
+          {
+            "fee": 200
+          },
+          {
+            "fee": 550
+          },
+          {
+            "fee": 750
+          },
+          {
+            "fee": 950
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: shinsengumiStronghold",
+    "class": "ObjectId: mercenaries",
+    "building": {
+      "price": 200,
+      "fee": 16,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 80
+          },
+          {
+            "fee": 220
+          },
+          {
+            "fee": 600
+          },
+          {
+            "fee": 800
+          },
+          {
+            "fee": 1000
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: forge",
+    "class": "ObjectId: workshops",
+    "building": {
+      "price": 220,
+      "fee": 18,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 90
+          },
+          {
+            "fee": 250
+          },
+          {
+            "fee": 700
+          },
+          {
+            "fee": 875
+          },
+          {
+            "fee": 1050
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id":"ObjectId: chance",
+    "event": {
+      "triggers": [
+        "stop"
+      ],
+      "options": [
+        {
+          "optionId": 0,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 34
+            }
+          ]
+        },
+        {
+          "optionId": 1,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 0
+            }
+          ]
+        },
+        {
+          "optionId": 2,
+          "inventory": {
+            "uses": 1,
+            "sellable": true
+          },
+          "set//TODO:": {
+            "imprisoned": false
+          }
+        },
+        {
+          "optionId": 3,
+          "cashDescriptor": {
+            "type": "building.improvements:level//FIXME:",
+            "each//FIXME:": {
+              "any": -40,
+              "max": -115
+            }
+          }
+        },
+        {
+          "optionId": 4,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 26
+            }
+          ]
+        },
+        {
+          "optionId": 5,
+          "cash": -15
+        },
+        {
+          "optionId": 6,
+          "cash": 150
+        },
+        {
+          "optionId": 7,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 9
+            }
+          ]
+        },
+        {
+          "optionId": 8,
+          "cashDescriptor": {
+            "type": "building.improvements:level//FIXME:",
+            "each//FIXME:": {
+              "any": -40,
+              "max": -115
+            }
+          }
+        },
+        {
+          "optionId": 9,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 25
+            }
+          ]
+        },
+        {
+          "optionId": 10,
+          "cash": 50
+        },
+        {
+          "optionId": 11,
+          "cash": 20
+        },
+        {
+          "optionId": 12,
+          "cash": 150
+        },
+        {
+          "optionId": 13,
+          "cash": 100
+        },
+        {
+          "optionId": 14,
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 6
+            }
+          ]
+        },
+        {
+          "optionId": 15,
+          "move": -3
+        }
+      ]
+    }
+  },
+  {
+    "_id": "ObjectId: stable",
+    "class": "ObjectId: workshops",
+    "building": {
+      "price": 220,
+      "fee": 18,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 90
+          },
+          {
+            "fee": 250
+          },
+          {
+            "fee": 700
+          },
+          {
+            "fee": 875
+          },
+          {
+            "fee": 1050
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: mill",
+    "class": "ObjectId: workshops",
+    "building": {
+      "price": 240,
+      "fee": 20,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 100
+          },
+          {
+            "fee": 300
+          },
+          {
+            "fee": 750
+          },
+          {
+            "fee": 925
+          },
+          {
+            "fee": 1100
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: northPort",
+    "class":"ObjectId: ports"
+  },
+  {
+    "_id": "ObjectId: todaiJi",
+    "class": "ObjectId: temples",
+    "building": {
+      "price": 260,
+      "fee": 22,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 110
+          },
+          {
+            "fee": 330
+          },
+          {
+            "fee": 800
+          },
+          {
+            "fee": 975
+          },
+          {
+            "fee": 1150
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: kiiChannel",
+    "class": "ObjectId: strait"
+  },
+  {
+    "_id": "ObjectId: kinkakuJi",
+    "class": "ObjectId: temples",
+    "building": {
+      "price": 260,
+      "fee": 22,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 110
+          },
+          {
+            "fee": 330
+          },
+          {
+            "fee": 800
+          },
+          {
+            "fee": 975
+          },
+          {
+            "fee": 1150
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: itsukushima",
+    "class": "ObjectId: temples",
+    "building": {
+      "price": 280,
+      "fee": 24,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 120
+          },
+          {
+            "fee": 360
+          },
+          {
+            "fee": 850
+          },
+          {
+            "fee": 1025
+          },
+          {
+            "fee": 1200
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: gotoPrison",
+    "event": {
+      "triggers": [
+        "stop"
+      ],
+      "action": {
+        "goto": 9
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: inuyama",
+    "class": "ObjectId: castles",
+    "building": {
+      "price": 300,
+      "fee": 26,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 130
+          },
+          {
+            "fee": 390
+          },
+          {
+            "fee": 900
+          },
+          {
+            "fee": 1100
+          },
+          {
+            "fee": 1275
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: osaka",
+    "class": "ObjectId: castles",
+    "building": {
+      "price": 300,
+      "fee": 26,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 130
+          },
+          {
+            "fee": 390
+          },
+          {
+            "fee": 900
+          },
+          {
+            "fee": 1100
+          },
+          {
+            "fee": 1275
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: himeji",
+    "class": "ObjectId: castles",
+    "building": {
+      "price": 320,
+      "fee": 28,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 150
+          },
+          {
+            "fee": 450
+          },
+          {
+            "fee": 1000
+          },
+          {
+            "fee": 1200
+          },
+          {
+            "fee": 1400
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: eastPort",
+    "class": "ObjectId: ports"
+  },
+  {
+    "_id": "ObjectId: ironOre",
+    "class": "ObjectId: mines",
+    "building": {
+      "price": 350,
+      "fee": 35,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 175
+          },
+          {
+            "fee": 500
+          },
+          {
+            "fee": 1100
+          },
+          {
+            "fee": 1300
+          },
+          {
+            "fee": 1500
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: ironOre",
+    "class": "ObjectId: mines",
+    "building": {
+      "price": 400,
+      "fee": 50,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 200
+          },
+          {
+            "fee": 600
+          },
+          {
+            "fee": 1400
+          },
+          {
+            "fee": 1700
+          },
+          {
+            "fee": 2000
+          }
+        ]
+      }
+    }
+  }
+]

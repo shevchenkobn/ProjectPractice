@@ -1,0 +1,1 @@
+{"version":3,"file":"@types.js","sourceRoot":"","sources":["../../src/socketio-api/@types.ts"],"names":[],"mappings":";;AAcA;IAGE,YAAY,OAAY,EAAE,IAAa;QACrC,IAAI,CAAC,OAAO,GAAG;YACb,OAAO;SACR,CAAA;QACD,EAAE,CAAC,CAAC,SAAS,CAAC,MAAM,GAAG,CAAC,CAAC,CAAC,CAAC;YACzB,IAAI,CAAC,OAAO,CAAC,IAAI,GAAG,IAAI,CAAC;QAC3B,CAAC;IACH,CAAC;CACF;AAXD,gDAWC"}

@@ -5,6 +5,68 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const emailSchema = new mongoose_1.default.Schema({
+    value: String,
+    type: {
+        type: String,
+    }
+}, {
+    _id: false
+});
+const photoSchema = new mongoose_1.default.Schema({
+    url: {
+        type: String,
+        required: true
+    },
+    isProfile: {
+        type: Boolean,
+        required: true
+    },
+    isDefault: Boolean
+}, {
+    _id: false
+});
+const googleInfoSchema = new mongoose_1.default.Schema({
+    id: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    displayName: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    name: {
+        familyName: String,
+        givenName: String
+    },
+    gender: {
+        type: String,
+        enum: ['male', 'female']
+    },
+    emails: [emailSchema],
+    photos: [photoSchema],
+    profileUrl: String,
+    organizations: [{
+            name: String,
+            type: String,
+            endDate: String,
+            primary: String
+        }],
+    placesLived: [{
+            value: String,
+            primary: Boolean
+        }],
+    isPlusUser: Boolean,
+    circledByCount: Boolean,
+    verified: Boolean,
+    domain: String
+}, {
+    _id: false
+});
 const userSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
@@ -13,14 +75,16 @@ const userSchema = new mongoose_1.default.Schema({
         trim: true
     },
     passwordHash: String,
-    salt: String
+    salt: String,
+    google: googleInfoSchema
 }, {
     timestamps: true,
     toObject: {
         transform(doc, ret) {
             return {
                 id: doc.id,
-                username: doc.username
+                username: doc.username,
+                google: doc.google
             };
         }
     }

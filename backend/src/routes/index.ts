@@ -1,5 +1,4 @@
 import { initialize as authRouterInitialize } from './auth.route';
-import { initialize as gameRouterInitialize } from './game.route';
 import { Router } from 'express';
 
 export interface IReadyRouter {
@@ -14,6 +13,6 @@ export function initialize(): Array<IReadyRouter> {
     return apiRoutes;
   }
   apiRoutes = [];
-  apiRoutes.push(authRouterInitialize(), gameRouterInitialize());
+  apiRoutes.push(authRouterInitialize());
   return apiRoutes;
 }

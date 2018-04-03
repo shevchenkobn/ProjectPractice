@@ -28,11 +28,11 @@ export function getController(): IAuthController {
       try {
         const user = await authService.createUser(req.body);
         const session = await authService.createSession(user);
-        req.login({ user, session }, err => {
+        req.login(session, err => {
           if (err) {
             next(err);
           }
-          res.json(req.user);
+          res.json(authService.getResponse(<any>req.user));
         });
       } catch (err) {
         next(err);
@@ -44,12 +44,12 @@ export function getController(): IAuthController {
         next(new ClientAuthError("User is logged in"));
       }
       try {
-        const state = await authService.getToken(req.body);
-        req.login(state, err => {
+        const session = await authService.getNewSession(req.body);
+        req.login(session, err => {
           if (err) {
             next(err);
           }
-          res.json(req.user);
+          res.json(authService.getResponse(<any>req.user));
         });
       } catch (err) {
         next(err);
@@ -57,7 +57,7 @@ export function getController(): IAuthController {
     },
 
     revokeToken: (req, res, next) => {
-      authService.logout(req).then(() => {
+      authService.revokeToken(req, true).then(() => {
         res.json({ //TODO: json schema
           "action": "logout",
           "status": "ok"

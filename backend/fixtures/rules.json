@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "ObjectId: en/FeodalMonopoly",
+    "playerLimits": {
+      "max": 6
+    },
+    "hasRoles": true,
+    "dices": [
+      {
+        "max": 6
+      },
+      {
+        "max": 6
+      }
+    ]
+  }
+]

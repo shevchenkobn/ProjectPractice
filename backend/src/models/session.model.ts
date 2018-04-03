@@ -1,9 +1,10 @@
 import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
+import { IUserDocument } from './user.model';
 
 export interface ISessionDocument extends Document {
-  userId: Schema.Types.ObjectId;
-  gameId: null | Schema.Types.ObjectId;
+  user: Schema.Types.ObjectId | IUserDocument;
+  gameId: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   status: 'active' | 'outdated';
@@ -12,12 +13,14 @@ export interface ISessionDocument extends Document {
 export interface ISessionModel extends Model<ISessionDocument> {}
 
 const sessionSchema = new Schema({
-  userId: {
+  user: {
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'User'
   },
-  gameId: {
-    type: Schema.Types.ObjectId
+  game: {
+    type: Schema.Types.ObjectId,
+    ref: 'Game'
   },
   status: {
     type: String,
@@ -29,7 +32,9 @@ const sessionSchema = new Schema({
   timestamps: true,
   toObject: {
     transform: (doc, res) => {
-      return doc.id;
+      return {
+        id: doc.id
+      }
     }
   }
 });
