@@ -25,7 +25,7 @@
     "descriptor": {
       "price": 200,
       "feeDescriptor": {
-        "type": "quantitative",
+        "type": "quantitative:values",
         "values": [
           25,
           50,
@@ -75,7 +75,7 @@
     "descriptor": {
       "price": 150,
       "feeDescriptor": {
-        "type": "quantitative",
+        "type": "quantitative:throw",
         "throw": "all//FIXME: probable fix",
         "factors": [
           4,
@@ -111,6 +111,50 @@
       "improvements": {
         "type": "level",
         "price": 150
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: temples",
+    "type": "building",
+    "functions": [
+      "ObjectId: todaiJi",
+      "ObjectId: kinkakuJi",
+      "ObjectId: itsukushima"
+    ],
+    "descriptor": {
+      "improvements": {
+        "type": "level",
+        "price": 150
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: castles",
+    "type": "building",
+    "functions": [
+      "ObjectId: inuyama",
+      "ObjectId: osaka",
+      "ObjectId: himeji"
+    ],
+    "descriptor": {
+      "improvements": {
+        "type": "level",
+        "price": 200
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: mines",
+    "type": "building",
+    "functions": [
+      "ObjectId: ironOre",
+      "ObjectId: brimstone"
+    ],
+    "descriptor": {
+      "improvements": {
+        "type": "level",
+        "price": 200
       }
     }
   }

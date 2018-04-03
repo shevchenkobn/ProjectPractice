@@ -673,5 +673,244 @@
         ]
       }
     }
+  },
+  {
+    "_id": "ObjectId: northPort",
+    "class":"ObjectId: ports"
+  },
+  {
+    "_id": "ObjectId: todaiJi",
+    "class": "ObjectId: temples",
+    "building": {
+      "price": 260,
+      "fee": 22,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 110
+          },
+          {
+            "fee": 330
+          },
+          {
+            "fee": 800
+          },
+          {
+            "fee": 975
+          },
+          {
+            "fee": 1150
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: kiiChannel",
+    "class": "ObjectId: strait"
+  },
+  {
+    "_id": "ObjectId: kinkakuJi",
+    "class": "ObjectId: temples",
+    "building": {
+      "price": 260,
+      "fee": 22,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 110
+          },
+          {
+            "fee": 330
+          },
+          {
+            "fee": 800
+          },
+          {
+            "fee": 975
+          },
+          {
+            "fee": 1150
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: itsukushima",
+    "class": "ObjectId: temples",
+    "building": {
+      "price": 280,
+      "fee": 24,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 120
+          },
+          {
+            "fee": 360
+          },
+          {
+            "fee": 850
+          },
+          {
+            "fee": 1025
+          },
+          {
+            "fee": 1200
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: gotoPrison",
+    "event": {
+      "triggers": [
+        "stop"
+      ],
+      "action": {
+        "goto": 9
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: inuyama",
+    "class": "ObjectId: castles",
+    "building": {
+      "price": 300,
+      "fee": 26,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 130
+          },
+          {
+            "fee": 390
+          },
+          {
+            "fee": 900
+          },
+          {
+            "fee": 1100
+          },
+          {
+            "fee": 1275
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: osaka",
+    "class": "ObjectId: castles",
+    "building": {
+      "price": 300,
+      "fee": 26,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 130
+          },
+          {
+            "fee": 390
+          },
+          {
+            "fee": 900
+          },
+          {
+            "fee": 1100
+          },
+          {
+            "fee": 1275
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: himeji",
+    "class": "ObjectId: castles",
+    "building": {
+      "price": 320,
+      "fee": 28,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 150
+          },
+          {
+            "fee": 450
+          },
+          {
+            "fee": 1000
+          },
+          {
+            "fee": 1200
+          },
+          {
+            "fee": 1400
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: eastPort",
+    "class": "ObjectId: ports"
+  },
+  {
+    "_id": "ObjectId: ironOre",
+    "class": "ObjectId: mines",
+    "building": {
+      "price": 350,
+      "fee": 35,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 175
+          },
+          {
+            "fee": 500
+          },
+          {
+            "fee": 1100
+          },
+          {
+            "fee": 1300
+          },
+          {
+            "fee": 1500
+          }
+        ]
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: ironOre",
+    "class": "ObjectId: mines",
+    "building": {
+      "price": 400,
+      "fee": 50,
+      "improvements": {
+        "levels": [
+          {
+            "fee": 200
+          },
+          {
+            "fee": 600
+          },
+          {
+            "fee": 1400
+          },
+          {
+            "fee": 1700
+          },
+          {
+            "fee": 2000
+          }
+        ]
+      }
+    }
   }
 ]
