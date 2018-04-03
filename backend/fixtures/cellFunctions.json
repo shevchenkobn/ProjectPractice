@@ -565,7 +565,7 @@
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
-              "cellId": "//TODO: prison"
+              "cellId": 9
             }
           ]
         },
@@ -590,14 +590,22 @@
         },
         {
           "optionId": 10,
-          "cash": 150
+          "cash": 50
         },
         {
           "optionId": 11,
-          "cash": 100
+          "cash": 20
         },
         {
           "optionId": 12,
+          "cash": 150
+        },
+        {
+          "optionId": 13,
+          "cash": 100
+        },
+        {
+          "optionId": 14,
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
@@ -606,7 +614,7 @@
           ]
         },
         {
-          "optionId": 13,
+          "optionId": 15,
           "move": -3
         }
       ]
