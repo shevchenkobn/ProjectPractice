@@ -440,6 +440,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anchor: {fileID: 1185047953}
   rotationSpeed: 5
+  movementSpeed: 5
+  factor: 0.25
   zoomSpeed: 30
   maxYAngle: 85
   minYAngle: 25
