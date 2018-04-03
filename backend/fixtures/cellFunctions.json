@@ -510,7 +510,7 @@
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
-              "cellId": "//TODO: himedzi castle"
+              "cellId": 34
             }
           ]
         },
@@ -548,7 +548,7 @@
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
-              "cellId": "//TODO: todai dzi"
+              "cellId": 26
             }
           ]
         },
@@ -584,7 +584,7 @@
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
-              "cellId": "//TODO: northPort"
+              "cellId": 25
             }
           ]
         },
