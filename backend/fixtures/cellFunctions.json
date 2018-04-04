@@ -7,7 +7,14 @@
         "stop"
       ],
       "action": {
-        "cash": 200
+        "cash": 200,
+        "cashDescriptor": {
+          "type": "building.fee",
+          "countImprovements": true,
+          "each": {
+            "percentage": 0.1
+          }
+        }
       }
     }
   },
@@ -80,7 +87,7 @@
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
-              "cellId": "20//TODO: prisonCell"
+              "cellId": 10
             }
           ]
         },
@@ -119,7 +126,7 @@
           "otherPlayers": [
             {
               "cash": 10,
-              "to//TODO: check if gathering is good": "otherPlayers"
+              "to//TODO: check if gathering is good": "player"
             }
           ]
         },
@@ -133,7 +140,7 @@
               "event": [
                 {
                   "boardId": "ObjectId: enFMBoard",
-                  "eventId": "ObjectId: //TODO: chanceEvent"
+                  "eventId": "ObjectId: chance"
                 }
               ]
             }
@@ -499,7 +506,7 @@
     }
   },
   {
-    "_id":"ObjectId: chance",
+    "_id": "ObjectId: chance",
     "event": {
       "triggers": [
         "stop"
@@ -565,7 +572,7 @@
           "goto": [
             {
               "boardId": "ObjectId: enFMBoard",
-              "cellId": 9
+              "cellId": 10
             }
           ]
         },
@@ -770,7 +777,12 @@
         "stop"
       ],
       "action": {
-        "goto": 9
+        "goto": [
+          {
+            "boardId": "ObjectId: enFMBoard",
+            "cellId": 10
+          }
+        ]
       }
     }
   },

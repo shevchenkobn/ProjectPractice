@@ -1,6 +1,12 @@
 [
   {
     "_id": "ObjectId: en/FeodalMonopoly",
+    "initialCash": 1500,
+    "randomizeEventOptions": true,
+    "turnTime": {
+      "limit": 50000,
+      "defaultOption": 0
+    },
     "playerLimits": {
       "max": 6
     },
@@ -11,6 +17,68 @@
       },
       {
         "max": 6
+      }
+    ],
+    "building": {
+      "pledge": {
+        "price": 0.5
+      },
+      "improvements": {
+        "monopoly": true,
+        "types": {
+          "level": {
+            "pledge": {
+              "price": 0.5,
+              "downgrade": true
+            }
+          }
+        }
+      },
+      "fee": {
+        "fromPledged": false,
+        "monopoly": {
+          "factor": 2,
+          "pledgeBreaks": true
+        },
+        "improvementsOverride": true
+      }
+    },
+    "events": [
+      {
+        "triggers": [
+          "turn.throw:eq"
+        ],
+        "action": {
+          "throw": "repeat//FIXME: probably"
+        }
+      },
+      {
+        "triggers": [
+          "turn.throw:eq:3"
+        ],
+        "action": {
+          "goto": [
+            {
+              "boardId": "ObjectId: enFMBoard",
+              "cellId": 10
+            }
+          ]
+        }
+      },
+      {
+        "triggers": [
+          "turn.purchase:omit"
+        ],
+        "action": {
+          "auction": {
+            "triggerId": 0,
+            "object": "trigger",
+            "price": {
+              "start": "anyPlayer"
+            },
+            "wait": 15000
+          }
+        }
       }
     ]
   }
