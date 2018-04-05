@@ -1,124 +1,47 @@
 {
-  "boards": {
-    "_id": "ObjectId",
-    "createdAt": "mongoose",
-    "updatedAt": "mongoose",
-    "rulesId": "ObjectId of rules",
-    "localizations": [
-      "ObjectId of available localizations"
-    ],
-    "cells": [
-      {
-        "cellId": 0,
-        "functionId": "ObjectId"
-      },
-      {
-        "cellId": 1,
-        "functionId": "ObjectId"
-      }
-    ]
-  },
-  "rules": {
-    "stepLimit": 6,
-    "playerLimit": 6,
-    "hasRoles": true,
-    "//comment": "what do I have to put here?"
-  },
-  "localizations": {
-    "_id": "ObjectId",
-    "createdAt": "mongoose",
-    "updatedAt": "mongoose",
-    "language": "en",
-    "style": "Japanese Feodal",
-    "dictionary": [
-      {
-        "type": "cellFunction| //whatever",
-        "entityId": "ObjectId",
-        "name": "name",
-        "description": "description",
-        "//comment": "what do I have to put here?"
-      }
-    ]
-  },
-  "cellFunctions": {
-    "_id": "ObjectId",
-    "createdAt": "mongoose",
-    "updatedAt": "mongoose",
-    "building?": {
-      "class": "ObjectId of class",
-      "price": 1000,
-      "profit": 10,
-      "fee": 100,
-      "improvement?": {
-        "//comment": "need to clarify"
-      }
-    },
-    "event?": {
-      "//comment": "not sure if smth is additionally needed",
-      "class": "ObjectId of class",
-      "options?": "ObjectId of options",
-      "action?": "skip 1 || smth else",
-      "//comment": "either of above"
-    },
-    "//comment": "either of above"
-  },
-  "cellFunctionClass": {
-    "_id": "ObjectId",
-    "createdAt": "mongoose",
-    "updatedAt": "mongoose",
-    "functions": [],
-    "descriptor?": "//comment: not sure how it will be"
-  },
-  "cellOptions": {
-    "_id": "ObjectId",
-    "createdAt": "mongoose",
-    "updatedAt": "mongoose",
-    "options": [
-      {
-        "cash?": -100,
-        "action": "skip 1 || smth else",
-        "action": [
-          {
-            "boardId": "ObjectId of board",
-            "action": "goto 10 || smth else"
-          }
-        ]
-      }
-    ]
-  },
   "games": {
     "_id": "ObjectId",
+    "board": "ObjectId of board or board itself",
+    "outcome?": {
+      "winner": "ObjectId of user"
+    },
     "createdAt": "mongoose",
     "updatedAt": "mongoose",
     "stepCount": 1,
     "playerIndex": 2,
     "players": [
       {
-        "playerId": "ObjectId of user",
+        "userId": "ObjectId of user",
         "role?": "ObjectId of role (clan)",
-        "status": "active|left|defeated",
-        "date?": "//comment: date when left or defeated",
-        "position": 10,
-        "modifiers": {
-          "step": 2,
-          "actionId?": "ObjectId of cellfunction",
-          "action?": {
-            "actionId": "ObjectId of cellfunction",
-            "optionIndex": 3
-          },
-          "//comment": "either of above"
-        },
+        "status": "active|defeated|winner",
+        "dateDefeated": "//comment: date when left or defeated",
         "cash": 9000,
-        "possesions": [
+        "asset": 5000,
+        "depts": {
+          "bank": 30,
+          "1 (index of player in array)": 3
+        },
+        "cellId": 10,
+        "property": [
           "ObjectId of cellFunction"
+        ],
+        "monopolies": {
+          "ObjectId of cellFunctionClass": "true|false (activeness)"
+        },
+        "buildingImprovemnts": {
+          "ObjectId of building": "status(level)"
+        },
+        "modifiers": [
+          "ObjectId of cellFunction.modifier"
+        ],
+        "inventory": [
+          "ObjectId of cellFunction.inventory"
+        ],
+        "mortgage": [
+          "ObjectId of mortgaged property"
         ]
       }
-    ],
-    "boardId": "ObjectId of board",
-    "outcome?": {
-      "//comment": "date is not needed because of updatedAt field; maybe other stuff is needed",
-      "winner": "ObjectId of user"
-    }
+    ]
   },
   "playerRoles": {
     "_id": "ObjectId",
@@ -129,7 +52,6 @@
         "cash?": "1.1: number //percentage",
         "prices?": "1.1: number //percentage",
         "fees?": "1.1: number //percentage",
-        "//comment": "whatever"
       }
     ]
   }

@@ -493,8 +493,8 @@
         {
           "optionId": 3,
           "cashDescriptor": {
-            "type": "building.improvements:level//FIXME:",
-            "each//FIXME:": {
+            "type": "building.improvements:level",
+            "each": {
               "any": -40,
               "max": -115
             }
@@ -529,8 +529,8 @@
         {
           "optionId": 8,
           "cashDescriptor": {
-            "type": "building.improvements:level//FIXME:",
-            "each//FIXME:": {
+            "type": "building.improvements:level",
+            "each": {
               "any": -40,
               "max": -115
             }

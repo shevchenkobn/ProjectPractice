@@ -1,13 +1,131 @@
 [
   {
     "_id": "ObjectId: enFMBoard",
-    "rulesId": "ObjectId: en/FeodalMonopoly",//TODO: add pledge (0.5 of price)
-    //TODO: add monopoly modifier (x2)
-    //TODO: add that improvements only on monopoly and override its feeFactor
-    //TODO: add three in row - goto prison
-    "localizations": [
-      "ObjectId: en/FeodalMonopoly"
-    ],
+    "rules": {
+      "initialCash": 1500,
+      "randomizeEventOptions": true,
+      "turnTime": {
+        "limit": 50000,
+        "defaultOption": 0
+      },
+      "playerLimits": {
+        "max": 6
+      },
+      "hasRoles": true,
+      "dices": [
+        {
+          "max": 6
+        },
+        {
+          "max": 6
+        }
+      ],
+      "building": {
+        "mortgage": {
+          "price": 0.5,
+          "liftInterestPledgePercent": 0.1,
+          "sell": {
+            "pricePercentPay": 0.1
+          }
+        },
+        "improvements": {
+          "type": "level",
+          "monopoly": true,
+          "types": {
+            "level": {
+              "sell": {
+                "price": 0.5,
+                "downgrade": true
+              }
+            }
+          }
+        },
+        "fee": {
+          "fromMortgaged": false,
+          "monopoly": {
+            "factor": 2,
+            "mortgageBreaks": true
+          },
+          "improvementsOverride": true
+        }
+      },
+      "sell": {
+        "buyRequest": true,
+        "sellRequest": true,
+        "responseTimeout": 100000,
+        "minPrice": 0,
+        "objects": [
+          "building",
+          "inventory"
+        ]
+      },
+      "events": [
+        {
+          "triggers": [
+            "turn.throw:eq"
+          ],
+          "action": {
+            "throw": "repeat"
+          }
+        },
+        {
+          "triggers": [
+            "turn.throw:eq:3"
+          ],
+          "action": {
+            "goto": [
+              {
+                "boardId": "ObjectId: enFMBoard",
+                "cellId": 10
+              }
+            ]
+          }
+        },
+        {
+          "triggers": [
+            "turn.purchase:omit"
+          ],
+          "action": {
+            "auction": {
+              "triggerId": 0,
+              "object": "trigger",
+              "price": {
+                "start": "anyPlayer"
+              },
+              "wait": 15000
+            }
+          }
+        }
+      ],
+      "defeat": [
+        {
+          "type": "leave"
+        },
+        {
+          "type": "bankruptcy",
+          "assets": [
+            "cash",
+            "building",
+            "building.improvements",
+            "inventory"
+          ],
+          "deptAction": {
+            "bank": {
+              "inventory": "auction",
+              "cash": "pass",
+              "building.improvements": "pass",
+              "building": "auction"
+            },
+            "player": {
+              "inventory": "pass",
+              "building.improvements": "sell",
+              "cash": "pass",
+              "building": "pass"
+            }
+          }
+        }
+      ]
+    },
     "cells": [
       {
         "cellId": 0,

@@ -73,7 +73,7 @@
       "price": 150,
       "feeDescriptor": {
         "type": "quantitative:throw",
-        "throw": "all//FIXME: probable fix",
+        "throw": "all",
         "factors": [
           4,
           10
