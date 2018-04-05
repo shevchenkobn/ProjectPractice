@@ -20,14 +20,19 @@
       }
     ],
     "building": {
-      "pledge": {
-        "price": 0.5
+      "mortgage": {
+        "price": 0.5,
+        "returnInterestPledgePercent": 0.1,
+        "sell": {
+          "pricePercentPay": 0.1
+        }
       },
       "improvements": {
+        "defaultType": "level",
         "monopoly": true,
         "types": {
           "level": {
-            "pledge": {
+            "sell": {
               "price": 0.5,
               "downgrade": true
             }
@@ -35,13 +40,23 @@
         }
       },
       "fee": {
-        "fromPledged": false,
+        "fromMortgaged": false,
         "monopoly": {
           "factor": 2,
-          "pledgeBreaks": true
+          "mortgageBreaks": true
         },
         "improvementsOverride": true
       }
+    },
+    "sell": {
+      "buyRequest": true,
+      "sellRequest": true,
+      "responseTimeout": 100000,
+      "minPrice": 0,
+      "objects": [
+        "building",
+        "inventory"
+      ]
     },
     "events": [
       {
@@ -77,6 +92,34 @@
               "start": "anyPlayer"
             },
             "wait": 15000
+          }
+        }
+      }
+    ],
+    "defeat": [
+      {
+        "type": "leave"
+      },
+      {
+        "type": "bankruptcy",
+        "assets": [
+          "cash",
+          "building",
+          "building.improvements",
+          "inventory"
+        ],
+        "deptAction": {
+          "bank": {
+            "inventory": "auction",
+            "cash": "pass",
+            "building.improvements": "pass",
+            "building": "auction"
+          },
+          "player": {
+            "inventory": "pass",
+            "building.improvements": "sell",
+            "cash": "pass",
+            "building": "pass"
           }
         }
       }
