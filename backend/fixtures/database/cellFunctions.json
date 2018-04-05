@@ -831,7 +831,7 @@
     }
   },
   {
-    "_id": "ObjectId: ironOre",
+    "_id": "ObjectId: brimstone",
     "class": "ObjectId: mines",
     "building": {
       "price": 400,
@@ -892,6 +892,17 @@
       "sellable": {
         "price": 50,
         "fixed": false
+      }
+    }
+  },
+  {
+    "_id": "ObjectId: trap",
+    "event": {
+      "triggers": [
+        "stop"
+      ],
+      "action": {
+        "cash": -150
       }
     }
   }

@@ -8,10 +8,14 @@
       "type": "node",
       "request": "launch",
       "name": "Tests File",
-      "program": "${workspaceFolder}/tests/file",
+      "program": "${workspaceFolder}/fixtures/populate",
       "skipFiles": [
         "node_modules/**/*.js",
         "<node_internals>/**/*.js"
+      ],
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "./fixtures/database"
       ]
     },
     {
