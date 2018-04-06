@@ -5,6 +5,9 @@ if (require.main != module) {
 const objectIdPrefix = 'ObjectId: ';
 const collectionExt = '.json';
 
+const appRoot = require('app-root-path');
+process.env["NODE_CONFIG_DIR"] = appRoot.resolve('./config');
+
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
