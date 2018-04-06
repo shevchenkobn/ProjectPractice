@@ -31,13 +31,9 @@
         "improvements": {
           "type": "level",
           "monopoly": true,
-          "types": {
-            "level": {
-              "sell": {
-                "price": 0.5,
-                "downgrade": true
-              }
-            }
+          "sell": {
+            "price": 0.5,
+            "downgrade": true
           }
         },
         "fee": {
