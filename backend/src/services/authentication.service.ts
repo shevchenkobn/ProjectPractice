@@ -10,7 +10,7 @@ import { SwaggerSecurityHandler } from 'swagger-tools';
 
 export class ClientAuthError extends ClientRequestError {}
 
-export interface IAuthPaths {
+export interface IAuthConfig {
   basePath: string,
   basic: {
     issueToken: string,
@@ -28,17 +28,13 @@ export interface IAuthPaths {
     }
   },
   jwtSecret: string
+  sessionLimit: number
 }
 
 export interface IAuthResponse {
   token: string;
   user: IUserDocument;
 }
-
-// export interface IAuthState {
-//   user: IUserDocument;
-//   session: ISessionDocument
-// }
 
 export interface IJwtPayload {
   id: string
@@ -58,7 +54,7 @@ export interface IAuthenticationService {
   swaggerBearerJwtChecker: SwaggerSecurityHandler;
 } 
 
-export const authConfig = config.get<IAuthPaths>('auth');
+export const authConfig = config.get<IAuthConfig>('auth');
 let _secret = authConfig.jwtSecret;
 let tokenExtractor: JwtFromRequestFunction;
 let User: IUserModel = null;
@@ -100,7 +96,7 @@ export function getService(): IAuthenticationService {
     },
 
     async getNewSession(credentials) {
-      if (!User.isConstructionDoc(credentials)) {
+      if (!User.isConstructionObject(credentials)) {
         throw new ClientAuthError("Bad login object");
       }
       const user = await User.findOne({
@@ -134,6 +130,14 @@ export function getService(): IAuthenticationService {
 
     async createSession(user) {
       if (user instanceof User) {
+        if (
+          await Session.count({
+            user: user._id,
+            status: 'active'
+          }) >= authConfig.sessionLimit
+        ) {
+          throw new ClientAuthError(`Maximum number of tokens (${authConfig.sessionLimit}) had already been issued!`);
+        }
         const session = new Session({
           user: user._id
         });
@@ -141,7 +145,7 @@ export function getService(): IAuthenticationService {
         await session.populate('user').execPopulate();
         return session;
       } else {
-        throw new Error('user is not a model or token is empty');
+        throw new Error('user is not a model');
       }
     },
 
@@ -152,7 +156,7 @@ export function getService(): IAuthenticationService {
     createUser(object) {
       return new Promise<IUserDocument>(async (resolve, reject) => {
         try {
-          if (!User.isConstructionDoc(object)) {
+          if (!User.isConstructionObject(object)) {
             return reject(new ClientAuthError("Bad registration object"));
           }
           let user = await User.findOne({username: object.username});

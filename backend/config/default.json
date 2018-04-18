@@ -26,7 +26,8 @@
         }
       }
     },
-    "jwtSecret": ">>>= is the Flash"
+    "jwtSecret": ">>>= is the Flash",
+    "sessionLimit": 5
   },
 
   "apiPath": "/api/v1",

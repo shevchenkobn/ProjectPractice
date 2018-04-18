@@ -19,7 +19,7 @@ security:
   - Bearer: []
     
 paths:
-  /games/:
+  /games/{path}:
     x-swagger-router-controller: "game.controller"
     get:
       operationId: getAll

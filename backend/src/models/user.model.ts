@@ -15,7 +15,7 @@ export interface IUserDocument extends mongoose.Document {
 }
 
 export interface IUserModel extends mongoose.Model<IUserDocument> {
-  isConstructionDoc(object: Object): boolean;
+  isConstructionObject(object: Object): boolean;
 }
 
 export interface IGoogleInfo {
@@ -159,7 +159,7 @@ userSchema.methods.checkPassword = function (password: string) {
   return bcrypt.hashSync(password, this.salt) === this.passwordHash;
 }
 
-userSchema.static('isConstructionDoc', function(object: any): any {
+userSchema.static('isConstructionObject', function(object: any): any {
   return typeof object === 'object' && typeof object.username === 'string' && typeof object.password === 'string';
 });
 
