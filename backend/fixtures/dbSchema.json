@@ -1,0 +1,58 @@
+{
+  "games": {
+    "_id": "ObjectId",
+    "board": "ObjectId of board or board itself",
+    "outcome?": {
+      "winner": "ObjectId of user"
+    },
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "stepCount": 1,
+    "playerIndex": 2,
+    "players": [
+      {
+        "userId": "ObjectId of user",
+        "role?": "ObjectId of role (clan)",
+        "status": "active|defeated|winner",
+        "dateDefeated": "//comment: date when left or defeated",
+        "cash": 9000,
+        "asset": 5000,
+        "depts": {
+          "bank": 30,
+          "1 (index of player in array)": 3
+        },
+        "cellId": 10,
+        "property": [
+          "ObjectId of cellFunction"
+        ],
+        "monopolies": {
+          "ObjectId of cellFunctionClass": "true|false (activeness)"
+        },
+        "buildingImprovemnts": {
+          "ObjectId of building": "status(level)"
+        },
+        "modifiers": [
+          "ObjectId of cellFunction.modifier"
+        ],
+        "inventory": [
+          "ObjectId of cellFunction.inventory"
+        ],
+        "mortgage": [
+          "ObjectId of mortgaged property"
+        ]
+      }
+    ]
+  },
+  "playerRoles": {
+    "_id": "ObjectId",
+    "createdAt": "mongoose",
+    "updatedAt": "mongoose",
+    "modifiers": [
+      {
+        "cash?": "1.1: number //percentage",
+        "prices?": "1.1: number //percentage",
+        "fees?": "1.1: number //percentage",
+      }
+    ]
+  }
+}

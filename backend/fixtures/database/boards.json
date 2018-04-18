@@ -1,0 +1,287 @@
+[
+  {
+    "_id": "ObjectId: enFMBoard",
+    "rules": {
+      "initialCash": 1500,
+      "randomizeEventOptions": true,
+      "turnTime": {
+        "limit": 50000,
+        "defaultOption": 0
+      },
+      "playerLimits": {
+        "max": 6
+      },
+      "hasRoles": true,
+      "dices": [
+        {
+          "max": 6
+        },
+        {
+          "max": 6
+        }
+      ],
+      "building": {
+        "mortgage": {
+          "price": 0.5,
+          "liftInterestPledgePercent": 0.1,
+          "sell": {
+            "pricePercentPay": 0.1
+          }
+        },
+        "improvements": {
+          "type": "level",
+          "monopoly": true,
+          "sell": {
+            "price": 0.5,
+            "downgrade": true
+          }
+        },
+        "fee": {
+          "fromMortgaged": false,
+          "monopoly": {
+            "factor": 2,
+            "mortgageBreaks": true
+          },
+          "improvementsOverride": true
+        }
+      },
+      "sell": {
+        "buyRequest": true,
+        "sellRequest": true,
+        "responseTimeout": 100000,
+        "minPrice": 0,
+        "objects": [
+          "building",
+          "inventory"
+        ]
+      },
+      "events": [
+        {
+          "triggers": [
+            "turn.throw:eq"
+          ],
+          "action": {
+            "throw": "repeat"
+          }
+        },
+        {
+          "triggers": [
+            "turn.throw:eq:3"
+          ],
+          "action": {
+            "goto": [
+              {
+                "boardId": "ObjectId: enFMBoard",
+                "cellId": 10
+              }
+            ]
+          }
+        },
+        {
+          "triggers": [
+            "turn.purchase:omit"
+          ],
+          "action": {
+            "auction": {
+              "triggerId": 0,
+              "object": "trigger",
+              "price": {
+                "start": "anyPlayer"
+              },
+              "wait": 15000
+            }
+          }
+        }
+      ],
+      "defeat": [
+        {
+          "type": "leave"
+        },
+        {
+          "type": "bankruptcy",
+          "assets": [
+            "cash",
+            "building",
+            "building.improvements",
+            "inventory"
+          ],
+          "deptAction": {
+            "bank": {
+              "inventory": "auction",
+              "cash": "pass",
+              "building.improvements": "pass",
+              "building": "auction"
+            },
+            "player": {
+              "inventory": "pass",
+              "building.improvements": "sell",
+              "cash": "pass",
+              "building": "pass"
+            }
+          }
+        }
+      ]
+    },
+    "cells": [
+      {
+        "cellId": 0,
+        "function": "ObjectId: start"
+      },
+      {
+        "cellId": 1,
+        "function": "ObjectId: silverMine"
+      },
+      {
+        "cellId": 2,
+        "function": "ObjectId: event"
+      },
+      {
+        "cellId": 3,
+        "function": "ObjectId: goldenMine"
+      },
+      {
+        "cellId": 4,
+        "function": "ObjectId: mountainPass"
+      },
+      {
+        "cellId": 5,
+        "function": "ObjectId: southPort"
+      },
+      {
+        "cellId": 6,
+        "function": "ObjectId: onsen"
+      },
+      {
+        "cellId": 7,
+        "function": "ObjectId: chance"
+      },
+      {
+        "cellId": 8,
+        "function": "ObjectId: yukaku"
+      },
+      {
+        "cellId": 9,
+        "function": "ObjectId: kabukiTheatre"
+      },
+      {
+        "cellId": 10,
+        "function": "ObjectId: prison"
+      },
+      {
+        "cellId": 11,
+        "function": "ObjectId: pier"
+      },
+      {
+        "cellId": 12,
+        "function": "ObjectId: kanmonStrait"
+      },
+      {
+        "cellId": 13,
+        "function": "ObjectId: sawmill"
+      },
+      {
+        "cellId": 14,
+        "function": "ObjectId: quarry"
+      },
+      {
+        "cellId": 15,
+        "function": "ObjectId: westPort"
+      },
+      {
+        "cellId": 16,
+        "function": "ObjectId: dojo"
+      },
+      {
+        "cellId": 17,
+        "function": "ObjectId: event"
+      },
+      {
+        "cellId": 18,
+        "function": "ObjectId: ninjaOutpost"
+      },
+      {
+        "cellId": 19,
+        "function": "ObjectId: shinsengumiStronghold"
+      },
+      {
+        "cellId": 20
+      },
+      {
+        "cellId": 21,
+        "function": "ObjectId: forge"
+      },
+      {
+        "cellId": 22,
+        "function": "ObjectId: chance"
+      },
+      {
+        "cellId": 23,
+        "function": "ObjectId: stable"
+      },
+      {
+        "cellId": 24,
+        "function": "ObjectId: mill"
+      },
+      {
+        "cellId": 25,
+        "function": "ObjectId: northPort"
+      },
+      {
+        "cellId": 26,
+        "function": "ObjectId: todaiJi"
+      },
+      {
+        "cellId": 27,
+        "function": "ObjectId: kiiChannel"
+      },
+      {
+        "cellId": 28,
+        "function": "ObjectId: kinkakuJi"
+      },
+      {
+        "cellId": 29,
+        "function": "ObjectId: itsukushima"
+      },
+      {
+        "cellId": 30,
+        "function": "ObjectId: gotoPrison"
+      },
+      {
+        "cellId": 31,
+        "function": "ObjectId: inuyama"
+      },
+      {
+        "cellId": 32,
+        "function": "ObjectId: osaka"
+      },
+      {
+        "cellId": 33,
+        "function": "ObjectId: event"
+      },
+      {
+        "cellId": 34,
+        "function": "ObjectId: himeji"
+      },
+      {
+        "cellId": 35,
+        "function": "ObjectId: eastPort"
+      },
+      {
+        "cellId": 36,
+        "function": "ObjectId: chance"
+      },
+      {
+        "cellId": 37,
+        "function": "ObjectId: ironOre"
+      },
+      {
+        "cellId": 38,
+        "function": "ObjectId: trap"
+      },
+      {
+        "cellId": 39,
+        "function": "ObjectId: brimstone"
+      }
+    ]
+  }
+]

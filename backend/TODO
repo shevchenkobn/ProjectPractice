@@ -1,0 +1,6 @@
+use config for routing and authentication
+
+implement callback for google
+
+postponed: implement async password workaround for user model for better productivity
+

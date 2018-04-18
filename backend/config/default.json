@@ -1,0 +1,41 @@
+{
+  "protocol": "http",
+  "host": "127.0.0.1",
+  "port": 3000,
+
+  "mongodb": {
+    "host": "mongodb://127.0.0.1",
+    "port": 27017,
+    "dbName": "monopoly"
+  },
+
+  "auth": {
+    "basePath": "/auth",
+    "basic": {
+      "issueToken": "/",
+      "register": "/register",
+      "revokeToken": "/revoke"
+    },
+    "oauth": {
+      "google": {
+        "path": "/google",
+        "strategyOptions": {
+          "clientID": "681857690541-jdidfn22iq5cgkrc775u5tp8d86acnke.apps.googleusercontent.com",
+          "clientSecret": "z3ri9d39enDzxcuA4VQCoGYP",
+          "callbackURL": "/callback"
+        }
+      }
+    },
+    "jwtSecret": ">>>= is the Flash"
+  },
+
+  "apiPath": "/api/v1",
+  "swaggerConfig": "./config/swagger.yml",
+  
+  "socketIO": {
+    "baseUrl": "/socket.io",
+    "apiSwitch": "/games"
+  },
+  
+  "uploadDir": "./uploads"
+}
