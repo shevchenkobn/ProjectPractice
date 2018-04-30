@@ -44,7 +44,7 @@
     "@types/swagger-tools": "^0.10.6",
     "@types/yamljs": "^0.2.30",
     "app-root-path": "^2.0.1",
-    "bcrypt": "^1.0.3",
+    "bcrypt": "^2.0.1",
     "body-parser": "^1.18.2",
     "config": "^1.30.0",
     "cors": "^2.8.4",
