@@ -2,6 +2,10 @@ import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
 import { IUserDocument } from './user.model';
 
+/**
+ * Interfaces part
+ */
+
 export interface ISessionDocument extends Document {
   user: Schema.Types.ObjectId | IUserDocument;
   gameId: Schema.Types.ObjectId;
@@ -11,6 +15,10 @@ export interface ISessionDocument extends Document {
 }
 
 export interface ISessionModel extends Model<ISessionDocument> {}
+
+/**
+ * Schema part
+ */
 
 const sessionSchema = new Schema({
   user: {

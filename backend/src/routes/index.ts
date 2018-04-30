@@ -8,7 +8,7 @@ export interface IReadyRouter {
 
 let apiRoutes: Array<IReadyRouter>;
 
-export function initialize(): Array<IReadyRouter> {
+export function getRoutes(): Array<IReadyRouter> {
   if (apiRoutes) {
     return apiRoutes;
   }

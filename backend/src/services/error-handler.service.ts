@@ -1,4 +1,4 @@
-import { ErrorRequestHandler } from "express-serve-static-core";
+import { ErrorRequestHandler, RequestHandler } from "express-serve-static-core";
 import { HttpError, BadRequest, InternalServerError, Forbidden } from 'http-errors';
 
 export class ClientRequestError extends Error {}
@@ -14,3 +14,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
   res.status(err.status).json(err);
 }
+
+export const notFoundHandler: RequestHandler = (req, res) => {
+  res.status(404).json({message: "Not Found"});
+};

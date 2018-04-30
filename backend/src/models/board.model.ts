@@ -1,11 +1,87 @@
 import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
-import { EventSchema } from './cellFunction.model';
 
+/**
+ * Interfaces part
+ */
 
+export interface IRange {
+  min?: number,
+  max?: number
+}
+
+export interface IBoardEvent {
+  triggers: Array<string>
+  action: any
+}
+
+export interface IBoardDefeat {
+  type: string
+}
+
+export interface IBoardCell {
+  cellId: number,
+  function?: any//TODO: add cellfunction type
+  next?: number
+}
+
+export interface IBoardDocument extends Document {
+  "rules": {
+    "initialCash": number,
+    "randomizeEventOptions": boolean,
+    "turnTime": {
+      "limit": number,
+      "defaultOption": number
+    },
+    "playerLimits": IRange,
+    "hasRoles": boolean,
+    "dices": Array<IRange>,
+    "building": {
+      "mortgage": {
+        "price": number,
+        "liftInterestPledgePercent": number,
+        "sell": {
+          "pricePercentPay": number
+        }
+      },
+      "improvements": {
+        "type": "string",
+        "monopoly": boolean,
+        "sell": {
+          "price": number,
+          "downgrade": boolean
+        }
+      },
+      "fee": {
+        "fromMortgaged": boolean,
+        "monopoly": {
+          "factor": number,
+          "mortgageBreaks": boolean
+        },
+        "improvementsOverride": boolean
+      }
+    },
+    "sell": {
+      "buyRequest": boolean,
+      "sellRequest": boolean,
+      "responseTimeout"?: number,
+      "minPrice": number,
+      "objects": Array<string>
+    },
+    "events": Array<IBoardEvent>,
+    "defeat": Array<IBoardDefeat>
+  },
+  "cells": Array<IBoardCell>
+}
+
+export interface IBoardModel extends Model<IBoardDocument> {}
+
+/**
+ * Schema part
+ */
 
 const rangeSchema = new Schema({
-  "max": {
+  max: {
     type: Number,
     required: true,
     min: 1
@@ -28,7 +104,28 @@ const defeatSchema = new Schema({
 });
 
 const cellSchema = new Schema({
-
+  cellId: {
+    type: Number,
+    required: true,
+    min: 0,
+    validate : {
+      validator : Number.isInteger
+    }
+  },
+  function: {
+    type: Schema.Types.ObjectId,
+    ref: 'CellFunction'
+  },
+  next: {
+    type: Number,
+    required: true,
+    min: 0,
+    validate : {
+      validator : Number.isInteger
+    }
+  }
+}, {
+  _id: false
 });
 
 const improvementsSchema = new Schema({
@@ -50,6 +147,19 @@ const improvementsSchema = new Schema({
       type: Boolean,
       required: true
     }
+  }
+}, {
+  _id: false
+});
+
+const eventSchema = new Schema({
+  triggers: {
+    type: [String],
+    required: true
+  },
+  action: {
+    type: Object,
+    required: true
   }
 }, {
   _id: false
@@ -121,8 +231,7 @@ const boardSchema = new Schema({
         required: true
       },
       "responseTimeout": {
-        type: Boolean,
-        required: true
+        type: Number
       },
       "minPrice": {
         type: Number,
@@ -136,10 +245,49 @@ const boardSchema = new Schema({
         ]
       }
     },
-    "events": [EventSchema],
-    defeat: defeatSchema
+    "events": [eventSchema],
+    defeat: [defeatSchema]
   },
-  cells: []
+  cells: [cellSchema]
 }, {
   timestamps: true
 });
+
+/**
+ * Export part
+ */
+
+export interface IBoardInitializer extends IModelInitializer<IBoardModel, IBoardDocument> {}
+
+let _modelName = 'Board';
+let Board: IBoardModel;
+let _connection: Connection | typeof mongoose;
+
+const initializer: IBoardInitializer = {
+  bindToConnection(connection, modelName = _modelName) {
+    if (Board) {
+      throw new TypeError('Board is already bound to connection');
+    }
+    _modelName = modelName;
+    _connection = connection;
+    Board = (connection as any).model(modelName, boardSchema);
+    return Board;
+  },
+
+  getModel() {
+    if (!Board) {
+      throw new TypeError('Board is not bound to connection');
+    }
+    return Board;
+  },
+  
+  isBoundToConnection(connection = _connection) {
+    return Board && connection == _connection;
+  },
+  
+  getModelName() {
+    return _modelName;
+  }
+}
+
+export default initializer;

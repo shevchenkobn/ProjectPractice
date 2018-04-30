@@ -891,7 +891,7 @@
       },
       "sellable": {
         "price": 50,
-        "fixed": false
+        "priceFixed": false
       }
     }
   },

@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
 
+/**
+ * Interfaces part
+ */
+
 export interface IUserDocument extends mongoose.Document {
   username: string;
   password?: string;
@@ -51,6 +55,10 @@ export interface IGoogleInfo {
   verified: boolean;
   domain?: string
 }
+
+/**
+ * Schema part
+ */
 
 const emailSchema = new mongoose.Schema({
   value: String,
