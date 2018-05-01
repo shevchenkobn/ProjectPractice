@@ -1,15 +1,21 @@
 import UserInitializer from './user.model';
 import SessionInitializer from './session.model';
+import BoardInitializer from './board.model';
+import CellFunctionInitializer from './cellFunction.model';
+import CellFunctionClassInitializer from './cellFunctionClass.model';
 import mongoose from 'mongoose';
 
-let models: IModels = null;
+export let models: IModels = null;
 export function initialize(connection: mongoose.Connection | typeof mongoose): IModels {
   if (models) {
-    return models;
+    throw new Error('Models are already initialized, import `models` instead')
   }
   models = {
     [UserInitializer.getModelName()]: UserInitializer.bindToConnection(connection),
-    [SessionInitializer.getModelName()]: SessionInitializer.bindToConnection(connection)
+    [SessionInitializer.getModelName()]: SessionInitializer.bindToConnection(connection),
+    [BoardInitializer.getModelName()]: BoardInitializer.bindToConnection(connection),
+    [CellFunctionInitializer.getModelName()]: CellFunctionInitializer.bindToConnection(connection),
+    [CellFunctionClassInitializer.getModelName()]: CellFunctionClassInitializer.bindToConnection(connection)
   };
   return models;
 }

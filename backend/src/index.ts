@@ -4,7 +4,7 @@ import path from 'path';
 
 import { SwaggerApp, IHandlersArray } from './app';
 import { getRoutes } from './routes/index';
-import { initialize as initializeModels } from './models';
+import { initialize as initializeModels, models as _ } from './models';
 import UserInititializer, { IUserModel } from './models/user.model';
 import { initialize as initializeMongoose, IMongoConfig, terminateSignal } from './services/database.service';
 import { initialize as initializePassport } from './services/passport.service';

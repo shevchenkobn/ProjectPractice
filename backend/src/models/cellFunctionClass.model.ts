@@ -86,7 +86,7 @@ const initializer: ICellFunctionClassInitializer = {
     }
     _modelName = modelName;
     _connection = connection;
-    CellFunctionClass = (connection as any).model(modelName, CellFunctionClass);
+    CellFunctionClass = (connection as any).model(modelName, cellFunctionClassSchema);
     return CellFunctionClass;
   },
 
@@ -105,3 +105,5 @@ const initializer: ICellFunctionClassInitializer = {
     return _modelName;
   }
 }
+
+export default initializer;

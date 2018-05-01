@@ -187,7 +187,10 @@ const boardSchema = new Schema({
       }
     },
     "playerLimits": rangeSchema,
-    "hasRoles": true,
+    "hasRoles": {
+      type: Boolean,
+      required: true
+    },
     "dices": [rangeSchema],
     "building": {
       "mortgage": {
