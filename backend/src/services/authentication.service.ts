@@ -102,7 +102,7 @@ export function getService(): IAuthenticationService {
       const user = await User.findOne({
         username: credentials.username
       });
-      if (!(user && user.checkPassword(credentials.password))) {
+      if (!(user && await user.checkPassword(credentials.password))) {
         throw new ClientAuthError("Bad username or password");
       }
       

@@ -1,10 +1,57 @@
-const createError = require('http-errors');
-const { BadRequest, InternalServerError } = createError;
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+(async () => {
+  const schemaPi$$yuk = new Schema({
+    name: String
+  });
+  const schemaBatya = new Schema({
+    obj: {
+      obj: [{
+        oids: {
+          type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Child'
+          }],
+          required: true
+        }
+      }]
+    }
+  });
 
-const express = require('express');
-const app = express();
-var s1 = app.listen(3000);
-var s2 = app.listen(3001);
-console.log(s1 == s2);
-app.listen(3002);
-app.listen(3003);
+  const connection = mongoose.createConnection('mongodb://127.0.0.1/test');
+  const Parent = connection.model('Parent', schemaBatya);
+  const Child = connection.model('Child', schemaPi$$yuk);
+
+  const children = [];
+  for (let i = 0; i < 4; i++) {
+    const child = new Child({
+      name: 'child#' + (i + 1)
+    });
+    await child.save();
+    children.push(child._id);
+  }
+  let parent = new Parent({
+    obj: {
+      obj: [{
+        oids: children.slice()
+      }]
+    }
+  });
+  await parent.save();
+  const parentId = parent._id;
+  delete parent;
+  await sleep(100);
+
+  parent = await Parent.findById(parentId);
+  await parent.populate({
+    path: 'obj.obj.0.oids'
+  }).execPopulate();
+  debugger;
+  connection.close();
+})();
+
+async function sleep(ms) {
+  return new Promise((res) => {
+    setInterval(res, ms);
+  });
+}

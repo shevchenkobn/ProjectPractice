@@ -1,8 +1,9 @@
 import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
+import { ICellFunctionDocument } from './cellFunction.model';
 
 /**
- * Interfaces part
+ * Interfaces section
  */
 
 export interface IRange {
@@ -21,7 +22,7 @@ export interface IBoardDefeat {
 
 export interface IBoardCell {
   cellId: number,
-  function?: any//TODO: add cellfunction type
+  function?: Schema.Types.ObjectId | ICellFunctionDocument
   next?: number
 }
 
@@ -77,7 +78,7 @@ export interface IBoardDocument extends Document {
 export interface IBoardModel extends Model<IBoardDocument> {}
 
 /**
- * Schema part
+ * Schema section
  */
 
 const rangeSchema = new Schema({
@@ -254,7 +255,7 @@ const boardSchema = new Schema({
 });
 
 /**
- * Export part
+ * Export section
  */
 
 export interface IBoardInitializer extends IModelInitializer<IBoardModel, IBoardDocument> {}
@@ -282,7 +283,7 @@ const initializer: IBoardInitializer = {
   },
   
   isBoundToConnection(connection = _connection) {
-    return Board && connection == _connection;
+    return Board && _connection && connection == _connection;
   },
   
   getModelName() {

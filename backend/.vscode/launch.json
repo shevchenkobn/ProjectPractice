@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Tests File",
-      "program": "${workspaceFolder}/fixtures/populate",
+      "program": "${workspaceFolder}/tests/file",
       "skipFiles": [
         "node_modules/**/*.js",
         "<node_internals>/**/*.js"

@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { IModelInitializer } from './index';
 
 /**
- * Interfaces part
+ * Interfacessectionpart
  */
 
 export interface IUserDocument extends mongoose.Document {
@@ -15,7 +15,7 @@ export interface IUserDocument extends mongoose.Document {
   google?: IGoogleInfo;
   createdAt: Date;
   updatedAt: Date;
-  checkPassword(password: string): boolean;
+  checkPassword(password: string): Promise<boolean>;
 }
 
 export interface IUserModel extends mongoose.Model<IUserDocument> {
@@ -162,9 +162,9 @@ userSchema.virtual('password')
     return this._password;
   });
 
-userSchema.methods.checkPassword = function (password: string) {
+userSchema.methods.checkPassword = async function (password: string) {
   if (!(password && this.passwordHash)) return false;
-  return bcrypt.hashSync(password, this.salt) === this.passwordHash;
+  return (await bcrypt.hash(password, this.salt)) === this.passwordHash;
 }
 
 userSchema.static('isConstructionObject', function(object: any): any {
@@ -174,7 +174,7 @@ userSchema.static('isConstructionObject', function(object: any): any {
 let _modelName = 'User';
 
 /**
- * Export part
+ * Export section
  */
 
 let User: IUserModel;
@@ -201,7 +201,7 @@ const initializer: IUserInitializer = {
   },
 
   isBoundToConnection(connection = _connection): boolean {
-    return User && connection === _connection;
+    return User && _connection && connection === _connection;
   },
 
   getModelName() {

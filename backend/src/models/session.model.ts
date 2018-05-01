@@ -3,12 +3,12 @@ import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
 import { IUserDocument } from './user.model';
 
 /**
- * Interfaces part
+ * Interfaces section
  */
 
 export interface ISessionDocument extends Document {
   user: Schema.Types.ObjectId | IUserDocument;
-  gameId: Schema.Types.ObjectId;
+  game: Schema.Types.ObjectId | any//TODO: add game interface;
   createdAt: Date;
   updatedAt: Date;
   status: 'active' | 'outdated';
@@ -17,7 +17,7 @@ export interface ISessionDocument extends Document {
 export interface ISessionModel extends Model<ISessionDocument> {}
 
 /**
- * Schema part
+ * Schema section
  */
 
 const sessionSchema = new Schema({
@@ -48,7 +48,7 @@ const sessionSchema = new Schema({
 });
 
 /**
- * Export part
+ * Export section
  */
 
 let _modelName = 'Session';
@@ -76,7 +76,7 @@ const initializer: ISessionInitializer = {
   },
 
   isBoundToConnection(connection = _connection) {
-    return Session && connection === _connection;
+    return Session && _connection && connection === _connection;
   },
 
   getModelName() {

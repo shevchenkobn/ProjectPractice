@@ -1,8 +1,9 @@
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
 import { IModelInitializer } from '.';
+import { ICellFunctionClassDocument } from './cellFunctionClass.model';
 
 /**
- * Interfaces part
+ * Interfaces section
  */
 
 export interface IImprovement {
@@ -14,7 +15,7 @@ export interface IOption {
 }
 
 export interface ICellFunctionDocument extends Document {
-  class: "event" | 'building' | 'modifier' | 'inventory',
+  class?: Schema.Types.ObjectId | ICellFunctionClassDocument
   event?: {
     triggers: Array<string>,
     action?: any
@@ -44,7 +45,7 @@ export interface ICellFunctionDocument extends Document {
 export interface ICellFunctionModel extends Model<ICellFunctionDocument> {}
 
 /**
- * Schema part
+ * Schema section
  */
 
 const improvementSchema = new Schema({
@@ -152,9 +153,8 @@ const eventSchema = new Schema({
 
 const cellFunctionSchema = new Schema({
   class: {
-    type: String,
-    required: true,
-    enum: ["event", 'building', 'modifier', 'inventory']
+    type: Schema.Types.ObjectId,
+    ref: 'CellFunctionClass'
   },
   event: {
     type: eventSchema,
@@ -177,7 +177,7 @@ const cellFunctionSchema = new Schema({
 });
 
 /**
- * Export part
+ * Export section
  */
 
  export interface ICellFunctionInitializer extends IModelInitializer<ICellFunctionModel, ICellFunctionDocument> {}
@@ -189,7 +189,7 @@ let _connection: Connection | typeof mongoose;
 const initializer: ICellFunctionInitializer = {
   bindToConnection(connection, modelName = _modelName) {
     if (CellFunction) {
-      throw new TypeError('Board is already bound to connection');
+      throw new TypeError('CellFunction is already bound to connection');
     }
     _modelName = modelName;
     _connection = connection;
@@ -199,13 +199,13 @@ const initializer: ICellFunctionInitializer = {
 
   getModel() {
     if (!CellFunction) {
-      throw new TypeError('Board is not bound to connection');
+      throw new TypeError('CellFunction is not bound to connection');
     }
     return CellFunction;
   },
   
   isBoundToConnection(connection = _connection) {
-    return CellFunction && connection == _connection;
+    return CellFunction && _connection && connection == _connection;
   },
   
   getModelName() {
