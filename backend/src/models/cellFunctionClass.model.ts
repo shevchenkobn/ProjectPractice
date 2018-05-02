@@ -67,6 +67,9 @@ const cellFunctionClassSchema = new Schema({
       required: false
     }
   }
+}, {
+  timestamps: true,
+  collection: 'cellFunctionClasses'
 });
 
 /**

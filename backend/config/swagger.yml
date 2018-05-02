@@ -5,9 +5,11 @@ info:
   version: 1.0.0
 
 host: localhost:3000
-basePath: "/api/v1"
+basePath: /api/v1
 schemes:
   - http
+consumes:
+  - application/json
 produces:
   - application/json
 securityDefinitions:
@@ -19,8 +21,8 @@ security:
   - Bearer: []
     
 paths:
-  /boards/:
-    x-swagger-router-controller: "boards.controller"
+  /boards:
+    x-swagger-router-controller: board.controller
     get:
       operationId: getBoards
       summary: Get all available-to-play boards
@@ -35,26 +37,43 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /boards/{boardId}/{modifier}:
-    x-swagger-router-controller: "boards.controller"
+  /boards/{boardId}:
+    x-swagger-router-controller: board.controller
+    parameters:
+      - in: path
+        name: boardId
+        required: true
+        type: string
+        pattern: '^[A-Fa-f\d]{24}$'
     get:
-      operationId: getBoards
-      summary: Get board by id
+      operationId: getBoard
+      summary: Get board by ObjectId
+      responses:
+        200:
+          description: OK
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
+
+  /boards/{boardId}/{modifier}:
+    x-swagger-router-controller: board.controller
+    parameters:
+      - in: path
+        name: boardId
+        required: true
+        type: string
+        pattern: '^[A-Fa-f\d]{24}$'
+      - in: path
+        name: modifier
+        required: true
+        type: string
+        enum: ['add-cell-functions']
+    get:
+      operationId: getBoard
+      summary: Get board by ObjectId with functions for cells
       description: >
-       Returns a board adding functions to cells.
-      parameters:
-        - in: path
-          name: boardId
-          required: true
-          schema:
-            type: string
-            pattern: ^[A-Fa-f\d]{24}$
-        - in: path
-          name: modifier
-          required: false
-          schema:
-            type: string
-            enum: ['add-cell-functions']
+       Returns a board and add functions to cells.
       responses:
         200:
           description: OK

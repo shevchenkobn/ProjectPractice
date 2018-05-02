@@ -122,7 +122,7 @@ const inventorySchema = new Schema({
   _id: false
 })
 
-const optionSchema = new Schema({
+const optionSchema = new Schema(<any>{
   optionId: {
     type: Number,
     min: 0,
@@ -173,7 +173,8 @@ const cellFunctionSchema = new Schema({
     required: false
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'cellFunctions'
 });
 
 /**

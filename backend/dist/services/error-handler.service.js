@@ -19,4 +19,8 @@ exports.errorHandler = (err, req, res, next) => {
     }
     res.status(err.status).json(err);
 };
+exports.notFoundHandler = (req, res) => {
+    const err = new http_errors_1.NotFound();
+    res.status(err.status).json(err);
+};
 //# sourceMappingURL=error-handler.service.js.map

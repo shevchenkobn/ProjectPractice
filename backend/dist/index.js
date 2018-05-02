@@ -1,7 +1,7 @@
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("config"));
 const app_root_path_1 = __importDefault(require("app-root-path"));
@@ -20,10 +20,10 @@ let dbConnection = database_service_1.initialize(mongoConfig);
 (async () => {
     dbConnection = await dbConnection;
     const models = models_1.initialize(dbConnection);
-    const passport = passport_service_1.initialize(models[user_model_1.default.getModelName()]);
+    const passport = passport_service_1.initialize(user_model_1.default.getModel());
     const middlewares = {
         before: [passport.initialize()],
-        after: [error_handler_service_1.errorHandler]
+        after: [error_handler_service_1.errorHandler, error_handler_service_1.notFoundHandler]
     };
     const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
     const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
@@ -32,7 +32,7 @@ let dbConnection = database_service_1.initialize(mongoConfig);
             express: {
                 middlewares,
                 uploadDir,
-                routes: index_1.initialize()
+                routes: index_1.getRoutes()
             },
             socketio: socketio_api_1.getConfig()
         },
@@ -45,7 +45,7 @@ let dbConnection = database_service_1.initialize(mongoConfig);
                 controllers: path_1.default.resolve(__dirname, './rest-api/controllers'),
             },
             validatorOptions: {
-                validateResponse: true
+                validateResponse: false
             }
         }
     });

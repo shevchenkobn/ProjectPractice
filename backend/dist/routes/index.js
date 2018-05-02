@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_route_1 = require("./auth.route");
 let apiRoutes;
-function initialize() {
+function getRoutes() {
     if (apiRoutes) {
         return apiRoutes;
     }
@@ -10,5 +10,5 @@ function initialize() {
     apiRoutes.push(auth_route_1.initialize());
     return apiRoutes;
 }
-exports.initialize = initialize;
+exports.getRoutes = getRoutes;
 //# sourceMappingURL=index.js.map

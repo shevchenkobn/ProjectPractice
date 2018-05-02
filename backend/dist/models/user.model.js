@@ -1,10 +1,13 @@
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+/**
+ * Schema part
+ */
 const emailSchema = new mongoose_1.default.Schema({
     value: String,
     type: {
@@ -103,17 +106,17 @@ userSchema.virtual('password')
     .get(function () {
     return this._password;
 });
-userSchema.methods.checkPassword = function (password) {
+userSchema.methods.checkPassword = async function (password) {
     if (!(password && this.passwordHash))
         return false;
-    return bcrypt_1.default.hashSync(password, this.salt) === this.passwordHash;
+    return (await bcrypt_1.default.hash(password, this.salt)) === this.passwordHash;
 };
-userSchema.static('isConstructionDoc', function (object) {
+userSchema.static('isConstructionObject', function (object) {
     return typeof object === 'object' && typeof object.username === 'string' && typeof object.password === 'string';
 });
 let _modelName = 'User';
 /**
- * Export part
+ * Export section
  */
 let User;
 let _connection;
@@ -134,7 +137,7 @@ const initializer = {
         return User;
     },
     isBoundToConnection(connection = _connection) {
-        return User && connection === _connection;
+        return User && _connection && connection === _connection;
     },
     getModelName() {
         return _modelName;

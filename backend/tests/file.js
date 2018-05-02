@@ -4,16 +4,19 @@ const { Schema } = mongoose;
   const schemaPi$$yuk = new Schema({
     name: String
   });
+  const nestedSchema = new Schema({
+    oids: {
+      type: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Child'
+      }],
+      required: true
+    }
+  });
   const schemaBatya = new Schema({
     obj: {
       obj: [{
-        oids: {
-          type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Child'
-          }],
-          required: true
-        }
+        oids: nestedSchema
       }]
     }
   });
@@ -43,9 +46,7 @@ const { Schema } = mongoose;
   await sleep(100);
 
   parent = await Parent.findById(parentId);
-  await parent.populate({
-    path: 'obj.obj.0.oids'
-  }).execPopulate();
+  await parent.populate('obj.obj.0.oids').execPopulate();
   debugger;
   connection.close();
 })();

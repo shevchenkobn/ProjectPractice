@@ -1,5 +1,5 @@
 import { IModelInitializer } from './index';
-import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
+import mongoose, { Types, Schema, Connection, Model, Document } from 'mongoose';
 import { ICellFunctionDocument } from './cellFunction.model';
 
 /**
@@ -22,7 +22,7 @@ export interface IBoardDefeat {
 
 export interface IBoardCell {
   cellId: number,
-  function?: Schema.Types.ObjectId | ICellFunctionDocument
+  function?: Types.ObjectId | ICellFunctionDocument
   next?: number
 }
 
@@ -72,7 +72,8 @@ export interface IBoardDocument extends Document {
     "events": Array<IBoardEvent>,
     "defeat": Array<IBoardDefeat>
   },
-  "cells": Array<IBoardCell>
+  "cells": Array<IBoardCell & Document>,
+  addCellFunctions(): Promise<void>;
 }
 
 export interface IBoardModel extends Model<IBoardDocument> {}
@@ -104,7 +105,7 @@ const defeatSchema = new Schema({
   _id: false
 });
 
-const cellSchema = new Schema({
+const cellSchema = new Schema(<any>{
   cellId: {
     type: Number,
     required: true,
@@ -249,13 +250,47 @@ const boardSchema = new Schema({
         ]
       }
     },
-    "events": [eventSchema],
-    defeat: [defeatSchema]
+    "events": {
+      type: [eventSchema],
+      required: false
+    },
+    defeat: {
+      type: [defeatSchema],
+      required: true
+    }
   },
-  cells: [cellSchema]
+  cells: {
+    type: [cellSchema],
+    required: true
+  }
 }, {
-  timestamps: true
+  timestamps: true,
+  collection: 'boards'
 });
+
+boardSchema.methods.addCellFunctions = async function(this: IBoardDocument) {
+  const pathPieces = ['cells.', '.function'];
+  for (let i = 0; i < this.cells.length; i++) {
+    this.populate(pathPieces.join(i.toString()));
+  }
+  await this.execPopulate();
+  // if (!CellFunction) {
+  //   CellFunction = CellFunctionInitializer.getModel();
+  // }
+  // const promises = [];
+  // for (let i = 0; i < this.cells.length; i++) {
+  //   if (this.cells[i].function instanceof Types.ObjectId) {
+  //     promises[i] = CellFunction.findById(this.cells[i].function.toString());
+  //   }
+  // }
+  // const functions = await Promise.all(promises);
+  // // console.log(functions);
+  // for (let i = 0; i < functions.length; i++) {
+  //   if (functions[i]) {
+  //     this.cells[i].function = functions[i];
+  //   }
+  // }
+};
 
 /**
  * Export section

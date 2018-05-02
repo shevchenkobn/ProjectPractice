@@ -1,7 +1,7 @@
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = __importDefault(require("../models/user.model"));
@@ -50,13 +50,13 @@ function getService() {
             };
         },
         async getNewSession(credentials) {
-            if (!User.isConstructionDoc(credentials)) {
+            if (!User.isConstructionObject(credentials)) {
                 throw new ClientAuthError("Bad login object");
             }
             const user = await User.findOne({
                 username: credentials.username
             });
-            if (!(user && user.checkPassword(credentials.password))) {
+            if (!(user && await user.checkPassword(credentials.password))) {
                 throw new ClientAuthError("Bad username or password");
             }
             return await service.createSession(user);
@@ -80,6 +80,12 @@ function getService() {
         },
         async createSession(user) {
             if (user instanceof User) {
+                if (await Session.count({
+                    user: user._id,
+                    status: 'active'
+                }) >= exports.authConfig.sessionLimit) {
+                    throw new ClientAuthError(`Maximum number of tokens (${exports.authConfig.sessionLimit}) had already been issued!`);
+                }
                 const session = new Session({
                     user: user._id
                 });
@@ -88,7 +94,7 @@ function getService() {
                 return session;
             }
             else {
-                throw new Error('user is not a model or token is empty');
+                throw new Error('user is not a model');
             }
         },
         /**
@@ -98,7 +104,7 @@ function getService() {
         createUser(object) {
             return new Promise(async (resolve, reject) => {
                 try {
-                    if (!User.isConstructionDoc(object)) {
+                    if (!User.isConstructionObject(object)) {
                         return reject(new ClientAuthError("Bad registration object"));
                     }
                     let user = await User.findOne({ username: object.username });

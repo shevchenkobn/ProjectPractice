@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+/**
+ * Schema section
+ */
 const sessionSchema = new mongoose_1.Schema({
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -28,7 +31,7 @@ const sessionSchema = new mongoose_1.Schema({
     }
 });
 /**
- * Export part
+ * Export section
  */
 let _modelName = 'Session';
 let Session;
@@ -50,7 +53,7 @@ const initializer = {
         return Session;
     },
     isBoundToConnection(connection = _connection) {
-        return Session && connection === _connection;
+        return Session && _connection && connection === _connection;
     },
     getModelName() {
         return _modelName;
