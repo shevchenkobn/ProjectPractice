@@ -19,30 +19,45 @@ security:
   - Bearer: []
     
 paths:
-  /games/{path}:
-    x-swagger-router-controller: "game.controller"
+  /boards/:
+    x-swagger-router-controller: "boards.controller"
     get:
-      operationId: getAll
-      summary: ...
-      description: ...
-      produces:
-        - application/json
-      parameters:
-        - name: path
-          in: path
-          description: ...
-          required: true
-          type: integer
-        - name: q
-          in: query
-          description: ...
-          required: false
-          type: string
+      operationId: getBoards
+      summary: Get all available-to-play boards
+      description: >
+       Returns an array of boards WITHOUT adding functions to cells.
+       To do so, get a single board.
       responses:
         200:
           description: OK
+        default:
+          description: Invalid request
           schema:
-            $ref: "#/definitions/Game"
+            $ref: "#/definitions/Error"
+
+  /boards/{boardId}/{modifier}:
+    x-swagger-router-controller: "boards.controller"
+    get:
+      operationId: getBoards
+      summary: Get board by id
+      description: >
+       Returns a board adding functions to cells.
+      parameters:
+        - in: path
+          name: boardId
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Fa-f\d]{24}$
+        - in: path
+          name: modifier
+          required: false
+          schema:
+            type: string
+            enum: ['add-cell-functions']
+      responses:
+        200:
+          description: OK
         default:
           description: Invalid request
           schema:
@@ -55,33 +70,4 @@ definitions:
         type: string
     required:
       - message
-  Element:
-    properties:
-      type: 
-        type: string
-        minLength: 2
-      code: 
-        type: integer
-        minimum: 0
-      array:
-        type: array
-        items:
-          type: 
-            - integer
-            - string
-        maxItems: 4
-  Game:
-    properties:
-      element:
-        $ref: "#/definitions/Element"
-      elements:
-        type: array
-        items:
-          $ref: "#/definitions/Element"
-      req:
-        type: string
-    required:
-      - element
-      - elements
-
       

@@ -8,7 +8,7 @@ import { ICellFunctionDocument } from './cellFunction.model';
 
 export interface ICellFunctionClassDocument extends Document {
   type: 'building',
-  function: Array<Schema.Types.ObjectId> | Array<ICellFunctionDocument>,
+  functions: Array<Schema.Types.ObjectId> | Array<ICellFunctionDocument>,
   descriptor: {
     improvements?: {
       price: number
