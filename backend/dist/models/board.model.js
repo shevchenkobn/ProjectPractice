@@ -1,6 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = require("mongoose");
+const mongoose_1 = __importDefault(require("mongoose"));
+/**
+ * Interfaces section
+ */
+const _ = mongoose_1.default.Model;
 /**
  * Schema section
  */
@@ -190,6 +197,22 @@ boardSchema.methods.addCellFunctions = async function () {
         this.populate(pathPieces.join(i.toString()));
     }
     await this.execPopulate();
+    // if (!CellFunction) {
+    //   CellFunction = CellFunctionInitializer.getModel();
+    // }
+    // const promises = [];
+    // for (let i = 0; i < this.cells.length; i++) {
+    //   if (this.cells[i].function instanceof Types.ObjectId) {
+    //     promises[i] = CellFunction.findById(this.cells[i].function.toString());
+    //   }
+    // }
+    // const functions = await Promise.all(promises);
+    // // console.log(functions);
+    // for (let i = 0; i < functions.length; i++) {
+    //   if (functions[i]) {
+    //     this.cells[i].function = functions[i];
+    //   }
+    // }
 };
 let _modelName = 'Board';
 let Board;

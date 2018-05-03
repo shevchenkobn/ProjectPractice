@@ -1,11 +1,12 @@
 import { IModelInitializer } from './index';
-import mongoose, { Types, Schema, Connection, Model, Document } from 'mongoose';
+import { Types, Schema, Connection, Model, Document } from 'mongoose';
+import mongoose from 'mongoose';
 import { ICellFunctionDocument } from './cellFunction.model';
 
 /**
  * Interfaces section
  */
-
+const _  = mongoose.Model
 export interface IRange {
   min?: number,
   max?: number
