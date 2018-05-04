@@ -29,6 +29,7 @@ exports.errorHandler = (err, req, res, next) => {
     else {
         err = new http_errors_1.InternalServerError(err.message);
     }
+    console.error(err);
     res.status(err.status).json(err);
 };
 exports.notFoundHandler = (req, res) => {

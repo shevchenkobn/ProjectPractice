@@ -40,16 +40,16 @@ paths:
         maxItems: 3
       - in: query
         name: offset
-        required: false
         type: integer
         minimum: 0
         maximum: 10000
+        default: 0
       - in: query
         name: limit
-        required: false
         type: integer
-        minimum: 0
+        minimum: 1
         maximum: 1000
+        default: 1000
     get:
       operationId: getBoards
       summary: Get all available-to-play boards
@@ -133,6 +133,46 @@ paths:
           description: Invalid request
           schema:
             $ref: "#/definitions/Error"
+
+  # /games/:
+  #   x-swagger-router-controller: game.controller
+  #   get:
+  #     operationId: getGames
+  #     summary: Get games according to parameters
+  #     parameters:
+  #       - in: query
+  #         name: filter
+  #         required: false
+  #         type: string
+  #       - in: query
+  #         name: sort
+  #         required: false
+  #         type: array
+  #         collectionFormat: csv
+  #         uniqueItems: true
+  #         items:
+  #           type: string
+  #         minItems: 1
+  #         maxItems: 3
+  #       - in: query
+  #         name: offset
+  #         type: integer
+  #         minimum: 0
+  #         maximum: 10000
+  #         default: 0
+  #       - in: query
+  #         name: limit
+  #         type: integer
+  #         minimum: 1
+  #         maximum: 1000
+  #         default: 1000
+  #     responses:
+  #       200:
+  #         description: OK
+  #       default:
+  #         description: Invalid request
+  #         schema:
+  #           $ref: "#/definitions/Error"
 
 definitions:
   Error:

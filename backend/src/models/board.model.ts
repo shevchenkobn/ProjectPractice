@@ -72,8 +72,8 @@ export interface IBoardDocument extends Document {
     "events": Array<IBoardEvent>,
     "defeat": Array<IBoardDefeat>
   },
-  "cells": Array<IBoardCell & Document>,
-  addCellFunctions(): Promise<void>;
+  "cells": Array<IBoardCell>,
+  addCellFunctions(poolEntities?: boolean): Promise<void>;
 }
 
 export interface IBoardModel extends Model<IBoardDocument> {}
@@ -268,12 +268,37 @@ const boardSchema = new Schema({
   collection: 'boards'
 });
 
-boardSchema.methods.addCellFunctions = async function(this: IBoardDocument) {
+boardSchema.methods.addCellFunctions = async function(this: IBoardDocument, poolEntities = true) {
   const pathPieces = ['cells.', '.function'];
-  for (let i = 0; i < this.cells.length; i++) {
-    this.populate(pathPieces.join(i.toString()));
+  let sharedIDs: {[objectId: string]: Array<number>};
+  if (poolEntities) {
+    sharedIDs = {};
+    for (let i = 0; i < this.cells.length; i++) {
+      if (!this.cells[i].function) {
+        continue;
+      }
+      const id = (this.cells[i].function as Types.ObjectId).toHexString();
+      if (sharedIDs[id]) {
+        sharedIDs[id].push(i);
+      } else {
+        this.populate(pathPieces.join(i.toString()));
+        sharedIDs[id] = [i];
+      }
+    }
+  } else {
+    for (let i = 0; i < this.cells.length; i++) {
+      this.populate(pathPieces.join(i.toString()));
+    }    
   }
   await this.execPopulate();
+  if (poolEntities) {
+    for (let id of Object.keys(sharedIDs)) {
+      const source = this.cells[sharedIDs[id][0]].function;
+      for (let i = 1; i < sharedIDs[id].length; i++) {
+        this.cells[sharedIDs[id][i]].function = source;
+      }
+    }
+  }
   // if (!CellFunction) {
   //   CellFunction = CellFunctionInitializer.getModel();
   // }

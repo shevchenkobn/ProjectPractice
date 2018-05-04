@@ -24,6 +24,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   } else {
     err = new InternalServerError(err.message);
   }
+  console.error(err);
   res.status(err.status).json(err);
 }
 

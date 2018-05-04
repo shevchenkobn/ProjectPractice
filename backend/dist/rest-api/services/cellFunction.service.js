@@ -7,7 +7,13 @@ const cellFunction_model_1 = __importDefault(require("../../models/cellFunction.
 const common_service_1 = require("./common.service");
 const CellFunctionClass = cellFunction_model_1.default.getModel();
 async function findCellFunction(id, addCellFunctionClass) {
-    const cellFunction = await CellFunctionClass.findById(id);
+    let cellFunction;
+    try {
+        cellFunction = await CellFunctionClass.findById(id);
+    }
+    catch (err) {
+        common_service_1.rethrowError(err);
+    }
     if (!cellFunction) {
         throw new common_service_1.ServiceError('Invalid cell function id');
     }

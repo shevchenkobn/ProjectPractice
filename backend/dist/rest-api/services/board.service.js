@@ -6,26 +6,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const board_model_1 = __importDefault(require("../../models/board.model"));
 const common_service_1 = require("./common.service");
 const Board = board_model_1.default.getModel();
-exports.findBoards = (query, sort, limit, offset) => {
-    const options = {};
-    if (sort) {
-        options.sort = sort;
+exports.findBoards = async (filter, options) => {
+    // const query = Board.find(filter);
+    const queryOptions = {};
+    if (Array.isArray(options.sort)) {
+        queryOptions.sort = options.sort;
     }
-    if (typeof limit === 'number') {
-        options.limit = limit;
+    if (typeof options.limit === 'number') {
+        queryOptions.limit = options.limit;
     }
-    if (typeof offset === 'number') {
-        options.skip = limit;
+    if (typeof options.offset === 'number') {
+        queryOptions.skip = options.offset;
+    }
+    if (options.lean) {
+        queryOptions.lean = options.lean;
     }
     try {
-        return Board.find(query, null, options);
+        return await Board.find(filter, null, queryOptions);
     }
     catch (err) {
         common_service_1.rethrowError(err);
     }
 };
 exports.findBoard = async (id, addCellFunctions) => {
-    const board = await Board.findById(id);
+    let board;
+    try {
+        board = await Board.findById(id);
+    }
+    catch (err) {
+        common_service_1.rethrowError(err);
+    }
     if (!board) {
         throw new common_service_1.ServiceError('Invalid board id');
     }

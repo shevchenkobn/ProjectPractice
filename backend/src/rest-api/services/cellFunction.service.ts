@@ -1,11 +1,16 @@
 
 import CellFunctionInitializer, { ICellFunctionModel } from '../../models/cellFunction.model';
-import { ServiceError } from './common.service';
+import { ServiceError, rethrowError } from './common.service';
 
 const CellFunctionClass: ICellFunctionModel = CellFunctionInitializer.getModel();
 
 export async function findCellFunction(id: string, addCellFunctionClass: boolean) {
-  const cellFunction = await CellFunctionClass.findById(id);
+  let cellFunction;
+  try {
+    cellFunction = await CellFunctionClass.findById(id);
+  } catch (err) {
+    rethrowError(err);
+  }
   if (!cellFunction) {
     throw new ServiceError('Invalid cell function id');
   }
