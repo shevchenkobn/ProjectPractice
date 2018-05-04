@@ -23,6 +23,33 @@ security:
 paths:
   /boards:
     x-swagger-router-controller: board.controller
+    parameters:
+      - in: query
+        name: filter
+        required: false
+        type: string
+      - in: query
+        name: sort
+        required: false
+        type: array
+        collectionFormat: csv
+        uniqueItems: true
+        items:
+          type: string
+        minItems: 1
+        maxItems: 3
+      - in: query
+        name: offset
+        required: false
+        type: integer
+        minimum: 0
+        maximum: 10000
+      - in: query
+        name: limit
+        required: false
+        type: integer
+        minimum: 0
+        maximum: 1000
     get:
       operationId: getBoards
       summary: Get all available-to-play boards
@@ -36,7 +63,6 @@ paths:
           description: Invalid request
           schema:
             $ref: "#/definitions/Error"
-
   /boards/{boardId}:
     x-swagger-router-controller: board.controller
     parameters:
@@ -44,10 +70,16 @@ paths:
         name: boardId
         required: true
         type: string
-        pattern: '^[A-Fa-f\d]{24}$'
+      - in: query
+        name: modifier
+        required: false
+        type: string
+        enum: ['add-cell-functions']
     get:
       operationId: getBoard
-      summary: Get board by ObjectId
+      summary: Get board by ObjectId with functions for cells
+      description: >
+       Returns a board and optionally add functions to cells. It is strongly recommended to download cell function separately because several cells can reference single cell function.
       responses:
         200:
           description: OK
@@ -56,24 +88,44 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /boards/{boardId}/{modifier}:
-    x-swagger-router-controller: board.controller
+  /boards/cell-functions/{cellFunctionId}:
+    x-swagger-router-controller: cellFunction.controller
     parameters:
       - in: path
-        name: boardId
+        name: cellFunctionId
         required: true
         type: string
-        pattern: '^[A-Fa-f\d]{24}$'
-      - in: path
+      - in: query
         name: modifier
+        required: false
+        type: string
+        enum: ['add-cell-function-class']
+    get:
+      operationId: getCellFunction
+      summary: Get cell function by ObjectId and optionally include cell function class object
+      responses:
+        200:
+          description: OK
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
+
+  /boards/cell-function-classes/{cellFunctionClassId}:
+    x-swagger-router-controller: cellFunctionClass.controller
+    parameters:
+      - in: path
+        name: cellFunctionClassId
         required: true
+        type: string
+      - in: query
+        name: modifier
+        required: false
         type: string
         enum: ['add-cell-functions']
     get:
-      operationId: getBoard
-      summary: Get board by ObjectId with functions for cells
-      description: >
-       Returns a board and add functions to cells.
+      operationId: getCellFunctionClass
+      summary: Get cell function class by ObjectId and optionally include cell function objects
       responses:
         200:
           description: OK

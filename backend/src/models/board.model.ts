@@ -6,7 +6,6 @@ import { ICellFunctionDocument } from './cellFunction.model';
 /**
  * Interfaces section
  */
-const _  = mongoose.Model
 export interface IRange {
   min?: number,
   max?: number
