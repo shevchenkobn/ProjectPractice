@@ -11,15 +11,13 @@ export const getBoards: Handler = async (req, res, next) => {
     const limit = (<any>req).swagger.params.limit.value || 0;
     const filter = filterString ? prepareFilter(filterString) : {};
 
-    const boards = await findBoards(
-      {
-        filter,
-        sort,
-        limit,
-        offset,
-        lean: true
-      }
-    );
+    const boards = await findBoards({
+      filter,
+      sort,
+      limit,
+      offset,
+      lean: true
+    });
     res.json(boards);
   } catch (err) {
     if (err instanceof ServiceError) {
@@ -33,9 +31,9 @@ export const getBoards: Handler = async (req, res, next) => {
 export const getBoard: Handler = async (req, res, next) => {
   try {
     const id = (<any>req).swagger.params.boardId.value as string;
-    const addCellFunctions = (<any>req).swagger.params.modifier && (<any>req).swagger.params.modifier.value === 'add-cell-functions';
+    const populate = (<any>req).swagger.params.populate.value;
 
-    const board = await findBoard(id, addCellFunctions);
+    const board = await findBoard(id, populate);
     res.json(board);
   } catch (err) {
     if (err instanceof ServiceError) {

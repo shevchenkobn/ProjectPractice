@@ -73,10 +73,10 @@ export interface IBoardDocument extends Document {
     "defeat": Array<IBoardDefeat>
   },
   "cells": Array<IBoardCell>,
-  addCellFunctions(poolEntities?: boolean): Promise<void>;
+  extendedPopulate(paths: Array<string>, poolEntities?: boolean): Promise<void>;
 }
 
-export interface IBoardModel extends Model<IBoardDocument> {}
+export interface IBoardModel extends Model<IBoardDocument> { }
 
 /**
  * Schema section
@@ -93,8 +93,8 @@ const rangeSchema = new Schema({
     min: 1
   }
 }, {
-  _id: false
-});
+    _id: false
+  });
 
 const defeatSchema = new Schema({
   type: {
@@ -102,16 +102,16 @@ const defeatSchema = new Schema({
     required: true
   }
 }, {
-  _id: false
-});
+    _id: false
+  });
 
 const cellSchema = new Schema(<any>{
   cellId: {
     type: Number,
     required: true,
     min: 0,
-    validate : {
-      validator : Number.isInteger
+    validate: {
+      validator: Number.isInteger
     }
   },
   function: {
@@ -122,13 +122,13 @@ const cellSchema = new Schema(<any>{
     type: Number,
     required: true,
     min: 0,
-    validate : {
-      validator : Number.isInteger
+    validate: {
+      validator: Number.isInteger
     }
   }
 }, {
-  _id: false
-});
+    _id: false
+  });
 
 const improvementsSchema = new Schema({
   "type": {
@@ -151,8 +151,8 @@ const improvementsSchema = new Schema({
     }
   }
 }, {
-  _id: false
-});
+    _id: false
+  });
 
 const eventSchema = new Schema({
   triggers: {
@@ -164,8 +164,8 @@ const eventSchema = new Schema({
     required: true
   }
 }, {
-  _id: false
-});
+    _id: false
+  });
 
 const boardSchema = new Schema({
   rules: {
@@ -192,7 +192,7 @@ const boardSchema = new Schema({
       required: true,
     },
     "roles": {
-      type: [{type: Schema.Types.ObjectId, ref: 'CellFunction'}],
+      type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
       required: false,
       default: []
     },
@@ -271,34 +271,43 @@ const boardSchema = new Schema({
     required: true
   }
 }, {
-  timestamps: true,
-  collection: 'boards'
-});
+    timestamps: true,
+    collection: 'boards'
+  });
 
-boardSchema.methods.addCellFunctions = async function(this: IBoardDocument, poolEntities = true) {
+boardSchema.methods.extendedPopulate = async function (this: IBoardDocument, paths: Array<string>, poolEntities = true) {
+  if (!(paths && paths.length)) {
+    return;
+  }
+  const hasCellFunctions = paths.includes('cellFunctions');
   const pathPieces = ['cells.', '.function'];
-  let sharedIDs: {[objectId: string]: Array<number>};
-  if (poolEntities) {
-    sharedIDs = {};
-    for (let i = 0; i < this.cells.length; i++) {
-      if (!this.cells[i].function) {
-        continue;
+  let sharedIDs: { [objectId: string]: Array<number> };
+  if (hasCellFunctions) {
+    if (poolEntities) {
+      sharedIDs = {};
+      for (let i = 0; i < this.cells.length; i++) {
+        if (!(this.cells[i].function && (this.cells[i].function as Types.ObjectId).toHexString)) {
+          continue;
+        }
+        const id = (this.cells[i].function as Types.ObjectId).toHexString();
+        if (sharedIDs[id]) {
+          sharedIDs[id].push(i);
+        } else {
+          this.populate(pathPieces.join(i.toString()));
+          sharedIDs[id] = [i];
+        }
       }
-      const id = (this.cells[i].function as Types.ObjectId).toHexString();
-      if (sharedIDs[id]) {
-        sharedIDs[id].push(i);
-      } else {
+    } else {
+      for (let i = 0; i < this.cells.length; i++) {
         this.populate(pathPieces.join(i.toString()));
-        sharedIDs[id] = [i];
       }
     }
-  } else {
-    for (let i = 0; i < this.cells.length; i++) {
-      this.populate(pathPieces.join(i.toString()));
-    }    
+  }
+  if (paths.includes('roles')) {
+    this.populate('roles');
   }
   await this.execPopulate();
-  if (poolEntities) {
+  if (hasCellFunctions && poolEntities) {
     for (let id of Object.keys(sharedIDs)) {
       const source = this.cells[sharedIDs[id][0]].function;
       for (let i = 1; i < sharedIDs[id].length; i++) {
@@ -328,7 +337,7 @@ boardSchema.methods.addCellFunctions = async function(this: IBoardDocument, pool
  * Export section
  */
 
-export interface IBoardInitializer extends IModelInitializer<IBoardModel, IBoardDocument> {}
+export interface IBoardInitializer extends IModelInitializer<IBoardModel, IBoardDocument> { }
 
 let _modelName = 'Board';
 let Board: IBoardModel;
@@ -351,11 +360,11 @@ const initializer: IBoardInitializer = {
     }
     return Board;
   },
-  
+
   isBoundToConnection(connection = _connection) {
     return Board && _connection && connection == _connection;
   },
-  
+
   getModelName() {
     return _modelName;
   }

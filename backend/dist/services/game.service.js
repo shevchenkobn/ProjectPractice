@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const board_model_1 = __importDefault(require("../models/board.model"));
+const game_model_1 = __importDefault(require("../models/game.model"));
 const common_service_1 = require("./common.service");
-const Board = board_model_1.default.getModel();
-exports.findBoards = async (options) => {
+const Game = game_model_1.default.getModel();
+exports.findGames = async (options) => {
     const filter = options.filter || {};
     const queryOptions = {};
     if (Array.isArray(options.sort)) {
@@ -22,24 +22,24 @@ exports.findBoards = async (options) => {
         queryOptions.lean = options.lean;
     }
     try {
-        return await Board.find(filter, null, queryOptions);
+        return await Game.find(filter, null, queryOptions);
     }
     catch (err) {
         common_service_1.rethrowError(err);
     }
 };
-exports.findBoard = async (id, populatePaths) => {
-    let board;
+exports.findGame = async (id, populatePaths) => {
+    let game;
     try {
-        board = await Board.findById(id);
+        game = await Game.findById(id);
     }
     catch (err) {
         common_service_1.rethrowError(err);
     }
-    if (!board) {
-        throw new common_service_1.ServiceError('Invalid board id');
+    if (!game) {
+        throw new common_service_1.ServiceError('Invalid game id');
     }
-    await board.extendedPopulate(populatePaths);
-    return board;
+    await game.extendedPopulate(populatePaths);
+    return game;
 };
-//# sourceMappingURL=board.service.js.map
+//# sourceMappingURL=game.service.js.map

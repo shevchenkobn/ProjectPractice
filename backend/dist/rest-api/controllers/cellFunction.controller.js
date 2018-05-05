@@ -6,8 +6,8 @@ const error_handler_service_1 = require("../../services/error-handler.service");
 exports.getCellFunction = async (req, res, next) => {
     try {
         const id = req.swagger.params.cellFunctionId.value;
-        const addCellFunctionClass = req.swagger.params.modifier && req.swagger.params.modifier.value === 'add-cell-function-class';
-        const cellFunction = await cellFunction_service_1.findCellFunction(id, addCellFunctionClass);
+        const populate = req.swagger.params.populate.value;
+        const cellFunction = await cellFunction_service_1.findCellFunction(id, populate);
         res.json(cellFunction);
     }
     catch (err) {

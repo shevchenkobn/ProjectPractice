@@ -31,8 +31,8 @@ exports.getBoards = async (req, res, next) => {
 exports.getBoard = async (req, res, next) => {
     try {
         const id = req.swagger.params.boardId.value;
-        const addCellFunctions = req.swagger.params.modifier && req.swagger.params.modifier.value === 'add-cell-functions';
-        const board = await board_service_1.findBoard(id, addCellFunctions);
+        const populate = req.swagger.params.populate.value;
+        const board = await board_service_1.findBoard(id, populate);
         res.json(board);
     }
     catch (err) {

@@ -22,7 +22,7 @@ export interface IPlayerDocument {
   },
   cellId: number,
   possessions: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
-  monopolies?: {[objectId: string]: boolean},// if monopoly is active
+  monopolies?: { [objectId: string]: boolean },// if monopoly is active
   modifiers: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
   mortgaged: Array<Schema.Types.ObjectId | ICellFunctionDocument>
 }
@@ -35,9 +35,11 @@ export interface IGameDocument extends Document {
   stepCount: number,
   playerIndex: number,
   players: Array<IPlayerDocument>
+
+  extendedPopulate(paths: Array<string>): Promise<void>
 }
 
-export interface IGameModel extends Model<IGameDocument> {}
+export interface IGameModel extends Model<IGameDocument> { }
 
 /**
  * Schema section
@@ -49,7 +51,7 @@ const playerSchema = new Schema({
     required: true,
     ref: 'User'
   },
-  role: { 
+  role: {
     type: Schema.Types.ObjectId,
     required: false,
     ref: 'CellFunction'
@@ -87,7 +89,7 @@ const playerSchema = new Schema({
     default: 0
   },
   possessions: {//FIXME: inventory for now is included here
-    type: [{type: Schema.Types.ObjectId, ref: 'CellFunction'}],
+    type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
     required: true,
     default: []
   },
@@ -96,16 +98,16 @@ const playerSchema = new Schema({
     required: false
   },
   modifiers: {//TODO: to be included in cellFunctions
-    type: [{type: Schema.Types.ObjectId, ref: 'CellFunction'}],
+    type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
     required: true,
   },
   mortgaged: {
-    type: [{type: Schema.Types.ObjectId, ref: 'CellFunction'}],
+    type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
     required: true
   }
 }, {
-  _id: false
-});
+    _id: false
+  });
 
 const gameSchema = new Schema({
   createdBy: {
@@ -149,15 +151,65 @@ const gameSchema = new Schema({
     default: []
   }
 }, {
-  timestamps: true,
-  collection: 'games'
-});
+    timestamps: true,
+    collection: 'games'
+  });
+
+gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths: Array<string>): Promise<void> {
+  if (paths && paths.length) {
+    const hasBoard = paths.includes('board');
+    if (paths.includes('board')) {
+      this.populate('board');
+    }
+    if (paths.includes('createdBy')) {
+      this.populate('board');
+    }
+    if (this.players.length) {
+      const playersPopulate = paths.filter(value => value.startsWith('players'));
+      if (playersPopulate.length) {
+        const populateUsers = playersPopulate.includes('players.users');
+        const populateRole = playersPopulate.includes('players.roles');
+        const populatePossessions = playersPopulate.includes('players.possessions');
+        const populateModifiers = playersPopulate.includes('players.modifiers');
+        const populateMortgaged = playersPopulate.includes('players.mortgaged');
+        for (let i = 0; i < this.players.length; i++) {
+          if (populateUsers) {
+            this.populate('players.' + i + '.user');
+          }
+          if (populateRole) {
+            this.populate('players.' + i + '.role');
+          }
+          if (populatePossessions) {
+            this.populate('players.' + i + '.posessions');
+          }
+          if (populateModifiers) {
+            this.populate('players.' + i + '.modifiers');
+          }
+          if (populateMortgaged) {
+            this.populate('players.' + i + '.mortgaged');
+          }
+        }
+      }
+    }
+    await this.execPopulate();
+    if (hasBoard) {
+      const boardPopulate = [];
+      if (paths.includes('board.cellFunctions')) {
+        boardPopulate.push('cellFunctions');
+      }
+      if (paths.includes('board.roles')) {
+        boardPopulate.push('roles');        
+      }
+      await (this.board as IBoardDocument).extendedPopulate(boardPopulate);
+    }
+  }
+};
 
 /**
  * Export section
  */
 
-export interface IGameModelInitializer extends IModelInitializer<IGameModel, IGameDocument> {}
+export interface IGameModelInitializer extends IModelInitializer<IGameModel, IGameDocument> { }
 
 let _modelName = 'Game';
 let Game: IGameModel;
@@ -180,11 +232,11 @@ const initializer: IGameModelInitializer = {
     }
     return Game;
   },
-  
+
   isBoundToConnection(connection = _connection) {
     return Game && _connection && connection == _connection;
   },
-  
+
   getModelName() {
     return _modelName;
   }

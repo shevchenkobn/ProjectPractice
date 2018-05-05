@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cellFunction_model_1 = __importDefault(require("../models/cellFunction.model"));
 const common_service_1 = require("./common.service");
 const CellFunctionClass = cellFunction_model_1.default.getModel();
-async function findCellFunction(id, addCellFunctionClass) {
+async function findCellFunction(id, populate) {
     let cellFunction;
     try {
         cellFunction = await CellFunctionClass.findById(id);
@@ -17,7 +17,7 @@ async function findCellFunction(id, addCellFunctionClass) {
     if (!cellFunction) {
         throw new common_service_1.ServiceError('Invalid cell function id');
     }
-    if (cellFunction.class && addCellFunctionClass) {
+    if (cellFunction.class && Array.isArray(populate) && populate.includes('class')) {
         await cellFunction.populate('class').execPopulate();
     }
     return cellFunction;

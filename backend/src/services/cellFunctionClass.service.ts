@@ -4,7 +4,7 @@ import { ServiceError, rethrowError } from './common.service';
 
 const CellFunctionClass: ICellFunctionClassModel = CellFunctionClassInitializer.getModel();
 
-export async function findCellFunctionClass(id: string, addCellFunctions: boolean) {
+export async function findCellFunctionClass(id: string, populate?: Array<string>) {
   let cellFunctionClass;
   try {
     cellFunctionClass = await CellFunctionClass.findById(id);
@@ -14,7 +14,7 @@ export async function findCellFunctionClass(id: string, addCellFunctions: boolea
   if (!cellFunctionClass) {
     throw new ServiceError('Invalid cell function class id');
   }
-  if (addCellFunctions) {
+  if (populate && Array.isArray(populate) && populate.includes('functions')) {
     await cellFunctionClass.populate('functions').execPopulate();
   }
   return cellFunctionClass;

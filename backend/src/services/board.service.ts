@@ -25,7 +25,7 @@ export const findBoards = async (options: IFindManyOptions): Promise<Array<IBoar
   }
 };
 
-export const findBoard = async (id: string, addCellFunctions: boolean): Promise<IBoardDocument> => {
+export const findBoard = async (id: string, populatePaths?: Array<string>): Promise<IBoardDocument> => {
   let board;
   try {
     board = await Board.findById(id);
@@ -35,8 +35,6 @@ export const findBoard = async (id: string, addCellFunctions: boolean): Promise<
   if (!board) {
     throw new ServiceError('Invalid board id');
   }
-  if (addCellFunctions) {
-    await board.addCellFunctions();
-  }
+  await board.extendedPopulate(populatePaths);
   return board;
 };

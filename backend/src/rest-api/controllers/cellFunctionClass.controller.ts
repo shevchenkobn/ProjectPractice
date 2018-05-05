@@ -6,9 +6,9 @@ import { ClientRequestError } from '../../services/error-handler.service';
 export const getCellFunctionClass: Handler = async (req, res, next) => {
   try {
     const id = (<any>req).swagger.params.cellFunctionClassId.value as string;
-    const addCellFunctions = (<any>req).swagger.params.modifier && (<any>req).swagger.params.modifier.value === 'add-cell-functions';
+    const populate = (<any>req).swagger.params.populate.value;
 
-    const cellFunctionClass = await findCellFunctionClass(id, addCellFunctions);
+    const cellFunctionClass = await findCellFunctionClass(id, populate);
     res.json(cellFunctionClass);
   } catch (err) {
     if (err instanceof ServiceError) {

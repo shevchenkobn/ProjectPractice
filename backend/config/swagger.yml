@@ -71,10 +71,12 @@ paths:
         required: true
         type: string
       - in: query
-        name: modifier
+        name: populate
         required: false
-        type: string
-        enum: ['add-cell-functions']
+        type: array
+        items:
+          type: string
+        uniqueItems: true
     get:
       operationId: getBoard
       summary: Get board by ObjectId with functions for cells
@@ -96,10 +98,12 @@ paths:
         required: true
         type: string
       - in: query
-        name: modifier
+        name: populate
         required: false
-        type: string
-        enum: ['add-cell-function-class']
+        type: array
+        items:
+          type: string
+        uniqueItems: true
     get:
       operationId: getCellFunction
       summary: Get cell function by ObjectId and optionally include cell function class object
@@ -119,10 +123,12 @@ paths:
         required: true
         type: string
       - in: query
-        name: modifier
+        name: populate
         required: false
-        type: string
-        enum: ['add-cell-functions']
+        type: array
+        items:
+          type: string
+        uniqueItems: true
     get:
       operationId: getCellFunctionClass
       summary: Get cell function class by ObjectId and optionally include cell function objects
@@ -134,45 +140,72 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  # /games/:
-  #   x-swagger-router-controller: game.controller
-  #   get:
-  #     operationId: getGames
-  #     summary: Get games according to parameters
-  #     parameters:
-  #       - in: query
-  #         name: filter
-  #         required: false
-  #         type: string
-  #       - in: query
-  #         name: sort
-  #         required: false
-  #         type: array
-  #         collectionFormat: csv
-  #         uniqueItems: true
-  #         items:
-  #           type: string
-  #         minItems: 1
-  #         maxItems: 3
-  #       - in: query
-  #         name: offset
-  #         type: integer
-  #         minimum: 0
-  #         maximum: 10000
-  #         default: 0
-  #       - in: query
-  #         name: limit
-  #         type: integer
-  #         minimum: 1
-  #         maximum: 1000
-  #         default: 1000
-  #     responses:
-  #       200:
-  #         description: OK
-  #       default:
-  #         description: Invalid request
-  #         schema:
-  #           $ref: "#/definitions/Error"
+  /games/:
+    x-swagger-router-controller: game.controller
+    get:
+      operationId: getGames
+      summary: Get games according to parameters
+      parameters:
+        - in: query
+          name: filter
+          required: false
+          type: string
+        - in: query
+          name: sort
+          required: false
+          type: array
+          collectionFormat: csv
+          uniqueItems: true
+          items:
+            type: string
+          minItems: 1
+          maxItems: 3
+        - in: query
+          name: offset
+          type: integer
+          minimum: 0
+          maximum: 10000
+          default: 0
+        - in: query
+          name: limit
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+      responses:
+        200:
+          description: OK
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
+
+  /games/{gameId}:
+    x-swagger-router-controller: game.controller
+    parameters:
+      - in: path
+        name: gameId
+        required: true
+        type: string
+    get:
+      operationId: getGame
+      parameters:
+        - in: query
+          name: populate
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+          collectionFormat: csv
+          default: []
+      responses:
+        200:
+          description: OK
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
+      
 
 definitions:
   Error:

@@ -191,32 +191,41 @@ const boardSchema = new mongoose_1.Schema({
     timestamps: true,
     collection: 'boards'
 });
-boardSchema.methods.addCellFunctions = async function (poolEntities = true) {
+boardSchema.methods.extendedPopulate = async function (paths, poolEntities = true) {
+    if (!(paths && paths.length)) {
+        return;
+    }
+    const hasCellFunctions = paths.includes('cellFunctions');
     const pathPieces = ['cells.', '.function'];
     let sharedIDs;
-    if (poolEntities) {
-        sharedIDs = {};
-        for (let i = 0; i < this.cells.length; i++) {
-            if (!this.cells[i].function) {
-                continue;
+    if (hasCellFunctions) {
+        if (poolEntities) {
+            sharedIDs = {};
+            for (let i = 0; i < this.cells.length; i++) {
+                if (!(this.cells[i].function && this.cells[i].function.toHexString)) {
+                    continue;
+                }
+                const id = this.cells[i].function.toHexString();
+                if (sharedIDs[id]) {
+                    sharedIDs[id].push(i);
+                }
+                else {
+                    this.populate(pathPieces.join(i.toString()));
+                    sharedIDs[id] = [i];
+                }
             }
-            const id = this.cells[i].function.toHexString();
-            if (sharedIDs[id]) {
-                sharedIDs[id].push(i);
-            }
-            else {
+        }
+        else {
+            for (let i = 0; i < this.cells.length; i++) {
                 this.populate(pathPieces.join(i.toString()));
-                sharedIDs[id] = [i];
             }
         }
     }
-    else {
-        for (let i = 0; i < this.cells.length; i++) {
-            this.populate(pathPieces.join(i.toString()));
-        }
+    if (paths.includes('roles')) {
+        this.populate('roles');
     }
     await this.execPopulate();
-    if (poolEntities) {
+    if (hasCellFunctions && poolEntities) {
         for (let id of Object.keys(sharedIDs)) {
             const source = this.cells[sharedIDs[id][0]].function;
             for (let i = 1; i < sharedIDs[id].length; i++) {
