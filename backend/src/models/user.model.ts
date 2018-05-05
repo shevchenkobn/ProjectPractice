@@ -140,7 +140,7 @@ const userSchema = new mongoose.Schema({
   toObject: {
     transform(doc, ret) {
       return {
-        id: doc.id,
+        _id: doc.id,
         username: doc.username,
         google: doc.google 
       };

@@ -59,10 +59,12 @@ const playerSchema = new mongoose_1.Schema({
     modifiers: {
         type: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'CellFunction' }],
         required: true,
+        default: []
     },
     mortgaged: {
         type: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'CellFunction' }],
-        required: true
+        required: true,
+        default: []
     }
 }, {
     _id: false
@@ -113,52 +115,53 @@ const gameSchema = new mongoose_1.Schema({
     collection: 'games'
 });
 gameSchema.methods.extendedPopulate = async function (paths) {
-    if (paths && paths.length) {
-        const hasBoard = paths.includes('board');
-        if (paths.includes('board')) {
-            this.populate('board');
-        }
-        if (paths.includes('createdBy')) {
-            this.populate('board');
-        }
-        if (this.players.length) {
-            const playersPopulate = paths.filter(value => value.startsWith('players'));
-            if (playersPopulate.length) {
-                const populateUsers = playersPopulate.includes('players.users');
-                const populateRole = playersPopulate.includes('players.roles');
-                const populatePossessions = playersPopulate.includes('players.possessions');
-                const populateModifiers = playersPopulate.includes('players.modifiers');
-                const populateMortgaged = playersPopulate.includes('players.mortgaged');
-                for (let i = 0; i < this.players.length; i++) {
-                    if (populateUsers) {
-                        this.populate('players.' + i + '.user');
-                    }
-                    if (populateRole) {
-                        this.populate('players.' + i + '.role');
-                    }
-                    if (populatePossessions) {
-                        this.populate('players.' + i + '.posessions');
-                    }
-                    if (populateModifiers) {
-                        this.populate('players.' + i + '.modifiers');
-                    }
-                    if (populateMortgaged) {
-                        this.populate('players.' + i + '.mortgaged');
-                    }
+    if (!(Array.isArray(paths) && paths.length)) {
+        return;
+    }
+    const hasBoard = paths.includes('board');
+    if (hasBoard) {
+        this.populate('board');
+    }
+    if (paths.includes('createdBy')) {
+        this.populate('createdBy');
+    }
+    if (this.players.length) {
+        const playersPopulate = paths.filter(value => value.startsWith('players'));
+        if (playersPopulate.length) {
+            const populateUsers = playersPopulate.includes('players.users');
+            const populateRole = playersPopulate.includes('players.roles');
+            const populatePossessions = playersPopulate.includes('players.possessions');
+            const populateModifiers = playersPopulate.includes('players.modifiers');
+            const populateMortgaged = playersPopulate.includes('players.mortgaged');
+            for (let i = 0; i < this.players.length; i++) {
+                if (populateUsers) {
+                    this.populate('players.' + i + '.user');
+                }
+                if (populateRole) {
+                    this.populate('players.' + i + '.role');
+                }
+                if (populatePossessions) {
+                    this.populate('players.' + i + '.posessions');
+                }
+                if (populateModifiers) {
+                    this.populate('players.' + i + '.modifiers');
+                }
+                if (populateMortgaged) {
+                    this.populate('players.' + i + '.mortgaged');
                 }
             }
         }
-        await this.execPopulate();
-        if (hasBoard) {
-            const boardPopulate = [];
-            if (paths.includes('board.cellFunctions')) {
-                boardPopulate.push('cellFunctions');
-            }
-            if (paths.includes('board.roles')) {
-                boardPopulate.push('roles');
-            }
-            await this.board.extendedPopulate(boardPopulate);
+    }
+    await this.execPopulate();
+    if (hasBoard) {
+        const boardPopulate = [];
+        if (paths.includes('board.cellFunctions')) {
+            boardPopulate.push('cellFunctions');
         }
+        if (paths.includes('board.roles')) {
+            boardPopulate.push('roles');
+        }
+        await this.board.extendedPopulate(boardPopulate);
     }
 };
 let _modelName = 'Game';

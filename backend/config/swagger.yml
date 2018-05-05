@@ -131,7 +131,7 @@ paths:
         uniqueItems: true
     get:
       operationId: getCellFunctionClass
-      summary: Get cell function class by ObjectId and optionally include cell function objects
+      summary: Get cell function class by ObjectId and optionally include other objects
       responses:
         200:
           description: OK
@@ -140,7 +140,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
-  /games/:
+  /games:
     x-swagger-router-controller: game.controller
     get:
       operationId: getGames
@@ -179,6 +179,20 @@ paths:
           description: Invalid request
           schema:
             $ref: "#/definitions/Error"
+    post:
+      operationId: createGame
+      parameters:
+        - in: body
+          name: gameSeed
+          schema:
+            $ref: "#/definitions/GameSeed"
+      responses:
+        200:
+          description: OK
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
 
   /games/{gameId}:
     x-swagger-router-controller: game.controller
@@ -193,11 +207,11 @@ paths:
         - in: query
           name: populate
           type: array
+          required: false
           items:
             type: string
           uniqueItems: true
           collectionFormat: csv
-          default: []
       responses:
         200:
           description: OK
@@ -205,6 +219,16 @@ paths:
           description: Invalid request
           schema:
             $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteGame
+      responses:
+        200:
+          description: OK
+        default:
+          description: Invalid request
+          schema:
+            $ref: "#/definitions/Error"
+
       
 
 definitions:
@@ -214,4 +238,10 @@ definitions:
         type: string
     required:
       - message
+  GameSeed:
+    properties:
+      boardId:
+        type: string
+    required:
+      - boardId
       
