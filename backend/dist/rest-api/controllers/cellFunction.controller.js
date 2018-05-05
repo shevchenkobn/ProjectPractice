@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const cellFunction_service_1 = require("../services/cellFunction.service");
-const common_service_1 = require("../services/common.service");
+const cellFunction_service_1 = require("../../services/cellFunction.service");
+const common_service_1 = require("../../services/common.service");
 const error_handler_service_1 = require("../../services/error-handler.service");
 exports.getCellFunction = async (req, res, next) => {
     try {

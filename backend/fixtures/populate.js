@@ -3,6 +3,7 @@ if (require.main != module) {
 }
 
 const objectIdPrefix = 'ObjectId: ';
+const datePrefix = 'Date: ';
 const collectionExt = '.json';
 
 const appRoot = require('app-root-path');
@@ -131,6 +132,11 @@ function resolveAny(obj, prop, idMap) {
           throw new Error(`Can't resolve ObjectId "${id}"`);
         }
         obj[prop] = idMap[id];
+      } else if (obj[prop].startsWith(datePrefix)) {
+        const option = obj[prop].replace(datePrefix, '');
+        if (option === 'now') {
+          obj[prop] = new Date();
+        }
       }
       break;
     case 'object':

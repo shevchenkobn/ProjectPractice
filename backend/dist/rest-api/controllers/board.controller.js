@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const board_service_1 = require("../services/board.service");
+const board_service_1 = require("../../services/board.service");
 const error_handler_service_1 = require("../../services/error-handler.service");
-const common_service_1 = require("../services/common.service");
+const common_service_1 = require("../../services/common.service");
 exports.getBoards = async (req, res, next) => {
     try {
         const filterString = req.swagger.params.filter.value;
@@ -10,7 +10,8 @@ exports.getBoards = async (req, res, next) => {
         const offset = req.swagger.params.offset.value || 0;
         const limit = req.swagger.params.limit.value || 0;
         const filter = filterString ? common_service_1.prepareFilter(filterString) : {};
-        const boards = await board_service_1.findBoards(filter, {
+        const boards = await board_service_1.findBoards({
+            filter,
             sort,
             limit,
             offset,

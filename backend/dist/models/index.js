@@ -8,6 +8,7 @@ const session_model_1 = __importDefault(require("./session.model"));
 const board_model_1 = __importDefault(require("./board.model"));
 const cellFunction_model_1 = __importDefault(require("./cellFunction.model"));
 const cellFunctionClass_model_1 = __importDefault(require("./cellFunctionClass.model"));
+const game_model_1 = __importDefault(require("./game.model"));
 exports.models = null;
 function initialize(connection) {
     if (exports.models) {
@@ -18,7 +19,8 @@ function initialize(connection) {
         [session_model_1.default.getModelName()]: session_model_1.default.bindToConnection(connection),
         [board_model_1.default.getModelName()]: board_model_1.default.bindToConnection(connection),
         [cellFunction_model_1.default.getModelName()]: cellFunction_model_1.default.bindToConnection(connection),
-        [cellFunctionClass_model_1.default.getModelName()]: cellFunctionClass_model_1.default.bindToConnection(connection)
+        [cellFunctionClass_model_1.default.getModelName()]: cellFunctionClass_model_1.default.bindToConnection(connection),
+        [game_model_1.default.getModelName()]: game_model_1.default.bindToConnection(connection)
     };
     return exports.models;
 }

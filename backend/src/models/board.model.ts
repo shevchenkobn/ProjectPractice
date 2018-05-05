@@ -35,7 +35,7 @@ export interface IBoardDocument extends Document {
       "defaultOption": number
     },
     "playerLimits": IRange,
-    "hasRoles": boolean,
+    "roles": Array<ICellFunctionDocument | Types.ObjectId>,
     "dices": Array<IRange>,
     "building": {
       "mortgage": {
@@ -187,10 +187,14 @@ const boardSchema = new Schema({
         required: true
       }
     },
-    "playerLimits": rangeSchema,
-    "hasRoles": {
-      type: Boolean,
-      required: true
+    "playerLimits": {
+      type: rangeSchema,
+      required: true,
+    },
+    "roles": {
+      type: [{type: Schema.Types.ObjectId, ref: 'CellFunction'}],
+      required: false,
+      default: []
     },
     "dices": [rangeSchema],
     "building": {
@@ -204,7 +208,10 @@ const boardSchema = new Schema({
           "pricePercentPay": Number
         }
       },
-      "improvements": improvementsSchema,
+      "improvements": {
+        type: improvementsSchema,
+        required: true
+      },
       "fee": {
         "fromMortgaged": {
           type: Boolean,

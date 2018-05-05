@@ -1,7 +1,7 @@
 import { Handler } from 'express';
-import { findBoards, findBoard } from '../services/board.service';
+import { findBoards, findBoard } from '../../services/board.service';
 import { ClientRequestError } from '../../services/error-handler.service';
-import { ServiceError, prepareFilter } from '../services/common.service';
+import { ServiceError, prepareFilter } from '../../services/common.service';
 
 export const getBoards: Handler = async (req, res, next) => {
   try {
@@ -12,8 +12,8 @@ export const getBoards: Handler = async (req, res, next) => {
     const filter = filterString ? prepareFilter(filterString) : {};
 
     const boards = await findBoards(
-      filter,
       {
+        filter,
         sort,
         limit,
         offset,

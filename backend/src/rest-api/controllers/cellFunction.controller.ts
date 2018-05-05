@@ -1,6 +1,6 @@
 import { Handler } from 'express-serve-static-core';
-import { findCellFunction } from '../services/cellFunction.service';
-import { ServiceError } from '../services/common.service';
+import { findCellFunction } from '../../services/cellFunction.service';
+import { ServiceError } from '../../services/common.service';
 import { ClientRequestError } from '../../services/error-handler.service';
 
 export const getCellFunction: Handler = async (req, res, next) => {

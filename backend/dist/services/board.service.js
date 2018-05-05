@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const board_model_1 = __importDefault(require("../../models/board.model"));
+const board_model_1 = __importDefault(require("../models/board.model"));
 const common_service_1 = require("./common.service");
 const Board = board_model_1.default.getModel();
-exports.findBoards = async (filter, options) => {
-    // const query = Board.find(filter);
+exports.findBoards = async (options) => {
+    const filter = options.filter || {};
     const queryOptions = {};
     if (Array.isArray(options.sort)) {
         queryOptions.sort = options.sort;

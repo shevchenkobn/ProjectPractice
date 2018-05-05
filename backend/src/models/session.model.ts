@@ -1,6 +1,7 @@
 import { IModelInitializer } from './index';
 import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
 import { IUserDocument } from './user.model';
+import { IGameDocument } from './game.model';
 
 /**
  * Interfaces section
@@ -8,7 +9,7 @@ import { IUserDocument } from './user.model';
 
 export interface ISessionDocument extends Document {
   user: Schema.Types.ObjectId | IUserDocument;
-  game: Schema.Types.ObjectId | any//TODO: add game interface;
+  game: Schema.Types.ObjectId | IGameDocument//TODO: add game interface;
   createdAt: Date;
   updatedAt: Date;
   status: 'active' | 'outdated';

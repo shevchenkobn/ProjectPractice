@@ -1,10 +1,10 @@
-import BoardInitializer, { IBoardModel, IBoardDocument } from '../../models/board.model';
+import BoardInitializer, { IBoardModel, IBoardDocument } from '../models/board.model';
 import { ServiceError, rethrowError, IFindManyOptions } from './common.service';
 
 const Board: IBoardModel = BoardInitializer.getModel();
 
-export const findBoards = async (filter: any, options: IFindManyOptions): Promise<Array<IBoardDocument>> => {
-  // const query = Board.find(filter);
+export const findBoards = async (options: IFindManyOptions): Promise<Array<IBoardDocument>> => {
+  const filter = options.filter || {};
   const queryOptions: any = {};
   if (Array.isArray(options.sort)) {
     queryOptions.sort = options.sort;

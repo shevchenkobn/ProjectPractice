@@ -1,6 +1,8 @@
 [
   {
     "_id": "ObjectId: valuable",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: silverMine",
@@ -14,6 +16,8 @@
   },
   {
     "_id": "ObjectId: ports",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: southPort",
@@ -36,6 +40,8 @@
   },
   {
     "_id": "ObjectId: prestige",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: onsen",
@@ -50,6 +56,8 @@
   },
   {
     "_id": "ObjectId: resources",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: pier",
@@ -64,6 +72,8 @@
   },
   {
     "_id": "ObjectId: strait",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: kanmonStrait",
@@ -83,6 +93,8 @@
   },
   {
     "_id": "ObjectId: mercenaries",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: dojo",
@@ -97,6 +109,8 @@
   },
   {
     "_id": "ObjectId: workshops",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: forge",
@@ -111,6 +125,8 @@
   },
   {
     "_id": "ObjectId: temples",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: todaiJi",
@@ -125,6 +141,8 @@
   },
   {
     "_id": "ObjectId: castles",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: inuyama",
@@ -139,6 +157,8 @@
   },
   {
     "_id": "ObjectId: mines",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "type": "building",
     "functions": [
       "ObjectId: ironOre",

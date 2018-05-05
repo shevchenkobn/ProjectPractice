@@ -11,10 +11,10 @@
     "playerIndex": 2,
     "players": [
       {
-        "userId": "ObjectId of user",
+        "user": "ObjectId of user",
         "role?": "ObjectId of role (clan)",
         "status": "active|defeated|winner",
-        "dateDefeated": "//comment: date when left or defeated",
+        "dateLeft": "//comment: date when left or defeated or won",
         "cash": 9000,
         "asset": 5000,
         "depts": {
@@ -22,10 +22,10 @@
           "1 (index of player in array)": 3
         },
         "cellId": 10,
-        "property": [
+        "possessions": [
           "ObjectId of cellFunction"
         ],
-        "monopolies": {
+        "monopolies?": {
           "ObjectId of cellFunctionClass": "true|false (activeness)"
         },
         "buildingImprovemnts": {
@@ -34,16 +34,16 @@
         "modifiers": [
           "ObjectId of cellFunction.modifier"
         ],
-        "inventory": [
+        "inventory": [//FIXME: is included into posessions
           "ObjectId of cellFunction.inventory"
         ],
-        "mortgage": [
+        "mortgaged": [
           "ObjectId of mortgaged property"
         ]
       }
     ]
   },
-  "playerRoles": {
+  "playerRoles": {//TODO: to be included in cellFunctions
     "_id": "ObjectId",
     "createdAt": "mongoose",
     "updatedAt": "mongoose",

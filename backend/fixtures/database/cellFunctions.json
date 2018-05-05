@@ -1,6 +1,8 @@
 [
   {
     "_id": "ObjectId: start",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "hover",
@@ -20,6 +22,8 @@
   },
   {
     "_id": "ObjectId: silverMine",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: valuable",
     "building": {
       "price": 60,
@@ -45,6 +49,8 @@
   },
   {
     "_id": "ObjectId: event",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "stop"
@@ -147,6 +153,8 @@
   },
   {
     "_id": "ObjectId: goldenMine",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: valuable",
     "building": {
       "price": 60,
@@ -172,6 +180,8 @@
   },
   {
     "_id": "ObjectId: mountainPass",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "stop"
@@ -190,10 +200,14 @@
   },
   {
     "_id": "ObjectId: southPort",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: ports"
   },
   {
     "_id": "ObjectId: onsen",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: prestige",
     "building": {
       "price": 100,
@@ -219,6 +233,8 @@
   },
   {
     "_id": "ObjectId: yukaku",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: prestige",
     "building": {
       "price": 100,
@@ -244,6 +260,8 @@
   },
   {
     "_id": "ObjectId: kabukiTheatre",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: prestige",
     "building": {
       "price": 120,
@@ -269,6 +287,8 @@
   },
   {
     "_id": "ObjectId: prison",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "redirect"
@@ -280,6 +300,8 @@
   },
   {
     "_id": "ObjectId: pier",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: resources",
     "building": {
       "price": 140,
@@ -305,10 +327,14 @@
   },
   {
     "_id": "ObjectId: kanmonStrait",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: strait"
   },
   {
     "_id": "ObjectId: sawmill",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: resources",
     "building": {
       "price": 140,
@@ -334,6 +360,8 @@
   },
   {
     "_id": "ObjectId: quarry",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: resources",
     "building": {
       "price": 160,
@@ -359,10 +387,14 @@
   },
   {
     "_id": "ObjectId: westPort",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: ports"
   },
   {
     "_id": "ObjectId: dojo",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: mercenaries",
     "building": {
       "price": 180,
@@ -388,6 +420,8 @@
   },
   {
     "_id": "ObjectId: ninjaOutpost",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: mercenaries",
     "building": {
       "price": 180,
@@ -413,6 +447,8 @@
   },
   {
     "_id": "ObjectId: shinsengumiStronghold",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: mercenaries",
     "building": {
       "price": 200,
@@ -438,6 +474,8 @@
   },
   {
     "_id": "ObjectId: forge",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: workshops",
     "building": {
       "price": 220,
@@ -463,6 +501,8 @@
   },
   {
     "_id": "ObjectId: chance",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "stop"
@@ -579,6 +619,8 @@
   },
   {
     "_id": "ObjectId: stable",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: workshops",
     "building": {
       "price": 220,
@@ -604,6 +646,8 @@
   },
   {
     "_id": "ObjectId: mill",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: workshops",
     "building": {
       "price": 240,
@@ -629,10 +673,14 @@
   },
   {
     "_id": "ObjectId: northPort",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: ports"
   },
   {
     "_id": "ObjectId: todaiJi",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: temples",
     "building": {
       "price": 260,
@@ -658,10 +706,14 @@
   },
   {
     "_id": "ObjectId: kiiChannel",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: strait"
   },
   {
     "_id": "ObjectId: kinkakuJi",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: temples",
     "building": {
       "price": 260,
@@ -687,6 +739,8 @@
   },
   {
     "_id": "ObjectId: itsukushima",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: temples",
     "building": {
       "price": 280,
@@ -712,6 +766,8 @@
   },
   {
     "_id": "ObjectId: gotoPrison",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "stop"
@@ -728,6 +784,8 @@
   },
   {
     "_id": "ObjectId: inuyama",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: castles",
     "building": {
       "price": 300,
@@ -753,6 +811,8 @@
   },
   {
     "_id": "ObjectId: osaka",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: castles",
     "building": {
       "price": 300,
@@ -778,6 +838,8 @@
   },
   {
     "_id": "ObjectId: himeji",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: castles",
     "building": {
       "price": 320,
@@ -803,10 +865,14 @@
   },
   {
     "_id": "ObjectId: eastPort",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: ports"
   },
   {
     "_id": "ObjectId: ironOre",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: mines",
     "building": {
       "price": 350,
@@ -832,6 +898,8 @@
   },
   {
     "_id": "ObjectId: brimstone",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "class": "ObjectId: mines",
     "building": {
       "price": 400,
@@ -857,6 +925,8 @@
   },
   {
     "_id": "ObjectId: imprisoned",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "modifier": {
       "actions": [
         {
@@ -885,6 +955,8 @@
   },
   {
     "_id": "ObjectId: outPrison",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "inventory": {
       "action": {
         "break": "ObjectId: imprisoned"
@@ -897,6 +969,8 @@
   },
   {
     "_id": "ObjectId: trap",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "event": {
       "triggers": [
         "stop"

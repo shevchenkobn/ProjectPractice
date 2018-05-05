@@ -1,6 +1,8 @@
 [
   {
     "_id": "ObjectId: enFMBoard",
+    "createdAt": "Date: now",
+    "updatedAt": "Date: now",
     "rules": {
       "initialCash": 1500,
       "randomizeEventOptions": true,
@@ -11,7 +13,7 @@
       "playerLimits": {
         "max": 6
       },
-      "hasRoles": true,
+      "roles": [],
       "dices": [
         {
           "max": 6

@@ -1,5 +1,5 @@
 
-import CellFunctionClassInitializer, { ICellFunctionClassModel } from '../../models/cellFunctionClass.model';
+import CellFunctionClassInitializer, { ICellFunctionClassModel } from '../models/cellFunctionClass.model';
 import { ServiceError, rethrowError } from './common.service';
 
 const CellFunctionClass: ICellFunctionClassModel = CellFunctionClassInitializer.getModel();

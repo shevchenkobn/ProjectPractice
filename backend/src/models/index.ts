@@ -3,6 +3,7 @@ import SessionInitializer from './session.model';
 import BoardInitializer from './board.model';
 import CellFunctionInitializer from './cellFunction.model';
 import CellFunctionClassInitializer from './cellFunctionClass.model';
+import GameModelInitializer from './game.model';
 import mongoose from 'mongoose';
 
 export interface IModelInitializer<IModel extends mongoose.Model<IDocument>, IDocument extends mongoose.Document> {
@@ -26,7 +27,8 @@ export function initialize(connection: mongoose.Connection | typeof mongoose): I
     [SessionInitializer.getModelName()]: SessionInitializer.bindToConnection(connection),
     [BoardInitializer.getModelName()]: BoardInitializer.bindToConnection(connection),
     [CellFunctionInitializer.getModelName()]: CellFunctionInitializer.bindToConnection(connection),
-    [CellFunctionClassInitializer.getModelName()]: CellFunctionClassInitializer.bindToConnection(connection)
+    [CellFunctionClassInitializer.getModelName()]: CellFunctionClassInitializer.bindToConnection(connection),
+    [GameModelInitializer.getModelName()]: GameModelInitializer.bindToConnection(connection)
   };
   return models;
 }

@@ -104,10 +104,14 @@ const boardSchema = new mongoose_1.Schema({
                 required: true
             }
         },
-        "playerLimits": rangeSchema,
-        "hasRoles": {
-            type: Boolean,
-            required: true
+        "playerLimits": {
+            type: rangeSchema,
+            required: true,
+        },
+        "roles": {
+            type: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'CellFunction' }],
+            required: false,
+            default: []
         },
         "dices": [rangeSchema],
         "building": {
@@ -121,7 +125,10 @@ const boardSchema = new mongoose_1.Schema({
                     "pricePercentPay": Number
                 }
             },
-            "improvements": improvementsSchema,
+            "improvements": {
+                type: improvementsSchema,
+                required: true
+            },
             "fee": {
                 "fromMortgaged": {
                     type: Boolean,
