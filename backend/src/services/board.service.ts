@@ -1,7 +1,12 @@
 import BoardInitializer, { IBoardModel, IBoardDocument } from '../models/board.model';
 import { ServiceError, rethrowError, IFindManyOptions } from './common.service';
+import { Types } from 'mongoose';
 
-const Board: IBoardModel = BoardInitializer.getModel();
+let Board: IBoardModel;
+
+export function initialize() {
+  Board = BoardInitializer.getModel();
+}
 
 export const findBoards = async (options: IFindManyOptions): Promise<Array<IBoardDocument>> => {
   const filter = options.filter || {};
@@ -25,7 +30,7 @@ export const findBoards = async (options: IFindManyOptions): Promise<Array<IBoar
   }
 };
 
-export const findBoard = async (id: string, populatePaths?: Array<string>): Promise<IBoardDocument> => {
+export const findBoard = async (id: string | Types.ObjectId, populatePaths?: Array<string>): Promise<IBoardDocument> => {
   let board;
   try {
     board = await Board.findById(id);

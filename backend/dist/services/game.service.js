@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const game_model_1 = __importDefault(require("../models/game.model"));
 const common_service_1 = require("./common.service");
 const board_service_1 = require("./board.service");
-const gamesPerUser = 3;
+const config_1 = __importDefault(require("config"));
+const events_1 = require("events");
+const gamesConfig = config_1.default.get('games');
 const Game = game_model_1.default.getModel();
 exports.findGames = async (options) => {
     const filter = options.filter || {};
@@ -51,12 +53,12 @@ exports.removeGame = async (id) => {
     }
     await game.remove();
 };
-exports.constructAndSaveGame = async (boardId, userId) => {
+exports.constructAndSaveGame = async (boardId, userId, createSuspendedRemoving = true) => {
     if (await Game.count({
         createdBy: userId,
         state: 'open'
-    }) >= gamesPerUser) {
-        throw new common_service_1.ServiceError(`The user "${userId}" has created maximum possible games (${gamesPerUser})`);
+    }) >= gamesConfig.gamesPerUser) {
+        throw new common_service_1.ServiceError(`The user "${userId}" has created maximum possible games (${gamesConfig.gamesPerUser})`);
     }
     await board_service_1.findBoard(boardId);
     try {
@@ -65,10 +67,40 @@ exports.constructAndSaveGame = async (boardId, userId) => {
             board: boardId
         });
         await newGame.save();
+        if (createSuspendedRemoving) {
+            exports.suspendRemoving(newGame, gamesConfig.removeTimeout)
+                .catch(err => console.log(err)); //TODO: add loggin in error callback
+        }
         return newGame;
     }
     catch (err) {
         common_service_1.rethrowError(err);
     }
+};
+const removeTimeouts = {};
+exports.suspendRemoving = (game, time) => {
+    if (!game) {
+        throw new TypeError('Game is undefined');
+    }
+    const id = game.id;
+    if (removeTimeouts[id]) {
+        throw new TypeError(`Remove timeout for "${id}" is already set`);
+    }
+    const eventEmitter = new events_1.EventEmitter();
+    removeTimeouts[id] = setTimeout(() => {
+        game.remove()
+            .then((...args) => eventEmitter.emit('resolve', ...args))
+            .catch((...args) => eventEmitter.emit('reject', ...args));
+    }, time);
+    return new Promise((resolve, reject) => {
+        eventEmitter.on('resolve', resolve);
+        eventEmitter.on('reject', reject);
+    });
+};
+exports.stopSuspendedRemoving = (gameId) => {
+    if (!removeTimeouts[gameId]) {
+        throw new Error(`No suspended removing is set for game id "${gameId}"`);
+    }
+    clearInterval(removeTimeouts[gameId]);
 };
 //# sourceMappingURL=game.service.js.map

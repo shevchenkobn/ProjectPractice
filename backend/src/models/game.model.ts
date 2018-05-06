@@ -35,6 +35,9 @@ export interface IGameDocument extends Document {
   stepCount: number,
   playerIndex: number,
   players: Array<IPlayerDocument>
+  
+  createdAt: Date,
+  updatedAt: Date,
 
   extendedPopulate(paths: Array<string>): Promise<void>
 }

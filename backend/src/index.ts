@@ -4,7 +4,8 @@ import path from 'path';
 
 import { SwaggerApp, IHandlersArray } from './app';
 import { getRoutes } from './routes/index';
-import { initialize as initializeModels, models as _ } from './models';
+import { initialize as initializeModels } from './models';
+import { initialize as initializeServices } from './services';
 import UserInititializer, { IUserModel } from './models/user.model';
 import { initialize as initializeMongoose, IMongoConfig, terminateSignal } from './services/database.service';
 import { initialize as initializePassport } from './services/passport.service';
@@ -12,6 +13,7 @@ import { errorHandler, notFoundHandler } from './services/error-handler.service'
 import { Handler, ErrorRequestHandler } from 'express';
 import { getService as getAuthService } from './services/authentication.service';
 import { getConfig as getSocketIoConfig } from './socketio-api';
+import { getReviverFunction } from './services/serverStateReviver.service';
 
 const mongoConfig = config.get<IMongoConfig>('mongodb');
 let dbConnection = initializeMongoose(mongoConfig);
@@ -19,10 +21,11 @@ let dbConnection = initializeMongoose(mongoConfig);
   dbConnection = await dbConnection;
   const models = initializeModels(dbConnection);
   const passport = initializePassport(UserInititializer.getModel());
+  initializeServices();
 
   const middlewares: IHandlersArray = {
-    before: [passport.initialize()],
-    after: [errorHandler, notFoundHandler]
+    beforeRouting: [passport.initialize()],
+    afterRouting: [errorHandler, notFoundHandler]
   };
 
   const swaggerConfigPath = appRoot.resolve(config.get<string>('swaggerConfig'));
@@ -50,10 +53,12 @@ let dbConnection = initializeMongoose(mongoConfig);
       }
     }
   });
+  const revive = await getReviverFunction();
 
   const server = await app.listen(config.get<number>('port'), app => {
     console.log('listening');
   });
+  revive();
 })().catch(softExit);
 
 function softExit(err: any) {

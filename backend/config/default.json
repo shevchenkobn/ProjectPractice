@@ -38,5 +38,11 @@
     "apiSwitch": "/games"
   },
   
-  "uploadDir": "./uploads"
+  "uploadDir": "./uploads",
+
+  "games": {
+    "gamesPerUser": 3,
+    "removeTimeout": 3600000,
+    "startCountdown": 30000
+  }
 }

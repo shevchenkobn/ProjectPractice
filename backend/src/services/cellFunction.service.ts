@@ -2,7 +2,11 @@
 import CellFunctionInitializer, { ICellFunctionModel } from '../models/cellFunction.model';
 import { ServiceError, rethrowError } from './common.service';
 
-const CellFunctionClass: ICellFunctionModel = CellFunctionInitializer.getModel();
+let CellFunctionClass: ICellFunctionModel;
+
+export function initialize() {
+  CellFunctionClass = CellFunctionInitializer.getModel()
+}
 
 export async function findCellFunction(id: string, populate: Array<string>) {
   let cellFunction;

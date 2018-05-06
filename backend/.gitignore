@@ -1,0 +1,5 @@
+node_modules/
+
+config/local-production.*
+config/local-development.*
+config/local-test.*

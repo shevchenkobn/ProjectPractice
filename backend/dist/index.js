@@ -15,6 +15,7 @@ const passport_service_1 = require("./services/passport.service");
 const error_handler_service_1 = require("./services/error-handler.service");
 const authentication_service_1 = require("./services/authentication.service");
 const socketio_api_1 = require("./socketio-api");
+const serverStateReviver_service_1 = require("./services/serverStateReviver.service");
 const mongoConfig = config_1.default.get('mongodb');
 let dbConnection = database_service_1.initialize(mongoConfig);
 (async () => {
@@ -22,8 +23,8 @@ let dbConnection = database_service_1.initialize(mongoConfig);
     const models = models_1.initialize(dbConnection);
     const passport = passport_service_1.initialize(user_model_1.default.getModel());
     const middlewares = {
-        before: [passport.initialize()],
-        after: [error_handler_service_1.errorHandler, error_handler_service_1.notFoundHandler]
+        beforeRouting: [passport.initialize()],
+        afterRouting: [error_handler_service_1.errorHandler, error_handler_service_1.notFoundHandler]
     };
     const swaggerConfigPath = app_root_path_1.default.resolve(config_1.default.get('swaggerConfig'));
     const uploadDir = app_root_path_1.default.resolve(config_1.default.get('uploadDir'));
@@ -49,9 +50,11 @@ let dbConnection = database_service_1.initialize(mongoConfig);
             }
         }
     });
+    const revive = await serverStateReviver_service_1.getReviverFunction();
     const server = await app.listen(config_1.default.get('port'), app => {
         console.log('listening');
     });
+    revive();
 })().catch(softExit);
 function softExit(err) {
     console.error(err);

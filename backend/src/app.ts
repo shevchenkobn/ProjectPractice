@@ -48,8 +48,8 @@ export interface ISwaggerAppConfig {
 }
 
 export interface IHandlersArray {
-  before: Array<Handler | ErrorRequestHandler>;
-  after: Array<Handler | ErrorRequestHandler>;
+  beforeRouting: Array<Handler | ErrorRequestHandler>;
+  afterRouting: Array<Handler | ErrorRequestHandler>;
 }
 
 export class App {
@@ -66,8 +66,8 @@ export class App {
     this._expressConfig = config.express;
     if (!this._expressConfig.middlewares) {
       this._expressConfig.middlewares = {
-        before: [],
-        after: []
+        beforeRouting: [],
+        afterRouting: []
       };
     }
     if (!this._expressConfig.routes) {
@@ -95,7 +95,7 @@ export class App {
       );
     }
 
-    this.useMiddlewares(this._expressConfig.middlewares.before);
+    this.useMiddlewares(this._expressConfig.middlewares.beforeRouting);
 
     for (let router of this._expressConfig.routes) {
       this._app.use(router.path, router.router);
@@ -139,7 +139,7 @@ export class App {
       throw new Error('Already listening to the port');
     }
     if (!this._middlewaresInUse) {
-      this.useMiddlewares(this._expressConfig.middlewares.after);
+      this.useMiddlewares(this._expressConfig.middlewares.afterRouting);
       this._middlewaresInUse = true;
     }
     const server = this._app.listen(port, () => callback && callback(this._app));
