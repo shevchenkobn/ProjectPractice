@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const _types_1 = require("./../@types");
 const authentication_service_1 = require("../../services/authentication.service");
 const config_1 = __importDefault(require("config"));
+const game_service_1 = require("../../services/game.service");
+const common_service_1 = require("../../services/common.service");
 let authService;
 let service;
 function getService() {
@@ -26,7 +28,14 @@ function getService() {
                     }
                 }
                 const gameId = getGameId(req.url);
-                if (!gameId) {
+                let game;
+                try {
+                    game = await game_service_1.findGame(gameId);
+                }
+                catch (err) {
+                    common_service_1.rethrowError(err);
+                }
+                if (!game) {
                     return next(new _types_1.NspMiddlewareError("Invalid game id"));
                 }
                 // get the game and do something else
@@ -42,12 +51,12 @@ function getService() {
 exports.getService = getService;
 let urls = config_1.default.get('socketIO');
 const baseUrl = `/${urls.baseUrl}/${urls.apiSwitch}/`.replace(/\/\//g, '/');
-const gameIdRegex = /^[a-f\d]{24}$/i;
+// const gameIdRegex = /^[a-f\d]{24}$/i;
 function getGameId(url) {
     if (!url.startsWith(baseUrl)) {
         return null;
     }
-    const gameId = url.split('?')[0].replace(baseUrl, '').replace(/\//, '');
-    return gameIdRegex.test(gameId) ? gameId : null;
+    const gameId = url.split('?')[0].replace(baseUrl, '').replace('\/', '');
+    return gameId; //gameIdRegex.test(gameId) ? gameId : null;
 }
 //# sourceMappingURL=helpers.service.js.map

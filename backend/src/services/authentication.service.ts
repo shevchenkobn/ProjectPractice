@@ -29,6 +29,7 @@ export interface IAuthConfig {
   },
   jwtSecret: string
   sessionLimit: number
+  sessionLifespan: number
 }
 
 export interface IAuthResponse {
@@ -124,19 +125,34 @@ export function getService(): IAuthenticationService {
       if (!session) {
         throw new ClientAuthError("Invalid Token");
       }
+      if (+session.updatedAt + authConfig.sessionLifespan <= Date.now()) {
+        await revokeSession(session);
+        throw new ClientAuthError("Session is outdated");
+      }
+      session.updatedAt = new Date();
+      await session.save();
       await session.populate('user').execPopulate();
       return session;
     },
 
     async createSession(user) {
+      const sessions = (await Session.find({
+        user: user._id,
+        status: 'active'
+      })).filter(async session => {
+        if (+session.updatedAt + authConfig.sessionLifespan <= Date.now()) {
+          revokeSession(session).then(session => {
+            //TODO: add some logging here
+          }).catch(err => {
+            //TODO: add some logging here
+          });
+          return false;
+        }
+        return true;
+      });
       if (user instanceof User) {
-        if (
-          await Session.count({
-            user: user._id,
-            status: 'active'
-          }) >= authConfig.sessionLimit
-        ) {
-          throw new ClientAuthError(`Maximum number of tokens (${authConfig.sessionLimit}) had already been issued!`);
+        if (sessions.length >= authConfig.sessionLimit) {
+          throw new ClientAuthError(`Maximum number of tokens (${authConfig.sessionLimit}) has already been issued!`);
         }
         const session = new Session({
           user: user._id
@@ -191,8 +207,7 @@ export function getService(): IAuthenticationService {
       if (!session) {
         throw new ClientAuthError('Invalid Token');
       }
-      session.status = 'outdated';
-      await session.save();
+      await revokeSession(session);
       req.logout();
     },
   
@@ -218,4 +233,10 @@ export function getService(): IAuthenticationService {
     }
   };
   return service;
-} 
+}
+
+async function revokeSession(session: ISessionDocument): Promise<ISessionDocument> {
+  session.status = 'outdated';
+  await session.save();
+  return session;
+}

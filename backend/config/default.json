@@ -27,7 +27,8 @@
       }
     },
     "jwtSecret": ">>>= is the Flash",
-    "sessionLimit": 5
+    "sessionLimit": 5,
+    "sessionLifespan": 2592000000
   },
 
   "apiPath": "/api/v1",

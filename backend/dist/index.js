@@ -9,6 +9,7 @@ const path_1 = __importDefault(require("path"));
 const app_1 = require("./app");
 const index_1 = require("./routes/index");
 const models_1 = require("./models");
+const services_1 = require("./services");
 const user_model_1 = __importDefault(require("./models/user.model"));
 const database_service_1 = require("./services/database.service");
 const passport_service_1 = require("./services/passport.service");
@@ -22,6 +23,7 @@ let dbConnection = database_service_1.initialize(mongoConfig);
     dbConnection = await dbConnection;
     const models = models_1.initialize(dbConnection);
     const passport = passport_service_1.initialize(user_model_1.default.getModel());
+    services_1.initialize();
     const middlewares = {
         beforeRouting: [passport.initialize()],
         afterRouting: [error_handler_service_1.errorHandler, error_handler_service_1.notFoundHandler]

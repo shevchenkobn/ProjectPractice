@@ -5,7 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const cellFunctionClass_model_1 = __importDefault(require("../models/cellFunctionClass.model"));
 const common_service_1 = require("./common.service");
-const CellFunctionClass = cellFunctionClass_model_1.default.getModel();
+let CellFunctionClass;
+function initialize() {
+    CellFunctionClass = cellFunctionClass_model_1.default.getModel();
+}
+exports.initialize = initialize;
 async function findCellFunctionClass(id, populate) {
     let cellFunctionClass;
     try {

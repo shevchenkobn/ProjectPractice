@@ -5,7 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const board_model_1 = __importDefault(require("../models/board.model"));
 const common_service_1 = require("./common.service");
-const Board = board_model_1.default.getModel();
+let Board;
+function initialize() {
+    Board = board_model_1.default.getModel();
+}
+exports.initialize = initialize;
 exports.findBoards = async (options) => {
     const filter = options.filter || {};
     const queryOptions = {};

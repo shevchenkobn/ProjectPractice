@@ -6,6 +6,8 @@ import config from 'config';
 import { IncomingMessage } from 'http';
 import { NotFound } from 'http-errors';
 import { ClientRequestError } from '../../services/error-handler.service';
+import { findGame } from '../../services/game.service';
+import { rethrowError } from '../../services/common.service';
 
 export interface ISocketIOHelpersService {
   checkAuthAndAccessMiddleware: SocketMiddleware;
@@ -37,7 +39,13 @@ export function getService() {
           }
         }
         const gameId = getGameId(req.url);
-        if (!gameId) {
+        let game;
+        try {
+          game = await findGame(gameId);
+        } catch (err) {
+          rethrowError(err);
+        }
+        if (!game) {
           return next(new NspMiddlewareError("Invalid game id"));
         }
 
@@ -53,11 +61,11 @@ export function getService() {
 
 let urls = config.get<ISocketIOUrls>('socketIO');
 const baseUrl = `/${urls.baseUrl}/${urls.apiSwitch}/`.replace(/\/\//g, '/');
-const gameIdRegex = /^[a-f\d]{24}$/i;
+// const gameIdRegex = /^[a-f\d]{24}$/i;
 function getGameId(url: string): string {
   if (!url.startsWith(baseUrl)) {
     return null;
   }
-  const gameId = url.split('?')[0].replace(baseUrl, '').replace(/\//, '');
-  return gameIdRegex.test(gameId) ? gameId : null;
+  const gameId = url.split('?')[0].replace(baseUrl, '').replace('\/', '');
+  return gameId;//gameIdRegex.test(gameId) ? gameId : null;
 }

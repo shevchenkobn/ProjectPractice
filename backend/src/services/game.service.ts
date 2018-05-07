@@ -84,6 +84,7 @@ export const constructAndSaveGame = async (boardId: string | Types.ObjectId, use
     await newGame.save();
     if (createSuspendedRemoving) {
       suspendRemoving(newGame, gamesConfig.removeTimeout)
+        // .then(err => console.log(err))//TODO: add loggin in error callback
         .catch(err => console.log(err));//TODO: add loggin in error callback
     }
     return newGame;

@@ -18,7 +18,6 @@ async function getReviverFunction() {
     for (let game of games) {
         if (now - +game.createdAt >= gamesConfig.removeTimeout) {
             outdatedGames.push(game.remove());
-            console.log('removed', game.id);
         }
         else {
             actualGames.push(game);
@@ -28,8 +27,7 @@ async function getReviverFunction() {
     return () => {
         const now = Date.now();
         for (let game of actualGames) {
-            game_service_1.suspendRemoving(game, Math.max(0, now - +game.createdAt)).catch(err => console.log(err)).then((game) => console.log(game.id)); //TODO: add logging here
-            console.log('suspended', game.id);
+            game_service_1.suspendRemoving(game, Math.max(0, now - +game.createdAt)).catch(err => console.log(err)); //TODO: add logging here
         }
     };
 }

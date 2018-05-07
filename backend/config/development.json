@@ -1,5 +1,8 @@
 {
+  "auth": {
+    "sessionLifespan": 2147483647
+  },
   "games": {
-    "removeTimeout": 1.7976931348623157e+308
+    "removeTimeout": 2147483647
   }
 }

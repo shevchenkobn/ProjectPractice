@@ -5,7 +5,7 @@ class NspMiddlewareError {
         this.message = {
             message
         };
-        if (arguments.length > 1) {
+        if (code) {
             this.message.code = code;
         }
     }

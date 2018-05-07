@@ -8,8 +8,13 @@ const common_service_1 = require("./common.service");
 const board_service_1 = require("./board.service");
 const config_1 = __importDefault(require("config"));
 const events_1 = require("events");
-const gamesConfig = config_1.default.get('games');
-const Game = game_model_1.default.getModel();
+let gamesConfig;
+let Game;
+function initialize() {
+    gamesConfig = config_1.default.get('games');
+    Game = game_model_1.default.getModel();
+}
+exports.initialize = initialize;
 exports.findGames = async (options) => {
     const filter = options.filter || {};
     const queryOptions = {};
@@ -69,6 +74,7 @@ exports.constructAndSaveGame = async (boardId, userId, createSuspendedRemoving =
         await newGame.save();
         if (createSuspendedRemoving) {
             exports.suspendRemoving(newGame, gamesConfig.removeTimeout)
+                // .then(err => console.log(err))//TODO: add loggin in error callback
                 .catch(err => console.log(err)); //TODO: add loggin in error callback
         }
         return newGame;
