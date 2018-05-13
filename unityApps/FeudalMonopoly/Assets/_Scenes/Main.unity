@@ -441,12 +441,13 @@ MonoBehaviour:
   anchor: {fileID: 1185047953}
   rotationSpeed: 5
   movementSpeed: 5
-  factor: 0.25
   zoomSpeed: 30
-  maxYAngle: 85
-  minYAngle: 25
   zoomOut: 80
   zoomIn: 20
+  maxHeight: 40
+  minHeight: 4
+  minAnchorDistance: 25
+  maxAnchorDistance: 65
 --- !u!114 &836886839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,6 +522,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1185047953}
+  - component: {fileID: 1185047954}
   m_Layer: 0
   m_Name: Anchor
   m_TagString: Untagged
@@ -541,6 +543,17 @@ Transform:
   m_Father: {fileID: 467363647}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1185047954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1185047952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da1dc7f4eefcc8b41b56db5f5377d732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1233665738
 GameObject:
   m_ObjectHideFlags: 0

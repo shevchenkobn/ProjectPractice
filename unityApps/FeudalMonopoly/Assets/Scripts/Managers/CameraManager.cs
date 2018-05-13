@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
+
+    public Camera ActiveCamera { get; private set; }
 
     public Camera mainCamera;
     public Camera topViewCamera;
@@ -24,6 +27,11 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        SetActiveCamera();
+    }
+
     private void OnEnable()
     {
         Dice.DiceRolling += OnDiceRolling;
@@ -38,33 +46,55 @@ public class CameraManager : MonoBehaviour
 
     private void OnDiceRolling()
     {
-        ActivteTopViewCamera();
+        ActivateTopViewCamera();
     }
 
     private void OnDiceRolled(int steps)
     {
-        ActivteMainCamera();
+        ActivateMainCamera();
     }
 
-    public void ActivteMainCamera()
+    private void SetActiveCamera()
+    {
+        if (mainCamera.enabled)
+        {
+            ActiveCamera = mainCamera;
+        }
+        else if (topViewCamera.enabled)
+        {
+            ActiveCamera = topViewCamera;
+        }
+        else
+        {
+            ActiveCamera = freeCamera;
+        }
+    }
+
+    public void ActivateMainCamera()
     {
         mainCamera.enabled = true;
         topViewCamera.enabled = false;
         freeCamera.enabled = false;
+
+        ActiveCamera = mainCamera;
     }
 
-    public void ActivteTopViewCamera()
+    public void ActivateTopViewCamera()
     {
         mainCamera.enabled = false;
         topViewCamera.enabled = true;
         freeCamera.enabled = false;
+
+        ActiveCamera = topViewCamera;
     }
 
-    public void ActivteFreeCamera()
+    public void ActivateFreeCamera()
     {
         mainCamera.enabled = false;
         topViewCamera.enabled = false;
         freeCamera.enabled = true;
+
+        ActiveCamera = freeCamera;
     }
 
 }
