@@ -15,18 +15,16 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     in: header
+security: 
+  - Bearer: []
     
 paths:
-  /games/{path}:
+  /games/:
     x-swagger-router-controller: "game.controller"
     get:
       operationId: getAll
       summary: ...
       description: ...
-      security: 
-        - Bearer: []
-      x-security-scopes:
-        - user
       produces:
         - application/json
       parameters:

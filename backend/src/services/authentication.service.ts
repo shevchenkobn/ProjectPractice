@@ -191,6 +191,7 @@ export function getService(): IAuthenticationService {
       await session.save();
       req.logout();
     },
+  
 
     getToken(req: Request, fromBody = false): string {
       return fromBody && req.body && req.body.token && (req.body.token + '').trim() || tokenExtractor(req);
