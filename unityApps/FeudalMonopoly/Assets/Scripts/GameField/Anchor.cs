@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Anchor : MonoBehaviour
 {
@@ -12,7 +10,7 @@ public class Anchor : MonoBehaviour
     }
 
     private void OnDrawGizmos()
-    {
+    {         
         //TODO: keep free camera on the same distance from anchor but move only on the surface of sphere
         if (transformComponent)
         {
