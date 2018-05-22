@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FollowingCamera : MonoBehaviour
 {
@@ -14,7 +11,6 @@ public class FollowingCamera : MonoBehaviour
     private int cornerCount;
     private int zOffset = 20;
     private int xOffset = 20;
-
 
     private void OnEnable()
     {

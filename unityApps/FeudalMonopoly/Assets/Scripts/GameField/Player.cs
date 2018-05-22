@@ -14,10 +14,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float delayBeforeMove = 0.5f;
     [SerializeField] private float delayBetweenSteps = 0.6f;
 
-    private Vector3 cornerRotation= new Vector3(0, -90, 0);
+    private Vector3 cornerRotation = new Vector3(0, -90, 0);
     private Vector3 movementDirection = Vector3.forward;
-    private int currentStepIndex = 1;
-    
+    private int currentStepIndex = 1;    
 
     private List<Vector3> possibleSpots = new List<Vector3>(Field.CORNERS_AMOUNT * (Field.STEPS_PER_CORNER + 1));
 

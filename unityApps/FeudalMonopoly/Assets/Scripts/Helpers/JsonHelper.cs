@@ -13,7 +13,6 @@ public class JsonHelper
     {
         using (StreamWriter streamWriter = new StreamWriter(path))
         {
-
             string json = JsonConvert.SerializeObject(objectToSerialize);
             streamWriter.Write(json);
         }

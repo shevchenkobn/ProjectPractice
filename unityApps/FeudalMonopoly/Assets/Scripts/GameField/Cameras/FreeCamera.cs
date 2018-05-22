@@ -6,52 +6,70 @@ public class FreeCamera : MonoBehaviour
 {
     public Transform anchor;
 
-    [SerializeField] private float rotationSpeed = 5f;
-    [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] private float horizontalRotationSpeed = 5f;
+    [SerializeField] private float verticalRotationSpeed = 2.5f;
 
     [SerializeField] private float zoomSpeed = 30f;
     [SerializeField] private float zoomOut = 80f;
     [SerializeField] private float zoomIn = 20f;
 
-    [SerializeField] private float maxHeight = 40f;
-    [SerializeField] private float minHeight = 4f;
-
-    [SerializeField] private float minAnchorDistance = 25f;
-    [SerializeField] private float maxAnchorDistance = 65f;
+    [SerializeField] private float maxHeight = 20f;
+    [SerializeField] private float minHeight = 10f;
 
     private Vector3 offset;
+    private Vector3 newPosition;
     private Camera cameraComponent;
 
-    private float anchorGravity;
+    private Quaternion horizontalRotation;    
+
+    private float verticalRotation;
+    private float distance;
     private float zoom;
 
     private void Start()
     {
+        newPosition = transform.position;
         cameraComponent = GetComponent<Camera>();
-        offset = transform.position - anchor.position;
         zoom = cameraComponent.fieldOfView;
+        offset = transform.position - anchor.position;
+        distance = offset.magnitude;
     }
 
     private void Update()
     {
-        offset = transform.position - anchor.position;
-
+        Debug.Log("Dist " + distance);
         if (Input.GetMouseButton(1))
         {
             Cursor.lockState = CursorLockMode.Locked;
 
-            Quaternion rotation = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * rotationSpeed, Vector3.up);
+            if (Input.GetAxis("Mouse X") != 0)
+            {
+                horizontalRotation = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * horizontalRotationSpeed, anchor.up);
+                offset = horizontalRotation * offset;
+            }
 
             if (Input.GetAxis("Mouse Y") != 0)
             {
-                anchorGravity = Vector3.up.y * Input.GetAxis("Mouse Y") * movementSpeed;
-            }
-            else
+                verticalRotation = -Input.GetAxis("Mouse Y") * verticalRotationSpeed;                
+                offset += transform.up * verticalRotation;                  
+            }            
+            
+            newPosition = anchor.position + offset;
+            float clampedY = Mathf.Clamp(offset.y, minHeight, maxHeight);
+            newPosition = new Vector3(newPosition.x, clampedY, newPosition.z);
+
+            Debug.Log("Dist " + distance);
+            Debug.Log("New dist " + (newPosition - anchor.position).magnitude);
+
+            while ((newPosition - anchor.position).magnitude > distance)
             {
-                anchorGravity = 0f;
+                newPosition += transform.forward;
             }
 
-            offset = rotation * offset;
+            while ((newPosition - anchor.position).magnitude < distance)
+            {
+                newPosition -= transform.forward;
+            }
         }
         else
         {
@@ -62,26 +80,17 @@ public class FreeCamera : MonoBehaviour
         {
             zoom -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
             zoom = Mathf.Clamp(zoom, zoomIn, zoomOut);
-        }
+        }        
     }
 
     private void LateUpdate()
     {
-        Vector3 newPosition = anchor.position + offset;
-        newPosition.y = Mathf.Clamp(newPosition.y, minHeight, maxHeight);      
-
-        transform.position = Vector3.Slerp(transform.position, newPosition, 0.5f);        
-        transform.LookAt(anchor);
-
-        Vector3 modefiedPosition = transform.position + transform.forward * anchorGravity;
-        float newPositionToAnchorDistance = (anchor.position - modefiedPosition).magnitude;
-
-        if (newPositionToAnchorDistance >= minAnchorDistance 
-            && newPositionToAnchorDistance <= maxAnchorDistance)
+        if (transform.position != newPosition)
         {
-            transform.position = modefiedPosition;
-        }       
+            transform.position = Vector3.Slerp(transform.position, newPosition, 0.2f);
+        }
 
+        transform.LookAt(anchor);
         cameraComponent.fieldOfView = zoom;
     }
 }
