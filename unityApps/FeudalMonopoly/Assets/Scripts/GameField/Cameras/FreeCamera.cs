@@ -37,7 +37,6 @@ public class FreeCamera : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Dist " + distance);
         if (Input.GetMouseButton(1))
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -57,9 +56,6 @@ public class FreeCamera : MonoBehaviour
             newPosition = anchor.position + offset;
             float clampedY = Mathf.Clamp(offset.y, minHeight, maxHeight);
             newPosition = new Vector3(newPosition.x, clampedY, newPosition.z);
-
-            Debug.Log("Dist " + distance);
-            Debug.Log("New dist " + (newPosition - anchor.position).magnitude);
 
             while ((newPosition - anchor.position).magnitude > distance)
             {
