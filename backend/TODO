@@ -4,6 +4,8 @@ close room when time for game is out (implement via passing socket.io server obj
 
 replace sessions with users when serializing game to json
 
+revive all active and open games in revive service
+
 ----------------------- improvements
 implement users and profile (user) api
 
