@@ -1,4 +1,23 @@
-export class ServiceError extends Error {}
+import { Error as MongooseError, CastError, ValidationError } from 'mongoose';
+
+export class ServiceError extends Error { }
+
+class MongooseServiceError extends ServiceError {
+  [mongooseErrorProps: string]: any;
+
+  constructor(errObj: MongooseError, message?: string) {
+    super();
+
+    const errPropsDict = errObj as { [prop: string]: any };
+    for (const prop of Object.keys(errObj)) {
+      this[prop] = errPropsDict[prop];
+    }
+
+    if (message) {
+      this.message = message;
+    }
+  }
+}
 
 export interface IFindManyOptions {
   filter?: any,
@@ -20,16 +39,18 @@ const objectIdRegex = /objectid/i;
 const unknownOperatorRegex = /unknown operator/i;
 const cantUseOperatorRegex = /Can't use \$/i;
 export function rethrowError(err: any): never {
+  console.log(err.constructor);
   if (!(err instanceof Error)) {
     throw err;
   } else if (err.message == "sort() only takes 1 Argument") {
-    throw new ServiceError('Contradiction between sort fields');
+    throw new MongooseServiceError(err, 'Contradiction between sort fields');
   } else if (
-    objectIdRegex.test(err.message)
+    err instanceof MongooseError
+    || objectIdRegex.test(err.message)
     || unknownOperatorRegex.test(err.message)
     || cantUseOperatorRegex.test(err.message)
   ) {
-    throw new ServiceError(err.message);
+    throw new MongooseServiceError(err);
   } else {
     throw err;
   }
