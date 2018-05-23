@@ -59,11 +59,11 @@ const suspendedRemovingCondition: RemoveCondition = async (game) => {
     const promises = [];
     if (game.players.length) {
       for (let i = 0; i < game.players.length; i++) {
-        if (game.players[i].session instanceof ObjectID) {
+        if (game.players[i].user instanceof ObjectID) {
           await game.populate('players.' + i + '.user').execPopulate();
         }
         // TODO: add players disconnecting
-        const session = game.players[i].session as ISessionDocument;
+        const session = game.players[i].user as ISessionDocument;
         session.game = null;
         promises.push(session.save());
       }

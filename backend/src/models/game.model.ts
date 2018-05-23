@@ -11,7 +11,7 @@ import { ISessionDocument } from './session.model';
  */
 
 export interface IPlayerDocument {
-  session: Types.ObjectId | ISessionDocument,
+  user: Types.ObjectId | ISessionDocument,
   role?: Types.ObjectId | ICellFunctionDocument,
   status: 'active' | 'gone',
   dateLeft?: Date,
@@ -50,7 +50,7 @@ export interface IGameModel extends Model<IGameDocument> { }
  */
 
 const playerSchema = new Schema({
-  session: {
+  user: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'Session'
@@ -175,14 +175,14 @@ gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths
   if (this.players.length) {
     const playersPopulate = paths.filter(value => value.startsWith('players'));
     if (playersPopulate.length) {
-      const populateUsers = playersPopulate.includes('players.sessions');
+      const populateUsers = playersPopulate.includes('players.users');
       const populateRole = playersPopulate.includes('players.roles');
       const populatePossessions = playersPopulate.includes('players.possessions');
       const populateModifiers = playersPopulate.includes('players.modifiers');
       const populateMortgaged = playersPopulate.includes('players.mortgaged');
       for (let i = 0; i < this.players.length; i++) {
         if (populateUsers) {
-          this.populate('players.' + i + '.session');
+          this.populate('players.' + i + '.user');
         }
         if (populateRole) {
           this.populate('players.' + i + '.role');
