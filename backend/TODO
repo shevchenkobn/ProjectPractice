@@ -1,5 +1,10 @@
-!!!load data for all current started games
+load data for all current started games
 
+close room when time for game is out (implement via passing socket.io server object to socket.io controller in app class)
+
+replace sessions with users when serializing game to json
+
+----------------------- improvements
 implement users and profile (user) api
 
 implement chat
