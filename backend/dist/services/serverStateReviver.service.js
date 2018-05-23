@@ -24,6 +24,7 @@ async function getReviverFunction() {
         }
     }
     await Promise.all(outdatedGames);
+    // TODO: load data for all current started games
     return () => {
         const now = Date.now();
         for (let game of actualGames) {

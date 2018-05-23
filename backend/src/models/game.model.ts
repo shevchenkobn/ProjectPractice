@@ -4,19 +4,20 @@ import mongoose from 'mongoose';
 import { IUserDocument } from './user.model';
 import { IBoardDocument } from './board.model';
 import { ICellFunctionDocument } from './cellFunction.model';
+import { ISessionDocument } from './session.model';
 
 /**
  * Interfaces section
  */
 
 export interface IPlayerDocument {
-  user: Types.ObjectId | IUserDocument,
+  session: Types.ObjectId | ISessionDocument,
   role?: Types.ObjectId | ICellFunctionDocument,
   status: 'active' | 'gone',
   dateLeft?: Date,
   cash: number,
   assets: number,
-  depts: {
+  depts?: {
     bank: number,
     [playerIndex: number]: number
   },
@@ -49,10 +50,10 @@ export interface IGameModel extends Model<IGameDocument> { }
  */
 
 const playerSchema = new Schema({
-  user: {
+  session: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: 'Session'
   },
   role: {
     type: Schema.Types.ObjectId,
@@ -174,14 +175,14 @@ gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths
   if (this.players.length) {
     const playersPopulate = paths.filter(value => value.startsWith('players'));
     if (playersPopulate.length) {
-      const populateUsers = playersPopulate.includes('players.users');
+      const populateUsers = playersPopulate.includes('players.sessions');
       const populateRole = playersPopulate.includes('players.roles');
       const populatePossessions = playersPopulate.includes('players.possessions');
       const populateModifiers = playersPopulate.includes('players.modifiers');
       const populateMortgaged = playersPopulate.includes('players.mortgaged');
       for (let i = 0; i < this.players.length; i++) {
         if (populateUsers) {
-          this.populate('players.' + i + '.user');
+          this.populate('players.' + i + '.session');
         }
         if (populateRole) {
           this.populate('players.' + i + '.role');

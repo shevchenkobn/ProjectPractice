@@ -7,7 +7,10 @@ import { IncomingMessage } from 'http';
 import { NotFound } from 'http-errors';
 import { ClientRequestError } from '../../services/error-handler.service';
 import { findGame } from '../../services/game.service';
-import { rethrowError } from '../../services/common.service';
+import { rethrowError, ServiceError } from '../../services/common.service';
+import { joinGame } from '../controllers/connection.handler';
+import { IUserDocument } from '../../models/user.model';
+import { ISessionDocument } from '../../models/session.model';
 
 export interface ISocketIOHelpersService {
   checkAuthAndAccessMiddleware: SocketMiddleware;
@@ -49,7 +52,16 @@ export function getService() {
           return next(new NspMiddlewareError("Invalid game id"));
         }
 
-        // get the game and do something else
+        try {
+        await joinGame(game, session as ISessionDocument);
+        } catch (err) {
+          if (err instanceof ServiceError) {
+            throw new NspMiddlewareError(err.message);
+          } else {
+            throw err;
+          }
+        }
+
         next();
       } catch (err) {
         next(err);

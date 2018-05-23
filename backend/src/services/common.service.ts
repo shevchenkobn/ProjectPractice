@@ -39,7 +39,6 @@ const objectIdRegex = /objectid/i;
 const unknownOperatorRegex = /unknown operator/i;
 const cantUseOperatorRegex = /Can't use \$/i;
 export function rethrowError(err: any): never {
-  console.log(err.constructor);
   if (!(err instanceof Error)) {
     throw err;
   } else if (err.message == "sort() only takes 1 Argument") {

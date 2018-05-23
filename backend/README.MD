@@ -8,5 +8,5 @@ use this JSON:
 { "path": "/socket.io/games/your game id" }
 ```
 
-#### Also see this:
-https://github.com/Doodle3D/socket.io-debug-client/
+### Change headers Chrome extension
+https://mod-header.appspot.com/

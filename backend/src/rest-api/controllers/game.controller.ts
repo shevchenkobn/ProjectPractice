@@ -49,7 +49,7 @@ export const deleteGame: Handler = async (req, res, next) => {
   try {
     const id = (<any>req).swagger.params.gameId.value as string;
 
-    await removeGame(id);
+    await removeGame(id, req.user.user.id);
     res.json({
       _id: id
     });

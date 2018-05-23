@@ -5,12 +5,16 @@ import { Types } from 'mongoose';
 import { findBoard } from './board.service';
 import config from 'config';
 import { EventEmitter } from 'events';
+import { ObjectID } from 'bson';
+import { IUserDocument } from '../models/user.model';
 
 export interface IGamesConfig {
   gamesPerUser: number,
   removeTimeout: number,
   startCountdown: number
 }
+
+export type RemoveCondition = (game: IGameDocument) => Promise<boolean>;
 
 let gamesConfig: IGamesConfig;
 let Game: IGameModel;
@@ -56,8 +60,11 @@ export const findGame = async (id: string | Types.ObjectId, populatePaths?: Arra
   return game;
 };
 
-export const removeGame = async (id: string): Promise<void> => {
+export const removeGame = async (id: string, userId: string): Promise<void> => {
   const game = await findGame(id);
+  if ((game.createdBy as ObjectID).toHexString() !== userId) {
+    throw new ServiceError('You are didn\'t created the game so you are not able to delete it.');
+  }
   if (game.players.length) {
     throw new ServiceError('There are players connected to the game. Delete is impossible.');
   }
@@ -94,6 +101,7 @@ export const constructAndSaveGame = async (boardId: string | Types.ObjectId, use
 };
 
 const removeTimeouts: {[objectId: string]: NodeJS.Timer} = {};
+const removeConditions: {[objectId: string]: RemoveCondition} = {};
 
 export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGameDocument> => {
   if (!game) {
@@ -104,10 +112,15 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
     throw new TypeError(`Remove timeout for "${id}" is already set`);
   }
   const eventEmitter = new EventEmitter();
-  removeTimeouts[id] = setTimeout(() => {
-    game.remove()
-      .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))
-      .catch((...args: Array<any>) => eventEmitter.emit('reject', ...args));
+  removeTimeouts[id] = setTimeout(async () => {
+    if (removeConditions[id] && await removeConditions[id](game)) {
+      game.remove()
+        .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))
+        .catch((...args: Array<any>) => eventEmitter.emit('reject', ...args));
+    } else {
+      stopSuspendedRemoving(id);
+      eventEmitter.emit('reject');
+    }
   }, time);
   return new Promise<IGameDocument>((resolve, reject) => {
     eventEmitter.on('resolve', resolve);
@@ -120,4 +133,17 @@ export const stopSuspendedRemoving = (gameId: string): void => {
     throw new Error(`No suspended removing is set for game id "${gameId}"`);
   }
   clearInterval(removeTimeouts[gameId]);
+
+  delete removeTimeouts[gameId];
+  delete removeConditions[gameId];
+}
+
+export const changeConditionOnRemoving = (gameId: string, condition: RemoveCondition) => {
+  if (!removeTimeouts[gameId]) {
+    throw new Error('The game has no timeout for removing');
+  } else if (removeConditions[gameId]) {
+    throw new Error('A removing condition is already set');
+  }
+
+  removeConditions[gameId] = condition;
 }

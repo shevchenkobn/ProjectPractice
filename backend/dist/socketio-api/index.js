@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const helpers_service_1 = require("./services/helpers.service");
 const config_1 = __importDefault(require("config"));
+const connection_handler_1 = require("./controllers/connection.handler");
 let helpersService;
 let socketConfig;
 const upgradeUrl = config_1.default.get('socketIO').baseUrl;
@@ -19,10 +20,8 @@ function getConfig() {
     socketConfig = {
         namespaces: {
             '/games': {
+                connectionHandler: connection_handler_1.connectionHandler,
                 middlewares: gameMiddlewares,
-                connectionHandler: (socket) => {
-                    // console.log('connected: ', socket);          
-                }
             }
         },
         serverOptions: {

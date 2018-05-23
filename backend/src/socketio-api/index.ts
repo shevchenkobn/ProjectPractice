@@ -1,6 +1,7 @@
 import { ISocketIOConfig, SocketMiddleware } from './@types';
 import { getService, ISocketIOHelpersService, ISocketIOUrls } from './services/helpers.service';
 import config from 'config';
+import { connectionHandler } from './controllers/connection.handler';
 
 let helpersService: ISocketIOHelpersService;
 let socketConfig: ISocketIOConfig;
@@ -18,10 +19,8 @@ export function getConfig(): ISocketIOConfig {
   socketConfig = {
     namespaces: {
       '/games': {
+        connectionHandler,
         middlewares: gameMiddlewares,
-        connectionHandler: (socket) => {
-          // console.log('connected: ', socket);          
-        }
       }
     },
     serverOptions: {

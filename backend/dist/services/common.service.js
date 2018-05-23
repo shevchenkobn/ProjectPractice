@@ -29,7 +29,6 @@ const objectIdRegex = /objectid/i;
 const unknownOperatorRegex = /unknown operator/i;
 const cantUseOperatorRegex = /Can't use \$/i;
 function rethrowError(err) {
-    console.log(err.constructor);
     if (!(err instanceof Error)) {
         throw err;
     }
