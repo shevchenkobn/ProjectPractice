@@ -8,7 +8,7 @@ public class BuildingCamera : MonoBehaviour
     [SerializeField] private float offsetForwardDistance = 3.5f;
     [SerializeField] private float offsetHeight = 2f;
 
-    public Transform target;
+    public Transform Target { get; set; }
 
     private readonly int rotationDirectionLimit = 60;
 
@@ -16,30 +16,36 @@ public class BuildingCamera : MonoBehaviour
     private Vector3 offset;
     private int rotationCount;
 
-    private void OnEnable()
+    public void OnBuildingCaptured()
     {
-        if (target)
+        if (Target)
         {
             rotationCount = 0;
             CalculateOffset();
-            transform.position = target.position + offset;
+            transform.position = Target.position + offset;
         }
     }
 
     private void LateUpdate()
     {
-        RotateAroundTarget();
+        if (Target)
+        {
+            RotateAroundTarget();
 
-        Vector3 futurePoition = target.position + offset;
-        transform.position = Vector3.SmoothDamp(transform.position, futurePoition, ref velocity, smoothTime);
-        transform.LookAt(target);
+            Vector3 futurePoition = Target.position + offset;
+            transform.position = Vector3.SmoothDamp(transform.position, futurePoition, ref velocity, smoothTime);
+            transform.LookAt(Target);
+        }
     }
 
+    /// <summary>
+    /// Rotates building camera around current Target
+    /// </summary>
     private void RotateAroundTarget()
     {
         CheckRotationDirection();       
 
-        Quaternion horizontalRotation = Quaternion.AngleAxis(rotationSpeed, target.up);
+        Quaternion horizontalRotation = Quaternion.AngleAxis(rotationSpeed, Target.up);
         offset = horizontalRotation * offset;
 
         rotationCount++;
@@ -50,7 +56,7 @@ public class BuildingCamera : MonoBehaviour
     /// </summary>
     private void CheckRotationDirection()
     {
-        //TODO: check angle of rotation and not count
+        //TODO: check angle of rotation and donnot use count
 
         if (rotationCount >= rotationDirectionLimit)
         {
@@ -60,11 +66,11 @@ public class BuildingCamera : MonoBehaviour
     }
 
     /// <summary>
-    /// Calculates camera offset from current target
+    /// Calculates camera offset from current Target
     /// </summary>
     private void CalculateOffset()
     {
-        offset = target.forward * offsetForwardDistance;
+        offset = Target.forward * offsetForwardDistance;
         offset.y += offsetHeight;
     }
 }

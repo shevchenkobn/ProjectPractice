@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4722385333618996}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: House
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,8 @@ GameObject:
   - component: {fileID: 4880481364553992}
   - component: {fileID: 33399260983979572}
   - component: {fileID: 23899318749447444}
-  m_Layer: 0
+  - component: {fileID: 64226201132364474}
+  m_Layer: 8
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +54,8 @@ GameObject:
   - component: {fileID: 4487543991080962}
   - component: {fileID: 33625457534779760}
   - component: {fileID: 23538721299893208}
-  m_Layer: 0
+  - component: {fileID: 64312464371644870}
+  m_Layer: 8
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +70,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4273687198087658}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: House (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4207568757037716}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: House (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +100,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4627715716107864}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: House (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +115,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4635636804248542}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Houses
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +132,8 @@ GameObject:
   - component: {fileID: 4686305054012726}
   - component: {fileID: 33958893959561738}
   - component: {fileID: 23271577507941072}
-  m_Layer: 0
+  - component: {fileID: 64309368334634030}
+  m_Layer: 8
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +150,8 @@ GameObject:
   - component: {fileID: 4936424976196956}
   - component: {fileID: 33038899728589738}
   - component: {fileID: 23905899398072658}
-  m_Layer: 0
+  - component: {fileID: 64871649833549396}
+  m_Layer: 8
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,4 +446,60 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1611357002515642}
+  m_Mesh: {fileID: 4300000, guid: ded9fd5a70ee62744bd9c7dbae2ad4b8, type: 3}
+--- !u!64 &64226201132364474
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1170621314248914}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: ded9fd5a70ee62744bd9c7dbae2ad4b8, type: 3}
+--- !u!64 &64309368334634030
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1611357002515642}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: ded9fd5a70ee62744bd9c7dbae2ad4b8, type: 3}
+--- !u!64 &64312464371644870
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1178807763096574}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: ded9fd5a70ee62744bd9c7dbae2ad4b8, type: 3}
+--- !u!64 &64871649833549396
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1720810421485638}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: ded9fd5a70ee62744bd9c7dbae2ad4b8, type: 3}

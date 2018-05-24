@@ -181,7 +181,7 @@ namespace UnityEngine.PostProcessing
                 m_Context.camera.ResetProjectionMatrix();
         }
 
-        // Classic render target pipeline for RT-based effects
+        // Classic render Target pipeline for RT-based effects
         void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             if (profile == null || m_Camera == null)
@@ -210,9 +210,9 @@ namespace UnityEngine.PostProcessing
             }
 
 #if UNITY_EDITOR
-            // Render to a dedicated target when monitors are enabled so they can show information
+            // Render to a dedicated Target when monitors are enabled so they can show information
             // about the final render.
-            // At runtime the output will always be the backbuffer or whatever render target is
+            // At runtime the output will always be the backbuffer or whatever render Target is
             // currently set on the camera.
             if (profile.monitors.onFrameEndEditorOnly != null)
                 dst = m_RenderTextureFactory.Get(src);

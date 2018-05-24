@@ -140,7 +140,7 @@ namespace UnityEngine.PostProcessing
                 m_CurrentAutoExposure = m_AutoExposurePool[0];
                 Graphics.Blit(null, m_CurrentAutoExposure, material, (int)EyeAdaptationModel.EyeAdaptationType.Fixed);
 
-                // Copy current exposure to the other pingpong target to avoid adapting from black
+                // Copy current exposure to the other pingpong Target to avoid adapting from black
                 Graphics.Blit(m_AutoExposurePool[0], m_AutoExposurePool[1]);
             }
             else

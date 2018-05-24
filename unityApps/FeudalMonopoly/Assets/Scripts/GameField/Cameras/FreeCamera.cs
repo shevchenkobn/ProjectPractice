@@ -114,24 +114,33 @@ public class FreeCamera : MonoBehaviour
     }
 
     /// <summary>
-    /// Moves newPosition back or front if needed
+    /// Moves newPosition back or forth if needed
     /// </summary>
     private void CorrectDistanceToAnchor()
     {
-        Pull(true);
-        Pull(false);
+        PullForward();
+        PullBackward();
     }
 
     /// <summary>
-    /// Changes newPosition with bringing it back or front to keep distance between camera and the anchor the same
+    /// Changes newPosition with bringing it forward to keep distance between camera and the anchor the same
     /// </summary>
-    /// <param name="forward">Should it be moved forward or backward</param>
-    private void Pull(bool forward)
+    private void PullForward()
     {
         while ((newPosition - anchor.position).magnitude > distance)
         {
-            if (forward) newPosition += transform.forward;
-            else newPosition -= transform.forward;
+            newPosition += transform.forward;
+        }
+    }
+
+    /// <summary>
+    /// Changes newPosition with bringing it backward to keep distance between camera and the anchor the same
+    /// </summary>
+    private void PullBackward()
+    {
+        while ((newPosition - anchor.position).magnitude < distance)
+        {
+            newPosition -= transform.forward;
         }
     }
 }
