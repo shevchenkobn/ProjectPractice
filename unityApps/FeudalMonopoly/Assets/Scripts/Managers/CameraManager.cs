@@ -5,11 +5,14 @@ public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
 
-    public Camera ActiveCamera { get; private set; }
+    public Camera ActiveCamera { get; private set; }   
 
     public Camera mainCamera;
     public Camera topViewCamera;
     public Camera freeCamera;
+    public Camera buildingCamera;
+
+    public Material renderTextureMaterial;
 
     /// <summary>
     /// Makes sure that Instance references only to one object in the scene
@@ -30,6 +33,7 @@ public class CameraManager : MonoBehaviour
     private void Start()
     {
         SetActiveCamera();
+        SetupBuildingCamera();
     }
 
     private void OnEnable()
@@ -97,4 +101,21 @@ public class CameraManager : MonoBehaviour
         ActiveCamera = freeCamera;
     }
 
+    public void ActivateBuildingCamera()
+    {
+        buildingCamera.enabled = true;
+    }
+
+    public void DeactivateBuildingCamera()
+    {
+        buildingCamera.enabled = false;
+    }
+
+    private void SetupBuildingCamera()
+    {
+        if (buildingCamera.targetTexture) buildingCamera.targetTexture.Release();
+
+        buildingCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
+        renderTextureMaterial.mainTexture = buildingCamera.targetTexture;
+    }
 }

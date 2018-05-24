@@ -29,6 +29,9 @@ public class FollowingCamera : MonoBehaviour
         transform.LookAt(target);
     }
 
+    /// <summary>
+    /// Changes offset to player while rotating on the field corners
+    /// </summary>
     private void OnPlayerRotated()
     {
         switch (cornerCount % 4)

@@ -43,29 +43,16 @@ public class FreeCamera : MonoBehaviour
 
             if (Input.GetAxis("Mouse X") != 0)
             {
-                horizontalRotation = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * horizontalRotationSpeed, anchor.up);
-                offset = horizontalRotation * offset;
+                HandleHorizontalInput();
             }
 
             if (Input.GetAxis("Mouse Y") != 0)
             {
-                verticalRotation = -Input.GetAxis("Mouse Y") * verticalRotationSpeed;                
-                offset += transform.up * verticalRotation;                  
-            }            
-            
-            newPosition = anchor.position + offset;
-            float clampedY = Mathf.Clamp(offset.y, minHeight, maxHeight);
-            newPosition = new Vector3(newPosition.x, clampedY, newPosition.z);
-
-            while ((newPosition - anchor.position).magnitude > distance)
-            {
-                newPosition += transform.forward;
+                HandleVerticalInput();
             }
 
-            while ((newPosition - anchor.position).magnitude < distance)
-            {
-                newPosition -= transform.forward;
-            }
+            CalculateNewPosition();
+            CorrectDistanceToAnchor();
         }
         else
         {
@@ -74,9 +61,8 @@ public class FreeCamera : MonoBehaviour
 
         if (Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            zoom -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
-            zoom = Mathf.Clamp(zoom, zoomIn, zoomOut);
-        }        
+            ZoomCamera();
+        }
     }
 
     private void LateUpdate()
@@ -88,5 +74,64 @@ public class FreeCamera : MonoBehaviour
 
         transform.LookAt(anchor);
         cameraComponent.fieldOfView = zoom;
+    }
+    
+    /// <summary>
+    /// Changes the scope of camera
+    /// </summary>
+    private void ZoomCamera()
+    {
+        zoom -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
+        zoom = Mathf.Clamp(zoom, zoomIn, zoomOut);
+    }
+
+    /// <summary>
+    /// Takes vertical input that is vertical rotation around the anchor
+    /// </summary>
+    private void HandleVerticalInput()
+    {
+        verticalRotation = -Input.GetAxis("Mouse Y") * verticalRotationSpeed;
+        offset += transform.up * verticalRotation;
+    }
+
+    /// <summary>
+    /// Takes horizontal input that is horizontal rotation around the anchor
+    /// </summary>
+    private void HandleHorizontalInput()
+    {
+        horizontalRotation = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * horizontalRotationSpeed, anchor.up);
+        offset = horizontalRotation * offset;
+    }
+
+    /// <summary>
+    /// Calculates newPosition for camera
+    /// </summary>
+    private void CalculateNewPosition()
+    {
+        newPosition = anchor.position + offset;
+        float clampedY = Mathf.Clamp(offset.y, minHeight, maxHeight);
+        newPosition = new Vector3(newPosition.x, clampedY, newPosition.z);
+    }
+
+    /// <summary>
+    /// Moves newPosition back or front if needed
+    /// </summary>
+    private void CorrectDistanceToAnchor()
+    {
+        Pull(true);
+        Pull(false);
+    }
+
+    /// <summary>
+    /// Changes newPosition with bringing it back or front to keep distance between camera and the anchor the same
+    /// </summary>
+    /// <param name="forward">Should it be moved forward or backward</param>
+    private void Pull(bool forward)
+    {
+        while ((newPosition - anchor.position).magnitude > distance)
+        {
+            if (forward) newPosition += transform.forward;
+            else newPosition -= transform.forward;
+        }
     }
 }
