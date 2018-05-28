@@ -11,7 +11,8 @@ import { ISessionDocument } from './session.model';
  */
 
 export interface IPlayerDocument {
-  user: Types.ObjectId | ISessionDocument,
+  session: Types.ObjectId | ISessionDocument,
+  user: Types.ObjectId | IUserDocument,
   role?: Types.ObjectId | ICellFunctionDocument,
   status: 'active' | 'gone',
   dateLeft?: Date,
@@ -28,7 +29,7 @@ export interface IPlayerDocument {
   mortgaged: Array<Schema.Types.ObjectId | ICellFunctionDocument>
 }
 
-export interface IGameDocument extends Document {
+interface IGame {
   createdBy: Types.ObjectId | IUserDocument,
   state: 'open' | 'playing' | 'finished',
   board: Types.ObjectId | IBoardDocument,
@@ -36,11 +37,13 @@ export interface IGameDocument extends Document {
   stepCount: number,
   playerIndex: number,
   players: Array<IPlayerDocument>
-  
+
   createdAt: Date,
   updatedAt: Date,
+}
 
-  extendedPopulate(paths: Array<string>): Promise<void>
+export interface IGameDocument extends Document, IGame {
+  extendedPopulate(paths: Array<string>, fromRequest?: boolean): Promise<void>
 }
 
 export interface IGameModel extends Model<IGameDocument> { }
@@ -50,10 +53,15 @@ export interface IGameModel extends Model<IGameDocument> { }
  */
 
 const playerSchema = new Schema({
-  user: {
+  session: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'Session'
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
   },
   role: {
     type: Schema.Types.ObjectId,
@@ -157,11 +165,18 @@ const gameSchema = new Schema({
     default: []
   }
 }, {
-    timestamps: true,
-    collection: 'games'
-  });
+  timestamps: true,
+  collection: 'games',
+  toObject: {
+    transform(doc: IGameDocument, ret: IGame, options) {
+      for (let i = 0; i < ret.players.length; i++) {
+        delete ret.players[i].session;
+      }
+    }
+  }
+});
 
-gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths: Array<string>): Promise<void> {
+gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths: Array<string>, fromRequest: boolean = false): Promise<void> {
   if (!(Array.isArray(paths) && paths.length)) {
     return;
   }
@@ -176,6 +191,7 @@ gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths
     const playersPopulate = paths.filter(value => value.startsWith('players'));
     if (playersPopulate.length) {
       const populateUsers = playersPopulate.includes('players.users');
+      const populateSessions = !fromRequest && playersPopulate.includes('players.sessions');
       const populateRole = playersPopulate.includes('players.roles');
       const populatePossessions = playersPopulate.includes('players.possessions');
       const populateModifiers = playersPopulate.includes('players.modifiers');
@@ -183,6 +199,9 @@ gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths
       for (let i = 0; i < this.players.length; i++) {
         if (populateUsers) {
           this.populate('players.' + i + '.user');
+        }
+        if (!fromRequest && populateSessions) {
+          this.populate('players.' + i + '.session');
         }
         if (populateRole) {
           this.populate('players.' + i + '.role');

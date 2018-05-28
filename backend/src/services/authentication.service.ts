@@ -7,6 +7,8 @@ import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
 import { Request } from 'express';
 import { ClientRequestError, AccessError } from './error-handler.service';
 import { SwaggerSecurityHandler } from 'swagger-tools';
+import { disconnectUser } from '../socketio-api/controllers/game.controller';
+import { ObjectID } from 'bson';
 
 export class ClientAuthError extends ClientRequestError {}
 
@@ -50,7 +52,7 @@ export interface IAuthenticationService {
   authenticate(sessionId: string): Promise<ISessionDocument>;
   createUser(object: any): Promise<IUserDocument>;
   createSession(user: IUserDocument): Promise<ISessionDocument>;
-  revokeToken(req: Request, token?: string | boolean): Promise<void>;
+  revokeToken(req: Request, tokenOrFromBody?: string | boolean): Promise<void>;
   getToken(req: Request, fromBody?: boolean): string;
   swaggerBearerJwtChecker: SwaggerSecurityHandler;
 } 
@@ -237,6 +239,7 @@ export function getService(): IAuthenticationService {
 
 async function revokeSession(session: ISessionDocument): Promise<ISessionDocument> {
   session.status = 'outdated';
+  disconnectUser(session.user instanceof ObjectID ? session.user.toHexString() : session.user.id);
   await session.save();
   return session;
 }

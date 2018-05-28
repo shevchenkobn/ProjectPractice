@@ -1,15 +1,16 @@
 import { IModelInitializer } from './index';
-import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
+import mongoose, { Schema, Connection, Model, Document, Types } from 'mongoose';
 import { IUserDocument } from './user.model';
 import { IGameDocument } from './game.model';
+import { ObjectID } from 'bson';
 
 /**
  * Interfaces section
  */
 
 export interface ISessionDocument extends Document {
-  user: Schema.Types.ObjectId | IUserDocument;
-  game: Schema.Types.ObjectId | IGameDocument//TODO: add game interface;
+  user: Types.ObjectId | IUserDocument;
+  game: Types.ObjectId | IGameDocument//TODO: add game interface;
   createdAt: Date;
   updatedAt: Date;
   status: 'active' | 'outdated';

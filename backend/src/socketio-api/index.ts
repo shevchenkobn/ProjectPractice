@@ -1,32 +1,32 @@
-import { ISocketIOConfig, SocketMiddleware } from './@types';
+import { SocketMiddleware, ISocketIoNamespace } from './@types';
 import { getService, ISocketIOHelpersService, ISocketIOUrls } from './services/helpers.service';
 import config from 'config';
-import { connectionHandler } from './controllers/connection.handler';
+import { connectionHandler, initialize as gameControllerInitializer } from './controllers/game.controller';
 
 let helpersService: ISocketIOHelpersService;
-let socketConfig: ISocketIOConfig;
+let socketIoNamespaces: Array<ISocketIoNamespace>;
 const upgradeUrl = config.get<ISocketIOUrls>('socketIO').baseUrl;
 
-export function getConfig(): ISocketIOConfig {
-  if (socketConfig) {
-    return socketConfig;
+export function initialize(server: SocketIO.Server): Array<ISocketIoNamespace> {
+  if (socketIoNamespaces) {
+    return socketIoNamespaces;
   }
+  if (!server) {
+    throw new Error('Server must be provided');
+  }
+  
+  // helpersService = getService();
 
-  helpersService = getService();
-  const gameMiddlewares: Array<SocketMiddleware> = [
-    helpersService.checkAuthAndAccessMiddleware 
+  socketIoNamespaces = [
+    gameControllerInitializer(server)
   ];
-  socketConfig = {
-    namespaces: {
-      '/games': {
-        connectionHandler,
-        middlewares: gameMiddlewares,
-      }
-    },
-    serverOptions: {
-      serveClient: true,
-      path: upgradeUrl
-    }
-  };
-  return socketConfig;
+
+  return socketIoNamespaces;
 }
+
+export function getSocketIoServerOptions(): SocketIO.ServerOptions {
+  return {
+    serveClient: true,
+    path: upgradeUrl
+  };
+};

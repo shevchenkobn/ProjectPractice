@@ -12,7 +12,12 @@ import Path from 'path';
 import SwaggerTools, { SwaggerRouter20Options, SwaggerValidatorOptions, SwaggerUiOptions, SwaggerSecurityOptions } from 'swagger-tools';
 import { loadSwaggerDocument } from './services/swagger.service';
 import { IReadyRouter } from './routes';
-import { SocketHandler, SocketMiddleware, ISocketIOConfig } from './socketio-api/@types';
+import { SocketHandler, SocketMiddleware, ISocketIoNamespace, SocketIOInitializer } from './socketio-api/@types';
+
+export interface ISocketIOInitializer {
+  initializer: SocketIOInitializer,
+  serverOptions: SocketIO.ServerOptions
+}
 
 export interface ISwaggerConfig {
   filepath: string;
@@ -24,12 +29,12 @@ export interface ISwaggerConfig {
 
 export interface IAppConfig {
   express: IExpressConfig;
-  socketio?: ISocketIOConfig;
+  socketio?: ISocketIOInitializer;
 }
 
 export interface IAppServer {
   express: Server;
-    socketio?: SocketIO.Server;
+  socketio?: SocketIO.Server;
 }
 
 export interface IAppServers {
@@ -52,14 +57,20 @@ export interface IHandlersArray {
   afterRouting: Array<Handler | ErrorRequestHandler>;
 }
 
+interface ISocketIOConfig {
+  serverOptions: SocketIO.ServerOptions,
+  namespaces: Array<ISocketIoNamespace>
+}
+
 export class App {
   protected readonly _app: Express;
   protected readonly _appServers: IAppServers;
   protected readonly _expressConfig: IExpressConfig;
   protected readonly _socketIoConfig: ISocketIOConfig;
+  protected readonly _socketIoInitialzer: SocketIOInitializer;
 
   private _middlewaresInUse: boolean;
-
+  
   constructor(config: IAppConfig) {
     this._app = ExpressApp();
     this._appServers = {};
@@ -73,7 +84,7 @@ export class App {
     if (!this._expressConfig.routes) {
       this._expressConfig.routes = [];
     }
-
+    
     this._app.use(
       BodyParser.urlencoded({
         extended: true
@@ -94,16 +105,20 @@ export class App {
         }).any()
       );
     }
-
+    
     this.useMiddlewares(this._expressConfig.middlewares.beforeRouting);
-
+    
     for (let router of this._expressConfig.routes) {
       this._app.use(router.path, router.router);
     }
     //// socket io initialization
-    this._socketIoConfig = config.socketio;
+    this._socketIoConfig = {
+      serverOptions: config.socketio.serverOptions,
+      namespaces: null
+    };
+    this._socketIoInitialzer = config.socketio.initializer;
   }
-
+  
   private useMiddlewares(middlewares: Array<Handler | ErrorRequestHandler>) {
     if (middlewares && middlewares.length) {
       for (let middleware of middlewares) {
@@ -119,11 +134,11 @@ export class App {
     if (!server) {
       throw new Error('No server provided nor found in class');
     }
-    const socketIo = Socket(server, this._socketIoConfig.serverOptions);
+    const socketIoServer = Socket(server, this._socketIoConfig.serverOptions);
+    this._socketIoConfig.namespaces = this._socketIoInitialzer(socketIoServer);
     
-    for (let nspName in this._socketIoConfig.namespaces) {
-      const nspConfig = this._socketIoConfig.namespaces[nspName];
-      const nsp = socketIo.of(nspName);
+    for (let nspConfig of this._socketIoConfig.namespaces) {
+      const nsp = socketIoServer.of(nspConfig.name);
       if (nspConfig.middlewares && nspConfig.middlewares.length) {
         for (let middleware of nspConfig.middlewares) {
           nsp.use(middleware);
@@ -131,7 +146,7 @@ export class App {
       }
       nsp.on('connection', nspConfig.connectionHandler);
     }
-    return socketIo;
+    return socketIoServer;
   }
 
   listen(port: number, callback?: (app: Express) => void): Promise<IAppServer> {

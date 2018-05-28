@@ -1,14 +1,12 @@
-load data for all current started games
+TO BE THOROUGHLY TESTED disconnect user when logged out
 
-close room when time for game is out (implement via passing socket.io server object to socket.io controller in app class)
-
-replace sessions with users when serializing game to json
-
-revive all active and open games in revive service
+TO BE THOROUGHLY TESTED players disconnect on game close
 
 ----------------------- improvements
+revive all active and open games in revive service
+
+add timeout on disconnect while playing game
+
 implement users and profile (user) api
 
 implement chat
-
-

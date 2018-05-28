@@ -8,7 +8,6 @@ const authentication_service_1 = require("../../services/authentication.service"
 const config_1 = __importDefault(require("config"));
 const game_service_1 = require("../../services/game.service");
 const common_service_1 = require("../../services/common.service");
-const connection_handler_1 = require("../controllers/connection.handler");
 let authService;
 let service;
 function getService() {
@@ -25,7 +24,7 @@ function getService() {
                     const token = authService.getToken(req);
                     session = await authService.getSessionFromToken(token);
                     if (!session) {
-                        return next(new _types_1.NspMiddlewareError("Invalid Token"));
+                        return next(new _types_1.NamespaceMiddlewareError("Invalid Token"));
                     }
                 }
                 const gameId = getGameId(req.url);
@@ -37,9 +36,12 @@ function getService() {
                     common_service_1.rethrowError(err);
                 }
                 if (!game) {
-                    return next(new _types_1.NspMiddlewareError("Invalid game id"));
+                    return next(new _types_1.NamespaceMiddlewareError("Invalid game id"));
                 }
-                await connection_handler_1.joinGame(game, session);
+                socket.data = {
+                    session,
+                    game
+                };
                 next();
             }
             catch (err) {

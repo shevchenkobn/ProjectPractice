@@ -1,6 +1,6 @@
 
 import { URL } from 'url';
-import { SocketMiddleware, AllowRequestHandler, NspMiddlewareError } from './../@types';
+import { SocketMiddleware, AllowRequestHandler, NamespaceMiddlewareError, AuthorizedSocket } from './../@types';
 import { getService as getAuthService, IAuthenticationService, ClientAuthError } from '../../services/authentication.service';
 import config from 'config';
 import { IncomingMessage } from 'http';
@@ -38,7 +38,7 @@ export function getService() {
           const token = authService.getToken(req);
           session = await authService.getSessionFromToken(token);
           if (!session) {
-            return next(new NspMiddlewareError("Invalid Token"));
+            return next(new NamespaceMiddlewareError("Invalid Token"));
           }
         }
         const gameId = getGameId(req.url);
@@ -49,18 +49,13 @@ export function getService() {
           rethrowError(err);
         }
         if (!game) {
-          return next(new NspMiddlewareError("Invalid game id"));
+          return next(new NamespaceMiddlewareError("Invalid game id"));
         }
 
-        try {
-        await joinGame(game, session as ISessionDocument);
-        } catch (err) {
-          if (err instanceof ServiceError) {
-            throw new NspMiddlewareError(err.message);
-          } else {
-            throw err;
-          }
-        }
+        (socket as AuthorizedSocket).data = {
+          session,
+          game
+        };
 
         next();
       } catch (err) {

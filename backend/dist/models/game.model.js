@@ -5,6 +5,11 @@ const mongoose_1 = require("mongoose");
  * Schema section
  */
 const playerSchema = new mongoose_1.Schema({
+    session: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Session'
+    },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true,
@@ -112,9 +117,16 @@ const gameSchema = new mongoose_1.Schema({
     }
 }, {
     timestamps: true,
-    collection: 'games'
+    collection: 'games',
+    toObject: {
+        transform(doc, ret, options) {
+            for (let i = 0; i < ret.players.length; i++) {
+                delete ret.players[i].session;
+            }
+        }
+    }
 });
-gameSchema.methods.extendedPopulate = async function (paths) {
+gameSchema.methods.extendedPopulate = async function (paths, fromRequest = false) {
     if (!(Array.isArray(paths) && paths.length)) {
         return;
     }
@@ -129,6 +141,7 @@ gameSchema.methods.extendedPopulate = async function (paths) {
         const playersPopulate = paths.filter(value => value.startsWith('players'));
         if (playersPopulate.length) {
             const populateUsers = playersPopulate.includes('players.users');
+            const populateSessions = !fromRequest && playersPopulate.includes('players.sessions');
             const populateRole = playersPopulate.includes('players.roles');
             const populatePossessions = playersPopulate.includes('players.possessions');
             const populateModifiers = playersPopulate.includes('players.modifiers');
@@ -136,6 +149,9 @@ gameSchema.methods.extendedPopulate = async function (paths) {
             for (let i = 0; i < this.players.length; i++) {
                 if (populateUsers) {
                     this.populate('players.' + i + '.user');
+                }
+                if (!fromRequest && populateSessions) {
+                    this.populate('players.' + i + '.session');
                 }
                 if (populateRole) {
                     this.populate('players.' + i + '.role');

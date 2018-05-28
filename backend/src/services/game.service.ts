@@ -14,7 +14,7 @@ export interface IGamesConfig {
   startCountdown: number
 }
 
-export type RemoveCondition = (game: IGameDocument) => Promise<boolean>;
+export type RemoveEventHandler = (game: IGameDocument) => Promise<boolean>;
 
 let gamesConfig: IGamesConfig;
 let Game: IGameModel;
@@ -56,7 +56,7 @@ export const findGame = async (id: string | Types.ObjectId, populatePaths?: Arra
   if (!game) {
     throw new ServiceError('Invalid game id');
   }
-  await game.extendedPopulate(populatePaths);
+  await game.extendedPopulate(populatePaths, true);
   return game;
 };
 
@@ -101,7 +101,7 @@ export const constructAndSaveGame = async (boardId: string | Types.ObjectId, use
 };
 
 const removeTimeouts: {[objectId: string]: NodeJS.Timer} = {};
-const removeConditions: {[objectId: string]: RemoveCondition} = {};
+const removeConditions: {[objectId: string]: RemoveEventHandler} = {};
 
 export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGameDocument> => {
   if (!game) {
@@ -138,7 +138,7 @@ export const stopSuspendedRemoving = (gameId: string): void => {
   delete removeConditions[gameId];
 }
 
-export const changeConditionOnRemoving = (gameId: string, condition: RemoveCondition) => {
+export const changeRemovingCondition = (gameId: string, condition: RemoveEventHandler) => {
   if (!removeTimeouts[gameId]) {
     throw new Error('The game has no timeout for removing');
   } else if (removeConditions[gameId]) {

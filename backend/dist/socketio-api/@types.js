@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class NspMiddlewareError {
+class NamespaceMiddlewareError {
     constructor(message, code) {
         this.message = {
             message
         };
         if (code) {
-            this.message.code = code;
+            this.code = code;
         }
     }
 }
-exports.NspMiddlewareError = NspMiddlewareError;
+exports.NamespaceMiddlewareError = NamespaceMiddlewareError;
 //# sourceMappingURL=@types.js.map

@@ -47,7 +47,7 @@ exports.getGame = async (req, res, next) => {
 exports.deleteGame = async (req, res, next) => {
     try {
         const id = req.swagger.params.gameId.value;
-        await game_service_1.removeGame(id);
+        await game_service_1.removeGame(id, req.user.user.id);
         res.json({
             _id: id
         });

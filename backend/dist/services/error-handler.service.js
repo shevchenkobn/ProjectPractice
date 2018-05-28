@@ -37,7 +37,7 @@ exports.notFoundHandler = (req, res) => {
     res.status(err.status).json(err);
 };
 // 0 is returned if not swagger error
-const swaggerErrorRegex = /.*swagger.*/i;
+const swaggerErrorRegex = /swagger/i;
 function getCodeFromSwaggerError(err, req) {
     if (err.failedValidation) {
         return 400;
