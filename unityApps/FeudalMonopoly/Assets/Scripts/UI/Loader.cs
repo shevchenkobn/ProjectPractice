@@ -7,7 +7,8 @@ public class Loader : MonoBehaviour
 {  
     const float MAX_LOADING_PROGRESS_VALUE = 0.9f;
 
-    public GameObject loginPanel;
+    public PlayerData playerData;
+    public LoginPanel loginPanel;
     public GameObject loadingPanel;
     public Slider loadingSlider;
 
@@ -18,7 +19,8 @@ public class Loader : MonoBehaviour
     /// </summary>
     /// <param name="sceneIndex">Index of scene to load</param>
     public void LoadLevel(int sceneIndex)
-    {       
+    {
+        GetPlayerData();
         StartCoroutine(LoadLevelAsync(sceneIndex));
     }
 
@@ -33,7 +35,7 @@ public class Loader : MonoBehaviour
         yield return new WaitForSeconds(loginPanelCloseAnimation.length);
 
         // switches panels
-        loginPanel.SetActive(false);
+        loginPanel.gameObject.SetActive(false);
         loadingPanel.SetActive(true);
 
         // loads next scene
@@ -47,5 +49,11 @@ public class Loader : MonoBehaviour
 
             yield return null;
         }
-    }   
+    }
+
+    private void GetPlayerData()
+    {
+        playerData.Login = loginPanel.loginField.text;
+        playerData.Password = loginPanel.passwordField.text;
+    }
 }
