@@ -206,7 +206,6 @@ PlayerSettings:
   tvOSSmallIconLayers: []
   tvOSSmallIconLayers2x: []
   tvOSLargeIconLayers: []
-  tvOSLargeIconLayers2x: []
   tvOSTopShelfImageLayers: []
   tvOSTopShelfImageLayers2x: []
   tvOSTopShelfImageWideLayers: []
@@ -646,7 +645,7 @@ PlayerSettings:
   apiCompatibilityLevel: 3
   cloudProjectId: 7fd2813d-2e8e-44be-9ac7-f90862f21c5c
   projectName: Feudal Monopoly
-  organizationId: dragon-vox
+  organizationId: ignisz
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
