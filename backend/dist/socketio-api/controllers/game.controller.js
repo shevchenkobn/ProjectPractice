@@ -4,10 +4,38 @@ const _types_1 = require("../@types");
 const common_service_1 = require("../../services/common.service");
 const game_service_1 = require("../../services/game.service");
 const bson_1 = require("bson");
-const currentGames = {};
+const helpers_service_1 = require("../services/helpers.service");
+const namespaceName = '/games';
+let helpersService;
+let server;
+let namespaceInfo;
+let namespace;
+// const currentClients: {[userId: string]: AuthorizedSocket} = {}; // FIXME: may be needed for better performance
+function initialize(socketIoServer) {
+    if (server && server !== socketIoServer) {
+        throw new TypeError('Server is already initialized! Recheck or comment this line');
+    }
+    server = socketIoServer;
+    namespace = server.of(namespaceName);
+    helpersService = helpers_service_1.getService();
+    namespaceInfo = {
+        connectionHandler: exports.connectionHandler,
+        middlewares: [
+            helpersService.checkAuthAndAccessMiddleware
+        ],
+        name: namespaceName
+    };
+    return namespaceInfo;
+}
+exports.initialize = initialize;
 exports.connectionHandler = async (socket) => {
     try {
         await joinGame(socket.data.game, socket.data.session);
+        // FIXME: use redis for better performance and cluster node
+        // const userId = socket.data.session.user instanceof ObjectID
+        //   ? socket.data.session.user.toHexString()
+        //   : (socket.data.session.user as IUserDocument).id;
+        // currentClients[userId] = socket;
     }
     catch (err) {
         if (err instanceof common_service_1.ServiceError) {
@@ -51,7 +79,6 @@ async function tryStartGame(game) {
     }
     if (game.players.length === game.board.rules.playerLimits.max) {
         game.state = 'playing';
-        currentGames[game.id] = game;
         return true;
         // TODO: start game
     }
@@ -59,25 +86,37 @@ async function tryStartGame(game) {
         return false;
     }
 }
+async function disconnectUser(userId) {
+    const socket = Object.keys(namespace.connected).find(socketId => {
+        const socketSessionUser = namespace.connected[socketId].data.session.user;
+        const socketUserId = socketSessionUser instanceof bson_1.ObjectID
+            ? socketSessionUser.toHexString()
+            : socketSessionUser.id;
+        return socketUserId === userId;
+    });
+    if (socket) {
+        namespace.connected[socket].disconnect(true);
+    }
+}
+exports.disconnectUser = disconnectUser;
 const suspendedRemovingCondition = async (game) => {
     if (!await tryStartGame(game)) {
         return false;
     }
     else {
         const promises = [];
+        await game.extendedPopulate(['players.sessions']);
         if (game.players.length) {
             for (let i = 0; i < game.players.length; i++) {
-                if (game.players[i].session instanceof bson_1.ObjectID) {
-                    await game.populate('players.' + i + '.user').execPopulate();
-                }
-                // TODO: add players disconnecting
                 const session = game.players[i].session;
                 session.game = null;
                 promises.push(session.save());
             }
+            // FIXME: try this if fails to(room).clients() loop
+            namespace.to(game.id).emit('disconnect');
             await Promise.all(promises);
         }
         return true;
     }
 };
-//# sourceMappingURL=connection.handler.js.map
+//# sourceMappingURL=game.controller.js.map

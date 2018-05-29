@@ -44,7 +44,11 @@ class App {
             this._app.use(router.path, router.router);
         }
         //// socket io initialization
-        this._socketIoConfig = config.socketio;
+        this._socketIoConfig = {
+            serverOptions: config.socketio.serverOptions,
+            namespaces: null
+        };
+        this._socketIoInitialzer = config.socketio.initializer;
     }
     useMiddlewares(middlewares) {
         if (middlewares && middlewares.length) {
@@ -60,10 +64,10 @@ class App {
         if (!server) {
             throw new Error('No server provided nor found in class');
         }
-        const socketIo = socket_io_1.default(server, this._socketIoConfig.serverOptions);
-        for (let nspName in this._socketIoConfig.namespaces) {
-            const nspConfig = this._socketIoConfig.namespaces[nspName];
-            const nsp = socketIo.of(nspName);
+        const socketIoServer = socket_io_1.default(server, this._socketIoConfig.serverOptions);
+        this._socketIoConfig.namespaces = this._socketIoInitialzer(socketIoServer);
+        for (let nspConfig of this._socketIoConfig.namespaces) {
+            const nsp = socketIoServer.of(nspConfig.name);
             if (nspConfig.middlewares && nspConfig.middlewares.length) {
                 for (let middleware of nspConfig.middlewares) {
                     nsp.use(middleware);
@@ -71,7 +75,7 @@ class App {
             }
             nsp.on('connection', nspConfig.connectionHandler);
         }
-        return socketIo;
+        return socketIoServer;
     }
     listen(port, callback) {
         if (this._appServers[port]) {

@@ -3,33 +3,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const helpers_service_1 = require("./services/helpers.service");
 const config_1 = __importDefault(require("config"));
-const connection_handler_1 = require("./controllers/connection.handler");
+const game_controller_1 = require("./controllers/game.controller");
 let helpersService;
-let socketConfig;
+let socketIoNamespaces;
 const upgradeUrl = config_1.default.get('socketIO').baseUrl;
-function getConfig() {
-    if (socketConfig) {
-        return socketConfig;
+function initialize(server) {
+    if (socketIoNamespaces) {
+        return socketIoNamespaces;
     }
-    helpersService = helpers_service_1.getService();
-    const gameMiddlewares = [
-        helpersService.checkAuthAndAccessMiddleware
+    if (!server) {
+        throw new Error('Server must be provided');
+    }
+    // helpersService = getService();
+    socketIoNamespaces = [
+        game_controller_1.initialize(server)
     ];
-    socketConfig = {
-        namespaces: {
-            '/games': {
-                connectionHandler: connection_handler_1.connectionHandler,
-                middlewares: gameMiddlewares,
-            }
-        },
-        serverOptions: {
-            serveClient: true,
-            path: upgradeUrl
-        }
-    };
-    return socketConfig;
+    return socketIoNamespaces;
 }
-exports.getConfig = getConfig;
+exports.initialize = initialize;
+function getSocketIoServerOptions() {
+    return {
+        serveClient: true,
+        path: upgradeUrl
+    };
+}
+exports.getSocketIoServerOptions = getSocketIoServerOptions;
+;
 //# sourceMappingURL=index.js.map

@@ -86,48 +86,46 @@ exports.constructAndSaveGame = async (boardId, userId, createSuspendedRemoving =
         common_service_1.rethrowError(err);
     }
 };
-const removeTimeouts = {};
-const removeConditions = {};
+const removeTasks = {};
 exports.suspendRemoving = (game, time) => {
     if (!game) {
         throw new TypeError('Game is undefined');
     }
     const id = game.id;
-    if (removeTimeouts[id]) {
+    if (removeTasks[id]) {
         throw new TypeError(`Remove timeout for "${id}" is already set`);
     }
     const eventEmitter = new events_1.EventEmitter();
-    removeTimeouts[id] = setTimeout(async () => {
-        if (removeConditions[id] && await removeConditions[id](game)) {
-            game.remove()
-                .then((...args) => eventEmitter.emit('resolve', ...args))
-                .catch((...args) => eventEmitter.emit('reject', ...args));
-        }
-        else {
-            exports.stopSuspendedRemoving(id);
-            eventEmitter.emit('reject');
-        }
-    }, time);
+    removeTasks[id] = [setTimeout(async () => {
+            if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
+                game.remove()
+                    .then((...args) => eventEmitter.emit('resolve', ...args))
+                    .catch((...args) => eventEmitter.emit('reject', ...args));
+            }
+            else {
+                exports.stopSuspendedRemoving(id);
+                eventEmitter.emit('reject');
+            }
+        }, time), null];
     return new Promise((resolve, reject) => {
         eventEmitter.on('resolve', resolve);
         eventEmitter.on('reject', reject);
     });
 };
 exports.stopSuspendedRemoving = (gameId) => {
-    if (!removeTimeouts[gameId]) {
+    if (!removeTasks[gameId]) {
         throw new Error(`No suspended removing is set for game id "${gameId}"`);
     }
-    clearInterval(removeTimeouts[gameId]);
-    delete removeTimeouts[gameId];
-    delete removeConditions[gameId];
+    clearInterval(removeTasks[gameId][0]);
+    delete removeTasks[gameId];
 };
 exports.changeRemovingCondition = (gameId, condition) => {
-    if (!removeTimeouts[gameId]) {
+    if (!removeTasks[gameId]) {
         throw new Error('The game has no timeout for removing');
     }
-    else if (removeConditions[gameId]) {
+    else if (removeTasks[gameId][1]) {
         throw new Error('A removing condition is already set');
     }
-    removeConditions[gameId] = condition;
+    removeTasks[gameId][1] = condition;
 };
 //# sourceMappingURL=game.service.js.map

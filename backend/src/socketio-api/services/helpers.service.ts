@@ -8,7 +8,6 @@ import { NotFound } from 'http-errors';
 import { ClientRequestError } from '../../services/error-handler.service';
 import { findGame } from '../../services/game.service';
 import { rethrowError, ServiceError } from '../../services/common.service';
-import { joinGame } from '../controllers/connection.handler';
 import { IUserDocument } from '../../models/user.model';
 import { ISessionDocument } from '../../models/session.model';
 

@@ -9,6 +9,8 @@ const session_model_1 = __importDefault(require("../models/session.model"));
 const config_1 = __importDefault(require("config"));
 const passport_jwt_1 = require("passport-jwt");
 const error_handler_service_1 = require("./error-handler.service");
+const game_controller_1 = require("../socketio-api/controllers/game.controller");
+const bson_1 = require("bson");
 class ClientAuthError extends error_handler_service_1.ClientRequestError {
 }
 exports.ClientAuthError = ClientAuthError;
@@ -187,6 +189,9 @@ function getService() {
 exports.getService = getService;
 async function revokeSession(session) {
     session.status = 'outdated';
+    if (session.game) {
+        game_controller_1.disconnectUser(session.user instanceof bson_1.ObjectID ? session.user.toHexString() : session.user.id);
+    }
     await session.save();
     return session;
 }

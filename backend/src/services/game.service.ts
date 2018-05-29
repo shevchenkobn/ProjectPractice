@@ -100,20 +100,19 @@ export const constructAndSaveGame = async (boardId: string | Types.ObjectId, use
   }
 };
 
-const removeTimeouts: {[objectId: string]: NodeJS.Timer} = {};
-const removeConditions: {[objectId: string]: RemoveEventHandler} = {};
+const removeTasks: {[objectId: string]: [NodeJS.Timer, RemoveEventHandler | never]} = {};
 
 export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGameDocument> => {
   if (!game) {
     throw new TypeError('Game is undefined');
   }
   const id = game.id;
-  if (removeTimeouts[id]) {
+  if (removeTasks[id]) {
     throw new TypeError(`Remove timeout for "${id}" is already set`);
   }
   const eventEmitter = new EventEmitter();
-  removeTimeouts[id] = setTimeout(async () => {
-    if (removeConditions[id] && await removeConditions[id](game)) {
+  removeTasks[id] = [setTimeout(async () => {
+    if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
       game.remove()
         .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))
         .catch((...args: Array<any>) => eventEmitter.emit('reject', ...args));
@@ -121,7 +120,7 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
       stopSuspendedRemoving(id);
       eventEmitter.emit('reject');
     }
-  }, time);
+  }, time), null];
   return new Promise<IGameDocument>((resolve, reject) => {
     eventEmitter.on('resolve', resolve);
     eventEmitter.on('reject', reject);
@@ -129,21 +128,20 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
 }
 
 export const stopSuspendedRemoving = (gameId: string): void => {
-  if (!removeTimeouts[gameId]) {
+  if (!removeTasks[gameId]) {
     throw new Error(`No suspended removing is set for game id "${gameId}"`);
   }
-  clearInterval(removeTimeouts[gameId]);
+  clearInterval(removeTasks[gameId][0]);
 
-  delete removeTimeouts[gameId];
-  delete removeConditions[gameId];
+  delete removeTasks[gameId];
 }
 
 export const changeRemovingCondition = (gameId: string, condition: RemoveEventHandler) => {
-  if (!removeTimeouts[gameId]) {
+  if (!removeTasks[gameId]) {
     throw new Error('The game has no timeout for removing');
-  } else if (removeConditions[gameId]) {
+  } else if (removeTasks[gameId][1]) {
     throw new Error('A removing condition is already set');
   }
 
-  removeConditions[gameId] = condition;
+  removeTasks[gameId][1] = condition;
 }

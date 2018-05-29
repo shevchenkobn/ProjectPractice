@@ -36,6 +36,9 @@ export function initialize(socketIoServer: SocketIO.Server): ISocketIoNamespace 
 export const connectionHandler: SocketHandler = async socket => {
   try {
     await joinGame(socket.data.game, socket.data.session as ISessionDocument);
+    socket.on('disconnect', async () => {
+      await disconnectPlayerFromGame(socket.data.game, socket.data.session);
+    });
     // FIXME: use redis for better performance and cluster node
     // const userId = socket.data.session.user instanceof ObjectID
     //   ? socket.data.session.user.toHexString()
@@ -107,11 +110,9 @@ const suspendedRemovingCondition: RemoveEventHandler = async (game) => {
     return false;
   } else {
     const promises = [];
+    await game.extendedPopulate(['players.sessions']);
     if (game.players.length) {
       for (let i = 0; i < game.players.length; i++) {
-        if (game.players[i].session instanceof ObjectID) {
-          await game.populate('players.' + i + '.user').execPopulate();
-        }
         const session = game.players[i].session as ISessionDocument;
         session.game = null;
         promises.push(session.save());
@@ -123,4 +124,23 @@ const suspendedRemovingCondition: RemoveEventHandler = async (game) => {
 
     return true;
   }
+}
+
+async function disconnectPlayerFromGame(game: IGameDocument, session: ISessionDocument) {
+  // TODO: probably additional check game.id == session.id is needed
+  const playerIndex = game.players.findIndex(player => {
+    const playerSessionId: string = player.session instanceof ObjectID
+      ? player.session.toHexString()
+      : player.session.id;
+    return playerSessionId === session.id;
+  });
+  // if (playerIndex < 0) {
+  //   throw new Error('This session is not attached to this game');
+  // }
+  game.players.splice(playerIndex, 1);
+  await game.save();
+  session.game = null;
+  await session.save();
+  // TODO: define user if 1 player left
+  // TODO: add reconnect timeout and freeze game until time is up
 }

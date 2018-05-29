@@ -37,7 +37,10 @@ let dbConnection = database_service_1.initialize(mongoConfig);
                 uploadDir,
                 routes: index_1.getRoutes()
             },
-            socketio: socketio_api_1.getConfig()
+            socketio: {
+                serverOptions: socketio_api_1.getSocketIoServerOptions(),
+                initializer: socketio_api_1.initialize
+            }
         },
         swagger: {
             filepath: swaggerConfigPath,
