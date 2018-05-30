@@ -1,1 +1,1 @@
-{"version":3,"file":"@types.js","sourceRoot":"","sources":["../../src/socketio-api/@types.ts"],"names":[],"mappings":";;AAcA;IAIE,YAAY,OAAY,EAAE,IAAa;QACrC,IAAI,CAAC,OAAO,GAAG;YACb,OAAO;SACR,CAAA;QACD,IAAI,IAAI,EAAE;YACR,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;SAClB;IACH,CAAC;CACF;AAZD,4DAYC"}
+{"version":3,"file":"@types.js","sourceRoot":"","sources":["../../src/socketio-api/@types.ts"],"names":[],"mappings":";;AAgBA;IAIE,YAAY,OAAY,EAAE,IAAa;QACrC,IAAI,CAAC,OAAO,GAAG;YACb,OAAO;SACR,CAAA;QACD,IAAI,IAAI,EAAE;YACR,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;SAClB;IACH,CAAC;CACF;AAZD,4DAYC"}

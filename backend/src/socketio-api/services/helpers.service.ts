@@ -52,8 +52,8 @@ export function getService() {
         }
 
         (socket as AuthorizedSocket).data = {
-          session,
-          game
+          sessionId: session.id,
+          gameId: gameId
         };
 
         next();

@@ -88,13 +88,15 @@ const googleInfoSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    trim: true
+    trim: true,
+    sparse: true
   },
   displayName: {
     type: String,
     required: true,
     unique: true,
-    trim: true
+    trim: true,
+    sparse: true
   },
   name: {
     familyName: String,
@@ -130,11 +132,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    trim: true
+    trim: true,
+    sparse: true
   },
   passwordHash: String,
   salt: String,
-  google: googleInfoSchema
+  google: {
+    type: googleInfoSchema,
+    required: false
+  }
 }, {
   timestamps: true,
   toObject: {

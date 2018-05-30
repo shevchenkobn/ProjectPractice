@@ -39,8 +39,8 @@ function getService() {
                     return next(new _types_1.NamespaceMiddlewareError("Invalid game id"));
                 }
                 socket.data = {
-                    session,
-                    game
+                    sessionId: session.id,
+                    gameId: gameId
                 };
                 next();
             }

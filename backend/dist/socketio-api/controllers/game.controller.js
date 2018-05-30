@@ -1,10 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const _types_1 = require("../@types");
+const game_model_1 = __importDefault(require("../../models/game.model"));
 const common_service_1 = require("../../services/common.service");
 const game_service_1 = require("../../services/game.service");
+const session_model_1 = __importDefault(require("../../models/session.model"));
 const bson_1 = require("bson");
 const helpers_service_1 = require("../services/helpers.service");
+const util_1 = require("util");
+let Game;
+let Session;
 const namespaceName = '/games';
 let helpersService;
 let server;
@@ -18,6 +25,8 @@ function initialize(socketIoServer) {
     server = socketIoServer;
     namespace = server.of(namespaceName);
     helpersService = helpers_service_1.getService();
+    Session = session_model_1.default.getModel();
+    Game = game_model_1.default.getModel();
     namespaceInfo = {
         connectionHandler: exports.connectionHandler,
         middlewares: [
@@ -30,7 +39,15 @@ function initialize(socketIoServer) {
 exports.initialize = initialize;
 exports.connectionHandler = async (socket) => {
     try {
-        await joinGame(socket.data.game, socket.data.session);
+        await joinGame(socket);
+        socket.on('disconnect', async () => {
+            try {
+                await disconnectPlayerFromGame(await Game.findById(socket.data.gameId), await Session.findById(socket.data.sessionId));
+            }
+            catch (err) {
+                // TODO: log error
+            }
+        });
         // FIXME: use redis for better performance and cluster node
         // const userId = socket.data.session.user instanceof ObjectID
         //   ? socket.data.session.user.toHexString()
@@ -38,15 +55,18 @@ exports.connectionHandler = async (socket) => {
         // currentClients[userId] = socket;
     }
     catch (err) {
-        if (err instanceof common_service_1.ServiceError) {
-            throw new _types_1.NamespaceMiddlewareError(err.message);
-        }
-        else {
-            throw err;
-        }
+        // if (err instanceof ServiceError) {
+        //   throw new NamespaceMiddlewareError(err.message);
+        // } else {
+        //   throw err;
+        // }
+        socket.emit('disconnect-message', err);
+        socket.disconnect(true);
     }
 };
-async function joinGame(game, session) {
+async function joinGame(socket) {
+    const game = await Game.findById(socket.data.gameId);
+    const session = await Session.findById(socket.data.sessionId);
     if (game.state !== 'open') {
         throw new common_service_1.ServiceError('The game room is not open');
     }
@@ -66,11 +86,12 @@ async function joinGame(game, session) {
     if (await tryStartGame(game)) {
         game_service_1.stopSuspendedRemoving(game.id);
     }
-    else {
+    else if (!game_service_1.hasRemovingCondition(game.id)) {
         game_service_1.changeRemovingCondition(game.id, suspendedRemovingCondition);
     }
     await game.save();
     await session.save();
+    socket.join(socket.data.gameId);
 }
 exports.joinGame = joinGame;
 async function tryStartGame(game) {
@@ -79,44 +100,86 @@ async function tryStartGame(game) {
     }
     if (game.players.length === game.board.rules.playerLimits.max) {
         game.state = 'playing';
-        return true;
         // TODO: start game
+        console.log('game is started, really');
+        return true;
     }
     else {
         return false;
     }
 }
-async function disconnectUser(userId) {
-    const socket = Object.keys(namespace.connected).find(socketId => {
-        const socketSessionUser = namespace.connected[socketId].data.session.user;
-        const socketUserId = socketSessionUser instanceof bson_1.ObjectID
-            ? socketSessionUser.toHexString()
-            : socketSessionUser.id;
-        return socketUserId === userId;
+function disconnectUser(session) {
+    // if (!session.game) {
+    //   return;
+    // }
+    return new Promise((resolve, reject) => {
+        namespace.to(session.populated('game')
+            ? session.game.id
+            : session.game.toHexString()).clients((async (err, clients) => {
+            if (err) {
+                reject(err);
+            }
+            const socketId = clients.find(socketId => {
+                return namespace.connected[socketId].data.sessionId === session.id;
+            });
+            if (socketId) {
+                namespace.connected[socketId].disconnect(true);
+                // if (!session.populated('game')) {
+                //   await session.populate('game').execPopulate();
+                // }
+                // await disconnectPlayerFromGame(session.game as IGameDocument, session);
+            }
+            resolve();
+        }));
     });
-    if (socket) {
-        namespace.connected[socket].disconnect(true);
-    }
 }
 exports.disconnectUser = disconnectUser;
 const suspendedRemovingCondition = async (game) => {
-    if (!await tryStartGame(game)) {
+    if (await tryStartGame(game)) {
         return false;
     }
     else {
         const promises = [];
         await game.extendedPopulate(['players.sessions']);
         if (game.players.length) {
+            const withRoomNsp = namespace.to(game.id);
+            const clients = await (util_1.promisify(withRoomNsp.clients.bind(withRoomNsp))());
+            for (let client of clients) {
+                namespace.connected[client].emit("disconnect-message", new Error("The room is being closed"));
+                namespace.connected[client].disconnect(true);
+            }
+            // namespace.to(game.id).clients
+            // (((err, clients) => {
+            //   for (let client of clients) {
+            //     namespace.connected[client].disconnect(true);
+            //   }
+            // }) as NamespaceClientsCallback);
             for (let i = 0; i < game.players.length; i++) {
                 const session = game.players[i].session;
-                session.game = null;
+                delete session.game;
                 promises.push(session.save());
             }
-            // FIXME: try this if fails to(room).clients() loop
-            namespace.to(game.id).emit('disconnect');
             await Promise.all(promises);
         }
         return true;
     }
 };
+async function disconnectPlayerFromGame(game, session) {
+    // TODO: probably additional check game.id == session.id is needed
+    const playerIndex = game.players.findIndex(player => {
+        const playerSessionId = player.session instanceof bson_1.ObjectID
+            ? player.session.toHexString()
+            : player.session.id;
+        return playerSessionId === session.id;
+    });
+    // if (playerIndex < 0) {
+    //   throw new Error('This session is not attached to this game');
+    // }
+    game.players.splice(playerIndex, 1);
+    await game.save();
+    delete session.game;
+    await session.save();
+    // TODO: define user if 1 player left
+    // TODO: add reconnect timeout and freeze game until time is up
+}
 //# sourceMappingURL=game.controller.js.map

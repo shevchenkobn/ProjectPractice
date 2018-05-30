@@ -112,6 +112,7 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
   }
   const eventEmitter = new EventEmitter();
   removeTasks[id] = [setTimeout(async () => {
+    game = await Game.findById(game._id);
     if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
       game.remove()
         .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))
@@ -131,7 +132,7 @@ export const stopSuspendedRemoving = (gameId: string): void => {
   if (!removeTasks[gameId]) {
     throw new Error(`No suspended removing is set for game id "${gameId}"`);
   }
-  clearInterval(removeTasks[gameId][0]);
+  clearTimeout(removeTasks[gameId][0]);
 
   delete removeTasks[gameId];
 }
@@ -139,9 +140,13 @@ export const stopSuspendedRemoving = (gameId: string): void => {
 export const changeRemovingCondition = (gameId: string, condition: RemoveEventHandler) => {
   if (!removeTasks[gameId]) {
     throw new Error('The game has no timeout for removing');
-  } else if (removeTasks[gameId][1]) {
+  } else if (removeTasks[gameId][1] && condition) {
     throw new Error('A removing condition is already set');
   }
 
   removeTasks[gameId][1] = condition;
+}
+
+export const hasRemovingCondition = (gameId: string) => {
+  return !!removeTasks[gameId][1];
 }

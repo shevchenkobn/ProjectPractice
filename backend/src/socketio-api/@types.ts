@@ -1,10 +1,12 @@
 import { ISessionDocument } from "../models/session.model";
 import { IGameDocument } from "../models/game.model";
+import { ObjectId } from "bson";
 
 export type SocketHandler = (socket: AuthorizedSocket) => void
 export type SocketMiddleware = (socket: SocketIO.Socket, fn: ( err?: any ) => void) => void
 export type AllowRequestHandler = (request:any, callback: (err: number, success: boolean) => void) => void;
-export type SocketIOInitializer = (soerver: SocketIO.Server) => Array<ISocketIoNamespace>;
+export type SocketIOInitializer = (server: SocketIO.Server) => Array<ISocketIoNamespace>;
+export type NamespaceClientsCallback = (err: any, clients: Array<string>) => any;
 
 export interface ISocketIoNamespace {
   connectionHandler: SocketHandler;
@@ -28,7 +30,7 @@ export class NamespaceMiddlewareError {
 
 export interface AuthorizedSocket extends SocketIO.Socket {
   data: {
-    session: ISessionDocument,
-    game: IGameDocument
+    sessionId: string,
+    gameId: string
   }
 }

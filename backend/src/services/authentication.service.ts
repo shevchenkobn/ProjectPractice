@@ -240,7 +240,7 @@ export function getService(): IAuthenticationService {
 async function revokeSession(session: ISessionDocument): Promise<ISessionDocument> {
   session.status = 'outdated';
   if (session.game) {
-    disconnectUser(session.user instanceof ObjectID ? session.user.toHexString() : session.user.id);
+    disconnectUser(session);
   }
   await session.save();
   return session;

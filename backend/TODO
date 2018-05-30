@@ -1,12 +1,15 @@
-TO BE THOROUGHLY TESTED disconnect user when logged out
 
-TO BE THOROUGHLY TESTED players disconnect on game close
 
 ----------------------- improvements
-revive all active and open games in revive service
+add timeout before game start and after it was open
+
+revive all active and open games in revive service (the same timeout as the next)
 
 add timeout on disconnect while playing game
 
 implement users and profile (user) api
 
 implement chat
+
+----------------------- possible issue sources
+non-sparse indexes in users collection (e.g. null is unique)
