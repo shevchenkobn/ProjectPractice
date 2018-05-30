@@ -89,7 +89,7 @@ export function getService(): IAuthenticationService {
     },
 
     getResponse(session) {
-      if (!(session.user instanceof User)) {
+      if (!session.populated('user')) {
         throw new TypeError('Session is not populated with user');
       }
       return {
@@ -152,19 +152,15 @@ export function getService(): IAuthenticationService {
         }
         return true;
       });
-      if (user instanceof User) {
-        if (sessions.length >= authConfig.sessionLimit) {
-          throw new ClientAuthError(`Maximum number of tokens (${authConfig.sessionLimit}) has already been issued!`);
-        }
-        const session = new Session({
-          user: user._id
-        });
-        await session.save();
-        await session.populate('user').execPopulate();
-        return session;
-      } else {
-        throw new Error('user is not a model');
+      if (sessions.length >= authConfig.sessionLimit) {
+        throw new ClientAuthError(`Maximum number of tokens (${authConfig.sessionLimit}) has already been issued!`);
       }
+      const session = new Session({
+        user: user._id
+      });
+      await session.save();
+      await session.populate('user').execPopulate();
+      return session;
     },
 
     /**
