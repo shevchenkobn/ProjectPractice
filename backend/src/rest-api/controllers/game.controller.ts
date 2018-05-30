@@ -34,7 +34,7 @@ export const getGame: Handler = async (req, res, next) => {
     const id = (<any>req).swagger.params.gameId.value as string;
     const populate = (<any>req).swagger.params.populate.value;
 
-    const game = await findGame(id, populate);
+    const game = await findGame(id, populate, true);
     res.json(game);
   } catch (err) {
     if (err instanceof ServiceError) {

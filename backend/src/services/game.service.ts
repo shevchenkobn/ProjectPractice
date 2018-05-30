@@ -46,7 +46,7 @@ export const findGames = async (options: IFindManyOptions): Promise<Array<IGameD
   }
 };
 
-export const findGame = async (id: string | Types.ObjectId, populatePaths?: Array<string>): Promise<IGameDocument> => {
+export const findGame = async (id: string | Types.ObjectId, populatePaths?: Array<string>, fromRequest: boolean = false): Promise<IGameDocument> => {
   let game;
   try {
     game = await Game.findById(id);
@@ -56,7 +56,7 @@ export const findGame = async (id: string | Types.ObjectId, populatePaths?: Arra
   if (!game) {
     throw new ServiceError('Invalid game id');
   }
-  await game.extendedPopulate(populatePaths, true);
+  await game.extendedPopulate(populatePaths, fromRequest);
   return game;
 };
 
@@ -112,7 +112,7 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
   }
   const eventEmitter = new EventEmitter();
   removeTasks[id] = [setTimeout(async () => {
-    game = await Game.findById(game._id);
+    game = await findGame(game._id);
     if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
       game.remove()
         .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))

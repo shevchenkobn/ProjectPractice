@@ -3,7 +3,7 @@ import GameInitializer, { IGameDocument, IGameModel } from '../../models/game.mo
 import { ServiceError } from '../../services/common.service';
 import { IBoardDocument } from '../../models/board.model';
 import { IUserDocument } from '../../models/user.model';
-import { stopSuspendedRemoving, changeRemovingCondition, RemoveEventHandler, hasRemovingCondition } from '../../services/game.service';
+import { stopSuspendedRemoving, changeRemovingCondition, RemoveEventHandler, hasRemovingCondition, findGame } from '../../services/game.service';
 import SessionInitializer, { ISessionDocument, ISessionModel } from '../../models/session.model';
 import { ObjectID, ObjectId } from 'bson';
 import { ISocketIOHelpersService, getService } from '../services/helpers.service';
@@ -47,31 +47,21 @@ export const connectionHandler: SocketHandler = async socket => {
     socket.on('disconnect', async () => {
       try {
         await disconnectPlayerFromGame(
-          await Game.findById(socket.data.gameId),
+          await findGame(socket.data.gameId),
           await Session.findById(socket.data.sessionId)
         );
       } catch (err) {
         // TODO: log error
       }
     });
-    // FIXME: use redis for better performance and cluster node
-    // const userId = socket.data.session.user instanceof ObjectID
-    //   ? socket.data.session.user.toHexString()
-    //   : (socket.data.session.user as IUserDocument).id;
-    // currentClients[userId] = socket;
   } catch (err) {
-    // if (err instanceof ServiceError) {
-    //   throw new NamespaceMiddlewareError(err.message);
-    // } else {
-    //   throw err;
-    // }
     socket.emit('disconnect-message', err);
     socket.disconnect(true);
   }
 }
 
 export async function joinGame(socket: AuthorizedSocket) {
-  const game = await Game.findById(socket.data.gameId);
+  const game = await findGame(socket.data.gameId);
   const session = await Session.findById(socket.data.sessionId);
   if (game.state !== 'open') {
     throw new ServiceError('The game room is not open');
