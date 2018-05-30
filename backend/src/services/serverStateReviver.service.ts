@@ -15,7 +15,7 @@ export async function getReviverFunction(): Promise<IReviverFunction> {
   const now = Date.now();
   const outdatedGames = [];
   const actualGames: Array<IGameDocument> = []
-  for (let game of games) {
+  for (let game of (games as Array<IGameDocument>)) {
     if (now - +game.createdAt >= gamesConfig.removeTimeout) {
       outdatedGames.push(game.remove());
     } else {

@@ -135,8 +135,6 @@ const suspendedRemovingCondition: RemoveEventHandler = async (game) => {
   if (await tryStartGame(game)) {
     return false;
   } else {
-    const promises = [];
-    await game.extendedPopulate(['players.sessions']);
     if (game.players.length) {
       const withRoomNsp = namespace.to(game.id);
       const clients = await (promisify(withRoomNsp.clients.bind(withRoomNsp))());
@@ -150,9 +148,11 @@ const suspendedRemovingCondition: RemoveEventHandler = async (game) => {
       //     namespace.connected[client].disconnect(true);
       //   }
       // }) as NamespaceClientsCallback);
+      const promises = [];
+      await game.extendedPopulate(['players.sessions']);
       for (let i = 0; i < game.players.length; i++) {
         const session = game.players[i].session as ISessionDocument;
-        delete session.game;
+        session.game = null;
         promises.push(session.save());
       }
       await Promise.all(promises);
@@ -175,7 +175,7 @@ async function disconnectPlayerFromGame(game: IGameDocument, session: ISessionDo
   // }
   game.players.splice(playerIndex, 1);
   await game.save();
-  delete session.game;
+  session.game = null;
   await session.save();
   // TODO: define user if 1 player left
   // TODO: add reconnect timeout and freeze game until time is up

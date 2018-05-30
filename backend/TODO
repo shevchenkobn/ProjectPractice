@@ -1,4 +1,4 @@
-
+delete session from playerDocument (by now toObject is not even called 0_o)
 
 ----------------------- improvements
 add timeout before game start and after it was open

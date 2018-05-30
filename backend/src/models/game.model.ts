@@ -29,7 +29,7 @@ export interface IPlayerDocument {
   mortgaged: Array<Schema.Types.ObjectId | ICellFunctionDocument>
 }
 
-interface IGame {
+export interface IGame {
   createdBy: Types.ObjectId | IUserDocument,
   state: 'open' | 'playing' | 'finished',
   board: Types.ObjectId | IBoardDocument,
@@ -172,6 +172,7 @@ const gameSchema = new Schema({
       for (let i = 0; i < ret.players.length; i++) {
         delete ret.players[i].session;
       }
+      return ret;
     }
   }
 });

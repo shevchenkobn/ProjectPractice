@@ -31,13 +31,19 @@ exports.findGames = async (options) => {
         queryOptions.lean = options.lean;
     }
     try {
-        return await Game.find(filter, null, queryOptions);
+        const games = await Game.find(filter, null, queryOptions);
+        if (options.callToJSON) {
+            for (let i = 0; i < games.length; i++) {
+                games[i] = games[i].toJSON();
+            }
+        }
+        return games;
     }
     catch (err) {
         common_service_1.rethrowError(err);
     }
 };
-exports.findGame = async (id, populatePaths) => {
+exports.findGame = async (id, populatePaths, fromRequest = false) => {
     let game;
     try {
         game = await Game.findById(id);
@@ -48,7 +54,7 @@ exports.findGame = async (id, populatePaths) => {
     if (!game) {
         throw new common_service_1.ServiceError('Invalid game id');
     }
-    await game.extendedPopulate(populatePaths, true);
+    await game.extendedPopulate(populatePaths, fromRequest);
     return game;
 };
 exports.removeGame = async (id, userId) => {
@@ -97,7 +103,7 @@ exports.suspendRemoving = (game, time) => {
     }
     const eventEmitter = new events_1.EventEmitter();
     removeTasks[id] = [setTimeout(async () => {
-            game = await Game.findById(game._id);
+            game = await exports.findGame(game._id);
             if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
                 game.remove()
                     .then((...args) => eventEmitter.emit('resolve', ...args))

@@ -123,6 +123,7 @@ const gameSchema = new mongoose_1.Schema({
             for (let i = 0; i < ret.players.length; i++) {
                 delete ret.players[i].session;
             }
+            return ret;
         }
     }
 });

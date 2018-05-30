@@ -42,7 +42,7 @@ function getService() {
             return await service.authenticate(decoded.id);
         },
         getResponse(session) {
-            if (!(session.user instanceof User)) {
+            if (!session.populated('user')) {
                 throw new TypeError('Session is not populated with user');
             }
             return {
@@ -100,20 +100,15 @@ function getService() {
                 }
                 return true;
             });
-            if (user instanceof User) {
-                if (sessions.length >= exports.authConfig.sessionLimit) {
-                    throw new ClientAuthError(`Maximum number of tokens (${exports.authConfig.sessionLimit}) has already been issued!`);
-                }
-                const session = new Session({
-                    user: user._id
-                });
-                await session.save();
-                await session.populate('user').execPopulate();
-                return session;
+            if (sessions.length >= exports.authConfig.sessionLimit) {
+                throw new ClientAuthError(`Maximum number of tokens (${exports.authConfig.sessionLimit}) has already been issued!`);
             }
-            else {
-                throw new Error('user is not a model');
-            }
+            const session = new Session({
+                user: user._id
+            });
+            await session.save();
+            await session.populate('user').execPopulate();
+            return session;
         },
         /**
          * Rejects either with string (user error) or Error (server error)

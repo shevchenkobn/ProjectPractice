@@ -15,7 +15,8 @@ exports.getGames = async (req, res, next) => {
             sort,
             limit,
             offset,
-            lean: true
+            lean: true,
+            callToJSON: true
         });
         res.json(games);
     }
@@ -32,7 +33,7 @@ exports.getGame = async (req, res, next) => {
     try {
         const id = req.swagger.params.gameId.value;
         const populate = req.swagger.params.populate.value;
-        const game = await game_service_1.findGame(id, populate);
+        const game = await game_service_1.findGame(id, populate, true);
         res.json(game);
     }
     catch (err) {

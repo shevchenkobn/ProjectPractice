@@ -1,4 +1,4 @@
-import GameModelInitializer, { IGameDocument, IGameModel } from '../models/game.model';
+import GameModelInitializer, { IGameDocument, IGameModel, IGame } from '../models/game.model';
 import { IFindManyOptions, rethrowError, ServiceError } from './common.service';
 import { IBoardDocument } from '../models/board.model';
 import { Types } from 'mongoose';
@@ -24,7 +24,7 @@ export function initialize() {
   Game = GameModelInitializer.getModel();
 }
 
-export const findGames = async (options: IFindManyOptions): Promise<Array<IGameDocument>> => {
+export const findGames = async (options: IFindManyOptions): Promise<Array<IGameDocument> | Array<IGame>> => {
   const filter = options.filter || {};
   const queryOptions: any = {};
   if (Array.isArray(options.sort)) {
@@ -40,7 +40,13 @@ export const findGames = async (options: IFindManyOptions): Promise<Array<IGameD
     queryOptions.lean = options.lean;
   }
   try {
-    return await Game.find(filter, null, queryOptions);
+    const games: Array<IGameDocument> | Array<IGame> = await Game.find(filter, null, queryOptions);
+    if (options.callToJSON) {
+      for (let i = 0; i < games.length; i++) {
+        games[i] = (games[i] as IGameDocument).toJSON();
+      }
+    }
+    return games as Array<IGame>;
   } catch (err) {
     rethrowError(err);
   }
