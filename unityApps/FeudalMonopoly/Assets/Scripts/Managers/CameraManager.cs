@@ -184,7 +184,7 @@ public class CameraManager : MonoBehaviour
         RaycastHit hit;        
         if (Physics.Raycast(ray, out hit, distanceToBackground, buildingsLayerMask))
         {
-            return hit.transform.parent;           
+            return hit.transform;           
         }
 
         return null;

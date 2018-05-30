@@ -12,6 +12,7 @@ public class BuildingCamera : MonoBehaviour
 
     private readonly int rotationDirectionLimit = 60;
 
+    private Vector3 targetPosition;
     private Vector3 velocity = Vector3.zero;
     private Vector3 offset;
     private int rotationCount;
@@ -20,6 +21,7 @@ public class BuildingCamera : MonoBehaviour
     {
         if (Target)
         {
+            targetPosition = Target.position;
             rotationCount = 0;
             CalculateOffset();
             transform.position = Target.position + offset;
@@ -34,7 +36,9 @@ public class BuildingCamera : MonoBehaviour
 
             Vector3 futurePoition = Target.position + offset;
             transform.position = Vector3.SmoothDamp(transform.position, futurePoition, ref velocity, smoothTime);
-            transform.LookAt(Target);
+
+            Vector3 lookAtPosition = new Vector3(targetPosition.x, targetPosition.y + offsetHeight / 1.75f, targetPosition.z);
+            transform.LookAt(lookAtPosition);
         }
     }
 
@@ -57,7 +61,6 @@ public class BuildingCamera : MonoBehaviour
     private void CheckRotationDirection()
     {
         //TODO: check angle of rotation and donnot use count
-
         if (rotationCount >= rotationDirectionLimit)
         {
             rotationCount = -rotationDirectionLimit;
