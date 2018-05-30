@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c47abafff9c3514ba719f0fc5136911, type: 3}
+  m_Name: Test Building Info
+  m_EditorClassIdentifier: 
+  Name: Test
+  Description: Test Test Test
+  Cost: 99
+  ZeroUpgradeRent: 99
+  FirstUpgradeRent: 99
+  SecondUpgradeRent: 99
+  ThirdUpgradeRent: 99
+  FourthUpgradeRent: 99
+  FifthUpgradeRent: 99
+  BasicUpgradeCost: 99
+  FinalUpgradeCost: 99
+  Mortgage: 99

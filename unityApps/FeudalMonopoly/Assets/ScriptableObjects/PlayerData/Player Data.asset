@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c06a2a72c2a5c54db7cff82566ccf1c, type: 3}
   m_Name: Player Data
   m_EditorClassIdentifier: 
-  Login: hdhd
-  Password: hdhd
+  Login: noname
+  Password: password
   Coins: 99
   Gems: 99

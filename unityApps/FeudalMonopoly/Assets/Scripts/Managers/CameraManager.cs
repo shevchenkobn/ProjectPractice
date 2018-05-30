@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
+
+    public static event System.Action<BuidlingInfo> BuildingCaptured = delegate { };
 
     public Camera ActiveCamera { get; private set; }   
 
     public Camera mainCamera;
     public Camera topViewCamera;
     public Camera freeCamera;
-    public Camera buildingCamera; 
+    public Camera buildingCamera;
 
-    public Material renderTextureMaterial;
+    public RawImage buildingCameraImage;
 
     private BuildingCamera buildingCameraComponent;
 
@@ -31,13 +34,8 @@ public class CameraManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
 
-    private void Start()
-    {
-        buildingsLayerMask = LayerMask.GetMask("Buildings");
-        SetActiveCamera();
-        SetupBuildingCamera();
+        Initialize();
     }
 
     private void OnEnable()
@@ -61,6 +59,16 @@ public class CameraManager : MonoBehaviour
             if (targetBuilding) ActivateBuildingCamera(targetBuilding);
             else DeactivateBuildingCamera();
         }
+    }
+
+    /// <summary>
+    /// Sets active camera and setups builidng camera's texture
+    /// </summary>
+    private void Initialize()
+    {
+        buildingsLayerMask = LayerMask.GetMask("Buildings");
+        SetActiveCamera();
+        SetupBuildingCamera();
     }
 
     /// <summary>
@@ -168,7 +176,7 @@ public class CameraManager : MonoBehaviour
         if (buildingCamera.targetTexture) buildingCamera.targetTexture.Release();
 
         buildingCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
-        renderTextureMaterial.mainTexture = buildingCamera.targetTexture;
+        buildingCameraImage.texture = buildingCamera.targetTexture;
 
         DeactivateBuildingCamera();
     }
@@ -184,9 +192,13 @@ public class CameraManager : MonoBehaviour
         RaycastHit hit;        
         if (Physics.Raycast(ray, out hit, distanceToBackground, buildingsLayerMask))
         {
+            Building buildingHit = hit.transform.GetComponent<Building>();
+            if (buildingHit) BuildingCaptured(buildingHit.buidlingInfo);
+
             return hit.transform;           
         }
 
+        UIManager.Instance.CloseBuildingInfoPanel();
         return null;
     }
 }

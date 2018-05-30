@@ -56,7 +56,7 @@ public class Dice : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) // TODO: make UI button to roll the dice
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             RollDice();
         }
@@ -90,7 +90,7 @@ public class Dice : MonoBehaviour
     /// If it was, resets its position
     /// Otherwise throws the dice
     /// </summary>
-    private void RollDice()
+    public void RollDice()
     {
         if (!isThrown && !isLanded)
         {
