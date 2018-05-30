@@ -42,30 +42,20 @@ exports.connectionHandler = async (socket) => {
         await joinGame(socket);
         socket.on('disconnect', async () => {
             try {
-                await disconnectPlayerFromGame(await Game.findById(socket.data.gameId), await Session.findById(socket.data.sessionId));
+                await disconnectPlayerFromGame(await game_service_1.findGame(socket.data.gameId), await Session.findById(socket.data.sessionId));
             }
             catch (err) {
                 // TODO: log error
             }
         });
-        // FIXME: use redis for better performance and cluster node
-        // const userId = socket.data.session.user instanceof ObjectID
-        //   ? socket.data.session.user.toHexString()
-        //   : (socket.data.session.user as IUserDocument).id;
-        // currentClients[userId] = socket;
     }
     catch (err) {
-        // if (err instanceof ServiceError) {
-        //   throw new NamespaceMiddlewareError(err.message);
-        // } else {
-        //   throw err;
-        // }
         socket.emit('disconnect-message', err);
         socket.disconnect(true);
     }
 };
 async function joinGame(socket) {
-    const game = await Game.findById(socket.data.gameId);
+    const game = await game_service_1.findGame(socket.data.gameId);
     const session = await Session.findById(socket.data.sessionId);
     if (game.state !== 'open') {
         throw new common_service_1.ServiceError('The game room is not open');
@@ -139,8 +129,6 @@ const suspendedRemovingCondition = async (game) => {
         return false;
     }
     else {
-        const promises = [];
-        await game.extendedPopulate(['players.sessions']);
         if (game.players.length) {
             const withRoomNsp = namespace.to(game.id);
             const clients = await (util_1.promisify(withRoomNsp.clients.bind(withRoomNsp))());
@@ -154,9 +142,11 @@ const suspendedRemovingCondition = async (game) => {
             //     namespace.connected[client].disconnect(true);
             //   }
             // }) as NamespaceClientsCallback);
+            const promises = [];
+            await game.extendedPopulate(['players.sessions']);
             for (let i = 0; i < game.players.length; i++) {
                 const session = game.players[i].session;
-                delete session.game;
+                session.game = null;
                 promises.push(session.save());
             }
             await Promise.all(promises);
@@ -177,7 +167,7 @@ async function disconnectPlayerFromGame(game, session) {
     // }
     game.players.splice(playerIndex, 1);
     await game.save();
-    delete session.game;
+    session.game = null;
     await session.save();
     // TODO: define user if 1 player left
     // TODO: add reconnect timeout and freeze game until time is up

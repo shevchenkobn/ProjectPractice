@@ -17,7 +17,8 @@ export const getGames: Handler = async (req, res, next) => {
       sort,
       limit,
       offset,
-      lean: true
+      lean: true,
+      callToJSON: true
     });
     res.json(games);
   } catch (err) {

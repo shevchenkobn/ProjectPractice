@@ -25,6 +25,7 @@ export interface IFindManyOptions {
   limit?: number,
   sort?: Array<string>,
   lean?: boolean
+  callToJSON?: boolean
 }
 
 export function prepareFilter(filterString: string): any {
