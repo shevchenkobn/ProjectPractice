@@ -33,36 +33,6 @@ public class FreeCamera : MonoBehaviour
         distance = offset.magnitude;
     }
 
-    private void Update()
-    {
-        if (Input.GetMouseButton(1))
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-
-            if (Input.GetAxis("Mouse X") != 0)
-            {
-                HandleHorizontalInput();
-            }
-
-            if (Input.GetAxis("Mouse Y") != 0)
-            {
-                HandleVerticalInput();
-            }
-
-            CalculateNewPosition();
-            CorrectDistanceToAnchor();
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-        }
-
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
-        {
-            ZoomCamera();
-        }
-    }
-
     private void LateUpdate()
     {
         if (transform.position != newPosition)
@@ -77,34 +47,34 @@ public class FreeCamera : MonoBehaviour
     /// <summary>
     /// Changes the scope of camera
     /// </summary>
-    private void ZoomCamera()
+    public void ZoomCamera(float zoomInput)
     {
-        zoom -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
+        zoom -= zoomInput * zoomSpeed;
         zoom = Mathf.Clamp(zoom, zoomIn, zoomOut);
     }
 
     /// <summary>
     /// Takes vertical input that is vertical rotation around the anchor
     /// </summary>
-    private void HandleVerticalInput()
+    public void HandleVerticalInput(float input)
     {
-        verticalRotation = -Input.GetAxis("Mouse Y") * verticalRotationSpeed;
+        verticalRotation = -input * verticalRotationSpeed;
         offset += transform.up * verticalRotation;
     }
 
     /// <summary>
     /// Takes horizontal input that is horizontal rotation around the anchor
     /// </summary>
-    private void HandleHorizontalInput()
+    public void HandleHorizontalInput(float input)
     {
-        horizontalRotation = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * horizontalRotationSpeed, anchor.up);
+        horizontalRotation = Quaternion.AngleAxis(input * horizontalRotationSpeed, anchor.up);
         offset = horizontalRotation * offset;
     }
 
     /// <summary>
     /// Calculates newPosition for camera
     /// </summary>
-    private void CalculateNewPosition()
+    public void CalculateNewPosition()
     {
         newPosition = anchor.position + offset;
         float clampedY = Mathf.Clamp(offset.y, minHeight, maxHeight);
@@ -114,7 +84,7 @@ public class FreeCamera : MonoBehaviour
     /// <summary>
     /// Moves newPosition back or forth if needed
     /// </summary>
-    private void CorrectDistanceToAnchor()
+    public void CorrectDistanceToAnchor()
     {
         PullForward();
         PullBackward();

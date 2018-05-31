@@ -4,9 +4,11 @@ public enum GameStatus { Active, Pause, GameOver }
 
 public class GameManager : MonoBehaviour
 {
-    public GameStatus Status { get; private set; }
+    public static event System.Action GameManagerLoaded = delegate { };
 
     public static GameManager Instance { get; private set; }
+
+    public GameStatus Status { get; private set; }
 
     public Player CurrentPlayer
     {
@@ -38,6 +40,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        GameManagerLoaded();
     }
 
     private void OnEnable()

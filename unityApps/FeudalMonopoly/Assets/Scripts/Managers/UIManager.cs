@@ -75,5 +75,6 @@ public class UIManager : MonoBehaviour
     public void CloseBuildingInfoPanel()
     {
         buildingInfoPanel.SetActive(false);
+        SupervisorManager.Instance.CameraManager.DeactivateBuildingCamera();
     }
 }

@@ -6,6 +6,7 @@ public class CameraManager : MonoBehaviour
     public static CameraManager Instance { get; private set; }
 
     public static event System.Action<BuidlingInfo> BuildingCaptured = delegate { };
+    public static event System.Action CameraManagerLoaded = delegate { };
 
     public Camera ActiveCamera { get; private set; }   
 
@@ -38,27 +39,32 @@ public class CameraManager : MonoBehaviour
         Initialize();
     }
 
+    private void Start()
+    {
+        CameraManagerLoaded();
+    }
+
     private void OnEnable()
     {
         Dice.DiceRolling += OnDiceRolling;
         Dice.DiceRolled += OnDiceRolled;
+        InputManager.MouseButtonDown += OnMouseButtonDown;
     }
 
     private void OnDisable()
     {
         Dice.DiceRolling -= OnDiceRolling;
         Dice.DiceRolled -= OnDiceRolled;
+        InputManager.MouseButtonDown -= OnMouseButtonDown;
     }
 
-    private void Update()
+    private void OnMouseButtonDown()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Transform targetBuilding = DetectBuilding();
+        Transform targetBuilding = DetectBuilding();
 
-            if (targetBuilding) ActivateBuildingCamera(targetBuilding);
-            else DeactivateBuildingCamera();
-        }
+        if (targetBuilding) ActivateBuildingCamera(targetBuilding);
+        else if (SupervisorManager.Instance.UIManager.buildingInfoPanel.activeSelf) return;
+        else DeactivateBuildingCamera();        
     }
 
     /// <summary>
@@ -187,7 +193,7 @@ public class CameraManager : MonoBehaviour
     /// <returns>Selected building</returns>
     private Transform DetectBuilding()
     {
-        Ray ray = ActiveCamera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = SupervisorManager.Instance.InputManager.GetInputRay();
 
         RaycastHit hit;        
         if (Physics.Raycast(ray, out hit, distanceToBackground, buildingsLayerMask))
@@ -198,7 +204,6 @@ public class CameraManager : MonoBehaviour
             return hit.transform;           
         }
 
-        UIManager.Instance.CloseBuildingInfoPanel();
         return null;
     }
 }

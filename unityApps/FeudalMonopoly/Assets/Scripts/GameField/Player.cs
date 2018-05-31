@@ -25,9 +25,20 @@ public class Player : MonoBehaviour
         FillPossiblePositions();
     }
 
-    void Start()
+    private void OnEnable()
     {
-        GameManager.Instance.Registrate(this);
+        GameManager.GameManagerLoaded += OnGameManagerLoaded;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.GameManagerLoaded -= OnGameManagerLoaded;
+    }
+
+
+    private void OnGameManagerLoaded()
+    {
+        SupervisorManager.Instance.GameManager.Registrate(this);
     }
 
     /// <summary>
