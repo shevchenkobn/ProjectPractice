@@ -6,7 +6,9 @@ public class InputManager : MonoBehaviour
 
     public static InputManager Instance { get; private set; }
 
+    [SerializeField] private float zoomThreshold = 0.2f;
     [SerializeField] private float zoomSpeed = 2f;
+
     [SerializeField] private float horizontalRotationSpeed = 2f;
     [SerializeField] private float verticalRotationSpeed = 3f;
 
@@ -275,21 +277,27 @@ public class InputManager : MonoBehaviour
     /// <returns>True if can zoom and false - otherwise</returns>
     private bool HandleMobileZoom()
     {
-        if (Input.touchCount == 2 && !isSwiping)
+        if (!isSwiping && Input.touchCount == 2)
         {
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);
-            
-            Vector2 touchZeroPreviousPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePreviousPos = touchOne.position - touchOne.deltaPosition;
 
-            float previousTouchDelta = (touchZeroPreviousPos - touchOnePreviousPos).magnitude;
-            float currenttouchDelta = (touchZero.position - touchOne.position).magnitude;
+            if (touchZero.phase == TouchPhase.Moved || touchOne.phase == TouchPhase.Moved)
+            {
+                Vector2 touchZeroPreviousPos = touchZero.position - touchZero.deltaPosition;
+                Vector2 touchOnePreviousPos = touchOne.position - touchOne.deltaPosition;
 
-            float deltaMagnitude = currenttouchDelta - previousTouchDelta;
+                float previousTouchDelta = (touchZeroPreviousPos - touchOnePreviousPos).magnitude;
+                float currenttouchDelta = (touchZero.position - touchOne.position).magnitude;
 
-            HandleZoom(Mathf.Sign(deltaMagnitude) * zoomSpeed);
-            return true;
+                float deltaMagnitude = currenttouchDelta - previousTouchDelta;
+
+                if (Mathf.Abs(deltaMagnitude) > zoomThreshold)
+                {
+                    HandleZoom(Mathf.Sign(deltaMagnitude) * zoomSpeed);
+                    return true;
+                }
+            }                   
         }
 
         return false;
