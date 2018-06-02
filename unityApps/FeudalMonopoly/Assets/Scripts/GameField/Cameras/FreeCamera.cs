@@ -4,15 +4,17 @@ public class FreeCamera : MonoBehaviour
 {
     public Transform anchor;
 
+    public Transform Transform { get; private set; }
+
+    public float MaxHeight { get; private set; }  = 30f;
+    public float MinHeight { get; private set; }  = 5f;
+
     [SerializeField] private float horizontalRotationSpeed = 5f;
     [SerializeField] private float verticalRotationSpeed = 2.5f;
 
     [SerializeField] private float zoomSpeed = 30f;
     [SerializeField] private float zoomOut = 80f;
     [SerializeField] private float zoomIn = 20f;
-
-    [SerializeField] private float maxHeight = 20f;
-    [SerializeField] private float minHeight = 10f;
 
     private Vector3 offset;
     private Vector3 newPosition;
@@ -26,21 +28,30 @@ public class FreeCamera : MonoBehaviour
 
     private void Start()
     {
-        newPosition = transform.position;
+        Transform = GetComponent<Transform>();
         cameraComponent = GetComponent<Camera>();
+
+        newPosition = Transform.position;
         zoom = cameraComponent.fieldOfView;
-        offset = transform.position - anchor.position;
+        offset = Transform.position - anchor.position;
         distance = offset.magnitude;
     }
 
     private void LateUpdate()
     {
-        if (transform.position != newPosition)
+        if (Transform.position != newPosition)
         {
-            transform.position = Vector3.Slerp(transform.position, newPosition, 0.2f);
+            Vector3 futurePosition = Vector3.Slerp(Transform.position, newPosition, 0.2f);
+
+            if (futurePosition.y >= MaxHeight)
+            {
+                futurePosition = new Vector3(futurePosition.x, MaxHeight, futurePosition.z);                
+            }
+
+            Transform.position = futurePosition;
         }
 
-        transform.LookAt(anchor);
+        Transform.LookAt(anchor);
         cameraComponent.fieldOfView = zoom;
     }
     
@@ -59,7 +70,7 @@ public class FreeCamera : MonoBehaviour
     public void HandleVerticalInput(float input)
     {
         verticalRotation = -input * verticalRotationSpeed;
-        offset += transform.up * verticalRotation;
+        offset += Transform.up * verticalRotation;
     }
 
     /// <summary>
@@ -77,14 +88,16 @@ public class FreeCamera : MonoBehaviour
     public void CalculateNewPosition()
     {
         newPosition = anchor.position + offset;
-        float clampedY = Mathf.Clamp(offset.y, minHeight, maxHeight);
+        float clampedY = Mathf.Clamp(offset.y, MinHeight, MaxHeight);
         newPosition = new Vector3(newPosition.x, clampedY, newPosition.z);
+
+        CorrectDistanceToAnchor();
     }
 
     /// <summary>
     /// Moves newPosition back or forth if needed
     /// </summary>
-    public void CorrectDistanceToAnchor()
+    private void CorrectDistanceToAnchor()
     {
         PullForward();
         PullBackward();
@@ -97,7 +110,7 @@ public class FreeCamera : MonoBehaviour
     {
         while ((newPosition - anchor.position).magnitude > distance)
         {
-            newPosition += transform.forward;
+            newPosition += Transform.forward;
         }
     }
 
@@ -108,7 +121,7 @@ public class FreeCamera : MonoBehaviour
     {
         while ((newPosition - anchor.position).magnitude < distance)
         {
-            newPosition -= transform.forward;
+            newPosition -= Transform.forward;
         }
     }
 }

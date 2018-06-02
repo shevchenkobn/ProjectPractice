@@ -246,7 +246,6 @@ GameObject:
   - component: {fileID: 171705260}
   - component: {fileID: 171705255}
   - component: {fileID: 171705262}
-  - component: {fileID: 171705261}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -365,17 +364,6 @@ MonoBehaviour:
   freeCamera: {fileID: 836886837}
   buildingCamera: {fileID: 1620304246}
   buildingCameraImage: {fileID: 1995290727}
---- !u!114 &171705261
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 171705254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f57ee4fa49fe4b9e127086c461d9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &171705262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -645,7 +633,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 836886835}
   m_LocalRotation: {x: 0.28257096, y: -0.32619035, z: 0.102847405, w: 0.89620084}
-  m_LocalPosition: {x: -4.5, y: 20, z: 2.5}
+  m_LocalPosition: {x: -3, y: 22.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641426246}
@@ -704,8 +692,6 @@ MonoBehaviour:
   zoomSpeed: 30
   zoomOut: 80
   zoomIn: 20
-  maxHeight: 20
-  minHeight: 10
 --- !u!1001 &902627110
 Prefab:
   m_ObjectHideFlags: 0
@@ -1360,7 +1346,7 @@ Camera:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1620304243}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1932,16 +1918,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114869597583370298, guid: 3e66806480024a64da9417b405987139,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 342319897}
     - target: {fileID: 114917245033193948, guid: 3e66806480024a64da9417b405987139,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 171705255}
+    - target: {fileID: 114869597583370298, guid: 3e66806480024a64da9417b405987139,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 342319897}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3e66806480024a64da9417b405987139, type: 2}
   m_IsPrefabParent: 0

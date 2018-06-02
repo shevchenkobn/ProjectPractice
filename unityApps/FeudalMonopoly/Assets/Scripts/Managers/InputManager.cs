@@ -56,12 +56,12 @@ public class InputManager : MonoBehaviour
 
     public Ray GetInputRay()
     {
-        return SupervisorManager.Instance.CameraManager.ActiveCamera.ScreenPointToRay(Input.mousePosition);
+        return CameraManager.Instance.ActiveCamera.ScreenPointToRay(Input.mousePosition);
     }
 
     private void OnCameraManageLoaded()
     {
-        freeCamera = SupervisorManager.Instance.CameraManager.freeCamera;
+        freeCamera = CameraManager.Instance.freeCamera;
         freeCameraComponent = freeCamera.GetComponent<FreeCamera>();
     }   
 
@@ -71,7 +71,7 @@ public class InputManager : MonoBehaviour
     /// <returns></returns>
     private bool IsAbleToHandleInput()
     {
-        Camera activeCamera = SupervisorManager.Instance.CameraManager.ActiveCamera;        
+        Camera activeCamera = CameraManager.Instance.ActiveCamera;        
         return activeCamera.Equals(freeCamera);
     }
 
@@ -115,7 +115,6 @@ public class InputManager : MonoBehaviour
     private void CorrectFreeCameraPosition()
     {
         freeCameraComponent.CalculateNewPosition();
-        freeCameraComponent.CorrectDistanceToAnchor();
     }
 
     /// <summary>
@@ -134,10 +133,21 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void HandlePcVerticalInput()
     {
-        if (Input.GetAxis("Mouse Y") != 0)
+        if (Input.GetAxis("Mouse Y") != 0 && !CanRotateOverAnchor(Input.GetAxis("Mouse Y")))
         {
-            HandleVerticalInput(Input.GetAxis("Mouse Y"));
+            HandleVerticalInput(Input.GetAxis("Mouse Y"));            
         }
+    }
+
+    /// <summary>
+    /// Checks if camera is going to rotate over anchor
+    /// </summary>
+    /// <param name="input">Vertical rotation value</param>
+    /// <returns>True if is going, false - otherwise</returns>
+    private bool CanRotateOverAnchor(float input)
+    {
+        return freeCamera.transform.position.y >= freeCameraComponent.MaxHeight 
+                && input < 0;
     }
 
     /// <summary>
@@ -216,7 +226,10 @@ public class InputManager : MonoBehaviour
             }
             else
             {
-                Vector2 direction = Input.GetTouch(0).position - lastTouchPosition;
+                Vector2 currentTouchPosition = Input.GetTouch(0).position;
+                if (currentTouchPosition == lastTouchPosition) return;
+
+                Vector2 direction = currentTouchPosition - lastTouchPosition;
 
                 if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
                 {
@@ -243,7 +256,7 @@ public class InputManager : MonoBehaviour
     private void HandleMobileVerticalInput(Vector2 direction)
     {
         float input = Mathf.Sign(direction.y) * verticalRotationSpeed;
-        HandleVerticalInput(input);
+        if(!CanRotateOverAnchor(input)) HandleVerticalInput(input);
     }
 
     /// <summary>
@@ -262,7 +275,7 @@ public class InputManager : MonoBehaviour
     /// <returns>True if can zoom and false - otherwise</returns>
     private bool HandleMobileZoom()
     {
-        if (Input.touchCount == 2)
+        if (Input.touchCount == 2 && !isSwiping)
         {
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);

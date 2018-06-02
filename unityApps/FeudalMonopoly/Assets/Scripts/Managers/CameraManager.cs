@@ -63,7 +63,7 @@ public class CameraManager : MonoBehaviour
         Transform targetBuilding = DetectBuilding();
 
         if (targetBuilding) ActivateBuildingCamera(targetBuilding);
-        else if (SupervisorManager.Instance.UIManager.buildingInfoPanel.activeSelf) return;
+        else if (UIManager.Instance.buildingInfoPanel.activeSelf) return;
         else DeactivateBuildingCamera();        
     }
 
@@ -193,7 +193,7 @@ public class CameraManager : MonoBehaviour
     /// <returns>Selected building</returns>
     private Transform DetectBuilding()
     {
-        Ray ray = SupervisorManager.Instance.InputManager.GetInputRay();
+        Ray ray = InputManager.Instance.GetInputRay();
 
         RaycastHit hit;        
         if (Physics.Raycast(ray, out hit, distanceToBackground, buildingsLayerMask))

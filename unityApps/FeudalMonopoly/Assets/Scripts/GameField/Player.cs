@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
 
     private void OnGameManagerLoaded()
     {
-        SupervisorManager.Instance.GameManager.Registrate(this);
+        GameManager.Instance.Registrate(this);
     }
 
     /// <summary>
