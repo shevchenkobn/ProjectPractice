@@ -17,15 +17,14 @@
       "dices": [
         {
           "max": 6
-        },
-        {
-          "max": 6
         }
       ],
       "building": {
         "mortgage": {
           "price": 0.5,
-          "liftInterestPledgePercent": 0.1,
+          "monopoly": false,
+          "improvements": false,
+          "liftInterestPercent": 0.1,
           "sell": {
             "pricePercentPay": 0.1
           }

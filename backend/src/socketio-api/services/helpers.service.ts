@@ -10,9 +10,12 @@ import { findGame } from '../../services/game.service';
 import { rethrowError, ServiceError } from '../../services/common.service';
 import { IUserDocument } from '../../models/user.model';
 import { ISessionDocument } from '../../models/session.model';
+import shuffleArray from 'shuffle-array';
 
 export interface ISocketIOHelpersService {
   checkAuthAndAccessMiddleware: SocketMiddleware;
+  getRange(size: number, shuffle?: boolean): Array<number>;
+  getIntegerBetween(min: number, max: number): number;
 }
 
 export interface ISocketIOUrls {
@@ -60,6 +63,20 @@ export function getService() {
       } catch (err) {
         next(err);
       }
+    },
+
+    getRange(size, shuffle = false) {
+      const arr = Array.apply(null, { length: size })
+        .map(Number.call, Number) // range [0 ... length]
+      if (shuffle) {
+        shuffleArray(arr);
+      }
+      return arr;
+    },
+
+    getIntegerBetween(min, max) {
+      min = Math.round(min), max = Math.round(max + 1);
+      return Math.round(min + Math.random() * (max - min));
     }
   };
   return service;

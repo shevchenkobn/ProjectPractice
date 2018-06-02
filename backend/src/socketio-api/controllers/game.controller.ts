@@ -8,6 +8,7 @@ import SessionInitializer, { ISessionDocument, ISessionModel } from '../../model
 import { ObjectID, ObjectId } from 'bson';
 import { ISocketIOHelpersService, getService } from '../services/helpers.service';
 import { promisify } from 'util';
+import { GameLoopController } from './gameLoop.class';
 
 let Game: IGameModel;
 let Session: ISessionModel;
@@ -96,7 +97,11 @@ async function tryStartGame(game: IGameDocument): Promise<boolean> {
     game.state = 'playing';
 
     // TODO: start game
-    console.log('game is started, really');
+    startGame(game).then(() => {
+      // TODO: add logging
+    }).catch(err => {
+      // TODO: add logging      
+    });
     return true;
   } else {
     return false;
@@ -179,4 +184,12 @@ async function disconnectPlayerFromGame(game: IGameDocument, session: ISessionDo
   await session.save();
   // TODO: define user if 1 player left
   // TODO: add reconnect timeout and freeze game until time is up
+}
+
+async function startGame(game: IGameDocument) {
+  if (!game.populated('board')) {
+    await game.populate('board');
+  }
+  const controller = await GameLoopController.getInstance((game.board as IBoardDocument).id);
+  return await controller.initiateGame(game);
 }

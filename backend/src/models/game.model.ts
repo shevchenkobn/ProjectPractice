@@ -26,7 +26,8 @@ export interface IPlayerDocument {
   possessions: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
   monopolies?: { [objectId: string]: boolean },// if monopoly is active
   modifiers: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
-  mortgaged: Array<Schema.Types.ObjectId | ICellFunctionDocument>
+  mortgaged: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
+  otherInfo?: any
 }
 
 export interface IGame {
@@ -36,7 +37,8 @@ export interface IGame {
   winner?: Types.ObjectId | IUserDocument,
   stepCount: number,
   playerIndex: number,
-  players: Array<IPlayerDocument>
+  players: Array<IPlayerDocument>,
+  otherInfo: any,
 
   createdAt: Date,
   updatedAt: Date,
@@ -118,6 +120,10 @@ const playerSchema = new Schema({
     type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
     required: true,
     default: []
+  },
+  otherInfo: {
+    type: Object,
+    required: false
   }
 }, {
     _id: false
@@ -163,14 +169,18 @@ const gameSchema = new Schema({
     type: [playerSchema],
     required: true,
     default: []
+  },
+  otherInfo: {
+    type: Object,
+    required: false
   }
 }, {
   timestamps: true,
   collection: 'games',
   toObject: {
     transform(doc: IGameDocument, ret: IGame, options) {
-      for (let i = 0; i < ret.players.length; i++) {
-        delete ret.players[i].session;
+      for (let player of ret.players) {
+        delete player.session;
       }
       return ret;
     }

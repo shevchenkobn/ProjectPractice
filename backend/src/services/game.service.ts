@@ -117,8 +117,9 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
     throw new TypeError(`Remove timeout for "${id}" is already set`);
   }
   const eventEmitter = new EventEmitter();
+  const gameId = game.id;
   removeTasks[id] = [setTimeout(async () => {
-    game = await findGame(game._id);
+    const game = await findGame(gameId);
     if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
       game.remove()
         .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))

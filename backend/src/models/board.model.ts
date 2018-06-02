@@ -12,6 +12,7 @@ export interface IRange {
 }
 
 export interface IBoardEvent {
+  type: string
   triggers: Array<string>
   action: any
 }
@@ -40,9 +41,11 @@ export interface IBoardDocument extends Document {
     "building": {
       "mortgage": {
         "price": number,
-        "liftInterestPledgePercent": number,
+        monopoly: boolean,
+        improvements: boolean,
+        "liftInterestPercent"?: number,
         "sell": {
-          "pricePercentPay": number
+          "pricePercentPay"?: number
         }
       },
       "improvements": {
@@ -74,6 +77,7 @@ export interface IBoardDocument extends Document {
   },
   "cells": Array<IBoardCell>,
   extendedPopulate(paths: Array<string>, poolEntities?: boolean): Promise<void>;
+  extendedPopulated(paths: Array<string>): { [path: string]: boolean };
 }
 
 export interface IBoardModel extends Model<IBoardDocument> { }
@@ -155,6 +159,10 @@ const improvementsSchema = new Schema({
   });
 
 const eventSchema = new Schema({
+  type: {
+    type: String,
+    required: true,
+  },
   triggers: {
     type: [String],
     required: true
@@ -203,7 +211,15 @@ const boardSchema = new Schema({
           type: Number,
           required: true
         },
-        "liftInterestPledgePercent": Number,
+        "monopoly": {
+          type: Boolean,
+          required: true
+        },
+        "improvements": {
+          type: Boolean,
+          required: true
+        },
+        "liftInterestPercent": Number,
         "sell": {
           "pricePercentPay": Number
         }
@@ -290,20 +306,26 @@ boardSchema.methods.extendedPopulate = async function (this: IBoardDocument, pat
           continue;
         }
         const id = (this.cells[i].function as Types.ObjectId).toHexString();
-        if (sharedIDs[id]) {
-          sharedIDs[id].push(i);
-        } else {
-          this.populate(pathPieces.join(i.toString()));
-          sharedIDs[id] = [i];
+        const path = pathPieces.join(i.toString());
+        if (!this.populated(path)) {
+          if (sharedIDs[id]) {
+            sharedIDs[id].push(i);
+          } else {
+            this.populate(path);
+            sharedIDs[id] = [i];
+          }
         }
       }
     } else {
       for (let i = 0; i < this.cells.length; i++) {
-        this.populate(pathPieces.join(i.toString()));
+        const path = pathPieces.join(i.toString());
+        if (!this.populated(path)) {
+          this.populate(pathPieces.join(i.toString()));
+        }
       }
     }
   }
-  if (paths.includes('roles')) {
+  if (paths.includes('roles') && !this.populated('roles')) {
     this.populate('roles');
   }
   await this.execPopulate();
@@ -331,6 +353,33 @@ boardSchema.methods.extendedPopulate = async function (this: IBoardDocument, pat
   //     this.cells[i].function = functions[i];
   //   }
   // }
+};
+
+boardSchema.methods.extendedPopulated = function (this: IBoardDocument, paths: Array<string>): { [path: string]: boolean } {
+  if (!(paths && paths.length)) {
+    return {};
+  }
+  const populated: { [path: string]: boolean } = paths.reduce((obj, path) => (obj as any)[path] = false, {});
+  const cellFunctionsIndex = paths.indexOf('cellFunctions');
+  const pathPieces = ['cells.', '.function'];
+  let sharedIDs: { [objectId: string]: Array<number> };
+  if (~cellFunctionsIndex) {
+    paths.splice(cellFunctionsIndex, 1);
+
+    for (let i = 0; i < this.cells.length; i++) {
+      const path = pathPieces.join(i.toString());
+      if (!this.populated(path)) {
+        populated.cellFunctions = false;
+        break;
+      } else {
+        populated.cellFunctions = true;
+      }
+    }
+  }
+  for (let path of paths) {
+    populated[path] = this.populated(path);
+  }
+  return populated;
 };
 
 /**
