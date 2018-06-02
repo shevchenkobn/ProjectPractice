@@ -46,6 +46,7 @@ public class CameraManager : MonoBehaviour
 
     private void OnEnable()
     {
+        Application.logMessageReceived += OnExceptionReceived;
         Dice.DiceRolling += OnDiceRolling;
         Dice.DiceRolled += OnDiceRolled;
         InputManager.MouseButtonDown += OnMouseButtonDown;
@@ -53,9 +54,15 @@ public class CameraManager : MonoBehaviour
 
     private void OnDisable()
     {
+        Application.logMessageReceived -= OnExceptionReceived;
         Dice.DiceRolling -= OnDiceRolling;
         Dice.DiceRolled -= OnDiceRolled;
         InputManager.MouseButtonDown -= OnMouseButtonDown;
+    }
+
+    private void OnExceptionReceived(string condiotion, string message, LogType logType)
+    {
+        Logger.Log($"Condition: {condiotion}; Messgae: {message}; Type: {logType}.");
     }
 
     private void OnMouseButtonDown()

@@ -11,15 +11,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c47abafff9c3514ba719f0fc5136911, type: 3}
   m_Name: Gold Mine Buidling Info
   m_EditorClassIdentifier: 
+  Color: {r: 0.95314395, g: 1, b: 0.5147059, a: 1}
   Name: Gold Mine
   Description: This is description
   Cost: 60
-  ZeroUpgradeRent: 2
-  FirstUpgradeRent: 10
-  SecondUpgradeRent: 30
-  ThirdUpgradeRent: 90
-  FourthUpgradeRent: 160
-  FifthUpgradeRent: 250
+  ZeroUpgradeRent: 4
+  FirstUpgradeRent: 20
+  SecondUpgradeRent: 60
+  ThirdUpgradeRent: 180
+  FourthUpgradeRent: 320
+  FifthUpgradeRent: 450
   BasicUpgradeCost: 50
   FinalUpgradeCost: 50
   Mortgage: 30

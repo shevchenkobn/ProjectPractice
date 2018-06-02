@@ -3,6 +3,8 @@
 [CreateAssetMenu(fileName = "New Buidling Info", menuName = "Buidling Info")]
 public class BuidlingInfo : ScriptableObject
 {
+    public Color Color;
+
     public string Name;
     public string Description;
     public int Cost;

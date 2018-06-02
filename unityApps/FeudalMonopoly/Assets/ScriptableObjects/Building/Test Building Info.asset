@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c47abafff9c3514ba719f0fc5136911, type: 3}
   m_Name: Test Building Info
   m_EditorClassIdentifier: 
+  Color: {r: 0.716, g: 0.042117644, b: 0.042117644, a: 1}
   Name: Test
   Description: Test Test Test
   Cost: 99

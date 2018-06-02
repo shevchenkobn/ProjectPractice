@@ -103,7 +103,7 @@ public class Dice : MonoBehaviour
         else if (isThrown && isLanded)
         {
             ResetDice();
-        }
+        }        
     }
 
     /// <summary>

@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     public GameObject buildingInfoPanel;
+    public Image titlePanel;
 
     public Text buildingTitleText;
     public Text buildingDesciptionText;
@@ -54,7 +55,7 @@ public class UIManager : MonoBehaviour
 
     private void ShowBuidlingInfo(BuidlingInfo buildingInfo)
     {
-        buildingInfoPanel.SetActive(true);
+        titlePanel.color = buildingInfo.Color;
 
         buildingTitleText.text = buildingInfo.Name;
         buildingDesciptionText.text = buildingInfo.Description;
@@ -70,6 +71,8 @@ public class UIManager : MonoBehaviour
         buildingBasicUpgradeCostText.text = buildingInfo.BasicUpgradeCost.ToString();
         buildingFinalUpgradeCostText.text = buildingInfo.FinalUpgradeCost.ToString();
         buildingMortgageText.text = buildingInfo.Mortgage.ToString();
+
+        buildingInfoPanel.SetActive(true);
     }
 
     public void CloseBuildingInfoPanel()
