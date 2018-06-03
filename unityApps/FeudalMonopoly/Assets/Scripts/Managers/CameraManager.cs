@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class CameraManager : MonoBehaviour
 {
@@ -46,7 +47,6 @@ public class CameraManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Application.logMessageReceived += OnExceptionReceived;
         Dice.DiceRolling += OnDiceRolling;
         Dice.DiceRolled += OnDiceRolled;
         InputManager.MouseButtonDown += OnMouseButtonDown;
@@ -54,15 +54,9 @@ public class CameraManager : MonoBehaviour
 
     private void OnDisable()
     {
-        Application.logMessageReceived -= OnExceptionReceived;
         Dice.DiceRolling -= OnDiceRolling;
         Dice.DiceRolled -= OnDiceRolled;
         InputManager.MouseButtonDown -= OnMouseButtonDown;
-    }
-
-    private void OnExceptionReceived(string condiotion, string message, LogType logType)
-    {
-        Logger.Log($"Condition: {condiotion}; Messgae: {message}; Type: {logType}.");
     }
 
     private void OnMouseButtonDown()
@@ -98,7 +92,10 @@ public class CameraManager : MonoBehaviour
     /// <param name="steps">Ignore this value</param>
     private void OnDiceRolled(int steps)
     {
-        ActivateMainCamera();
+        if (freeCamera.enabled == false)
+        {
+            ActivateMainCamera();
+        }
     }
 
     /// <summary>
@@ -177,6 +174,15 @@ public class CameraManager : MonoBehaviour
     {
         buildingCameraComponent.Target = null;
         buildingCamera.enabled = false;
+    }
+
+    /// <summary>
+    /// Detects wheather freeCamera is active
+    /// </summary>
+    /// <returns>True if freeCamera is active, false - otherwise</returns>
+    public bool IsFreeCameraActive()
+    {
+        return Instance.ActiveCamera.Equals(Instance.freeCamera);
     }
 
     /// <summary>

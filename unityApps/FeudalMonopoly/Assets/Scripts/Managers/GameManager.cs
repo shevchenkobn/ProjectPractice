@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.IO;
 
 public enum GameStatus { Active, Pause, GameOver }
 
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private void Start()
     {
         GameManagerLoaded();
@@ -49,12 +51,20 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        Application.logMessageReceived += OnExceptionReceived;
         Dice.DiceRolled += OnDiceRolled;
     }
 
     private void OnDisable()
     {
+        Application.logMessageReceived -= OnExceptionReceived;
         Dice.DiceRolled -= OnDiceRolled;
+    }
+
+    private void OnExceptionReceived(string condition, string message, LogType logType)
+    {
+        string path = Path.Combine(Application.persistentDataPath, "/logs.txt");
+        Logger.Log(path, $"Condition: {condition}; Messgae: {message}; Type: {logType}.");
     }
 
     /// <summary>

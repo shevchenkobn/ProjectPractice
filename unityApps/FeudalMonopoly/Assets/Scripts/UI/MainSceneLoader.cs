@@ -46,7 +46,11 @@ public class MainSceneLoader : MonoBehaviour
     /// </summary>
     private void GetPlayerData()
     {
-        playerData.Login = loginPanel.loginField.text;
+        if (!string.IsNullOrEmpty(loginPanel.loginField.text))
+        {
+            playerData.Login = loginPanel.loginField.text;
+        }
+
         playerData.Password = loginPanel.passwordField.text;
     }
 }

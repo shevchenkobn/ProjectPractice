@@ -6,17 +6,19 @@ public class CameraSwitcherButton : MonoBehaviour
 
     private void OnEnable()
     {
+        Dice.DiceRolling += OnDiceRolling;
         Dice.DiceRolled += OnDiceRolled;
     }
 
     private void OnDisable()
     {
+        Dice.DiceRolling -= OnDiceRolling;
         Dice.DiceRolled -= OnDiceRolled;
     }
 
     private void Start()
     {
-        if (CameraManager.Instance.ActiveCamera.Equals(CameraManager.Instance.freeCamera))
+        if (CameraManager.Instance.IsFreeCameraActive())
         {
             lockImage.SetActive(false);
         }
@@ -33,6 +35,14 @@ public class CameraSwitcherButton : MonoBehaviour
     }
 
     public void OnDiceRolled(int steps)
+    {
+        if (CameraManager.Instance.IsFreeCameraActive())
+        {
+            lockImage.SetActive(false);
+        }
+    }
+
+    public void OnDiceRolling()
     {
         lockImage.SetActive(true);        
     }

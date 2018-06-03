@@ -28,7 +28,7 @@ public class Dice : MonoBehaviour
 
     private void Awake()
     {
-        path = Path.Combine(Application.dataPath, "Json/Dice.json");
+        //path = Path.Combine(Application.dataPath, "Json/Dice.json");
 
         rigidbody = GetComponent<Rigidbody>();
         transform = GetComponent<Transform>();
@@ -36,12 +36,64 @@ public class Dice : MonoBehaviour
 
     private void Start()
     {
-        JsonHelper.LoadJson(path, ref sideTorqueValusePair);
+        //JsonHelper.LoadJson(path, ref sideTorqueValusePair);
 
-        if (sideTorqueValusePair == null)
+        //if (sideTorqueValusePair == null)
+        //{
+        //    sideTorqueValusePair = new Dictionary<int, List<Vector3>>();
+        //}
+
+        sideTorqueValusePair = new Dictionary<int, List<Vector3>>()
         {
-            sideTorqueValusePair = new Dictionary<int, List<Vector3>>();
-        }
+            {
+                6, new List<Vector3>()
+                {
+                        new Vector3(147f, 134f, 444f),
+                        new Vector3(277f, 141f, 201f),
+                        new Vector3(364f, 406f, 225f)
+                }
+            },
+            {
+                5, new List<Vector3>()
+                {
+                        new Vector3(122f, 332f, 121f),
+                        new Vector3(297f, 137f, 14f),
+                        new Vector3(33f, 68f, 118f)
+                }
+            },
+            {
+                4, new List<Vector3>()
+                {
+                        new Vector3(488f, 498f, 66f),
+                        new Vector3(145f, 222f, 288f),
+                        new Vector3(376f, 207f, 8f)
+                }
+            },
+             {
+                3, new List<Vector3>()
+                {
+                        new Vector3(194f, 383f, 129f),
+                        new Vector3(337f, 94f, 141f),
+                        new Vector3(194f, 409f, 196f)
+                }
+            },
+            {
+                2, new List<Vector3>()
+                {
+                        new Vector3(486f, 58f, 80f),
+                        new Vector3(186f, 478f, 313f),
+                        new Vector3(294f, 434f, 224f)
+                }
+            }, 
+            {
+                1, new List<Vector3>()
+                {
+                        new Vector3(200f, 117f, 211f),
+                        new Vector3(388f, 403f, 387f),
+                        new Vector3(326f, 65f, 39f)
+                }
+            }
+        };
 
         foreach (Transform child in transform)
         {
