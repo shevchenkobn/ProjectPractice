@@ -24,13 +24,15 @@ export class GameEventsManager {
     return Object.keys(this._listeners);
   }
 
-  public getListener(eventName: string, game: IGameDocument, socket: AuthorizedSocket): (...args: Array<any>) => any {
-    return this.listenerWrapper.bind(this, game, socket, this._listeners[eventName]);
+  public getListener(eventName: string, socket: AuthorizedSocket): (...args: Array<any>) => any {
+    return this.listenerWrapper.bind(this, socket, this._listeners[eventName]);
   }
 
-  private async listenerWrapper(gameId: string, socket: AuthorizedSocket, listener: SocketEventHanler, ...args: Array<any>) {
-    const game = await findGame(gameId);
-    await listener.call(this, game, socket, ...args);
-    await game.save();
+  private async listenerWrapper(socket: AuthorizedSocket, listener: SocketEventHanler, ...args: Array<any>) {
+    const game = await findGame(socket.data.gameId);
+    if (game.status === 'playing') {
+      await listener.call(this, game, socket, ...args);
+      await game.save();
+    }
   }
 }
