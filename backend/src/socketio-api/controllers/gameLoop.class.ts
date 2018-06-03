@@ -156,7 +156,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
 
     if (rules.randomizeEventOptions) {
       const cellFunctionsPath = ['cellFunctions'];
-      if (!this._board.extendedPopulated(cellFunctionsPath)) {
+      if (!this._board.extendedPopulated(cellFunctionsPath).cellFunctions) {
         await this._board.extendedPopulate(cellFunctionsPath);
       }
 
