@@ -4,6 +4,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: silverMine",
       "ObjectId: goldenMine"
@@ -43,6 +44,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: onsen",
       "ObjectId: yukaku",
@@ -59,6 +61,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: pier",
       "ObjectId: sawmill",
@@ -96,6 +99,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: dojo",
       "ObjectId: ninjaOutpost",
@@ -112,6 +116,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: forge",
       "ObjectId: stable",
@@ -128,6 +133,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: todaiJi",
       "ObjectId: kinkakuJi",
@@ -144,6 +150,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: inuyama",
       "ObjectId: osaka",
@@ -160,6 +167,7 @@
     "createdAt": "Date: now",
     "updatedAt": "Date: now",
     "type": "building",
+    "monopolistic": true,
     "functions": [
       "ObjectId: ironOre",
       "ObjectId: brimstone"

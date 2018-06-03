@@ -44,6 +44,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
     }
     if (!this._instances[boardId]) {
       this._instances[boardId] = new GameLoopController(await findBoard(boardId));
+      await this._instances[boardId].initialize();
     }
     return this._instances[boardId] as IGameManager;
   }
@@ -55,12 +56,14 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
   private _board: IBoardDocument;
   private _defeatOnLeave: boolean;
   private _eventsManager: GameEventsManager;
+  private _initialized: boolean;
 
   private constructor(board: IBoardDocument) {
     if (!board) {
       throw new Error('Board is undefined');
     }
     this._board = board;
+    this._initialized = false;
     this._eventsManager = new GameEventsManager(this);
     this.parseBoard();
   }
@@ -70,6 +73,9 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
   }
 
   async initiateGame(game: IGameDocument) {
+    if (!this._initialized) {
+      throw new Error('Instance is not initialized!');
+    }
     if (!game) {
       throw new Error('Game is undefined');
     }
@@ -86,6 +92,9 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
   }
 
   async tryWinGame(game: IGameDocument) {
+    if (!this._initialized) {
+      throw new Error('Instance is not initialized!');
+    }
     const activePlayersIndexes = game.players.reduce((indexesArray, player, index) => {
       if (player.status === 'active') {
         indexesArray.push(index);
@@ -107,7 +116,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
         ) {
           socket.emit('winner') // TODO: use from event handles
           disconnectSocket(socket, {
-            message: 'Game is finished. You are winner.'
+            message: 'Game is finished. You are the winner.'
           });
         }
       }
@@ -115,6 +124,14 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
     } else {
       return false;
     }
+  }
+
+  private async initialize() {
+    const paths = ['cellFunctions'];
+    if (!this._board.extendedPopulated(paths).cellFunctions) {
+      await this._board.extendedPopulate(paths);
+    }
+    this._initialized = true;
   }
 
   private parseBoard(): void {
@@ -166,7 +183,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
       );
       if (eventCellsWithOptions.length) {
         const events: { [eventId: string]: Array<number> } = {};
-        game.otherInfo.cellEvents = events;
+        game.otherInfo.cellEventOptions = events;
         for (let cell of eventCellsWithOptions) {
           const event = cell.function as ICellFunctionDocument;
           if (!events[event.id]) {

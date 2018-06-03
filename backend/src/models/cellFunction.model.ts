@@ -11,6 +11,7 @@ export interface IImprovement {
 }
 
 export interface IOption {
+  [action: string]: any,
   optionId: number
 }
 

@@ -8,7 +8,7 @@ export function initialize() {
   CellFunctionClass = CellFunctionInitializer.getModel()
 }
 
-export async function findCellFunction(id: string, populate: Array<string>) {
+export async function findCellFunction(id: string, populate?: Array<string>) {
   let cellFunction;
   try {
     cellFunction = await CellFunctionClass.findById(id);

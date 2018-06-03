@@ -48,33 +48,15 @@
 
 // })();
 
-
-
-// const arr = [];
-// const func = (...args) => console.log(args);
-// const cb = () => {console.log('cb')};
-// console.log(process.memoryUsage());
-// let start = process.hrtime();
-
-// for (let i = 0; i < 1e5; i++) {
-//   arr[i] = setInterval(func.bind(null, 'string', cb, {a: 1, b: 2}, 4, false), 60000);
-// }
-// console.log(process.hrtime(start));
-// console.log(process.memoryUsage());
-// process.exit(0);
-
-const arr = new Array(1e6).fill({});
-let start = process.hrtime();
-arr.reduce((el, i) => {});
-console.log(process.hrtime(start));
-start = process.hrtime();
-for (let i = 0; i < arr.length; i++) {
-  
+class A {
+  constructor() {
+    this.prop = {
+      test() {
+        console.log(this);
+      }
+    }
+  }
 }
-console.log(process.hrtime(start));
 
-start = process.hrtime();
-for (let el of arr) {
-  
-}
-console.log(process.hrtime(start));
+const a = new A();
+a.prop.test.call(A);

@@ -5,6 +5,7 @@ import { IUserDocument } from './user.model';
 import { IBoardDocument } from './board.model';
 import { ICellFunctionDocument } from './cellFunction.model';
 import { ISessionDocument } from './session.model';
+import { ObjectId } from 'bson';
 
 /**
  * Interfaces section
@@ -23,10 +24,11 @@ export interface IPlayerDocument {
     [playerIndex: number]: number
   },
   cellId: number,
-  possessions: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
-  monopolies?: { [objectId: string]: boolean },// if monopoly is active
-  modifiers: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
-  mortgaged: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
+  possessions: Array<ObjectId | ICellFunctionDocument>,
+  monopolies?: { [cellFunctionClassId: string]: boolean },// if monopoly is active
+  improvements?: { [cellFunctionId: string]: any } // FIXME: find out what to save here
+  modifiers: Array<ObjectId | ICellFunctionDocument>,
+  mortgaged: Array<ObjectId | ICellFunctionDocument>,
   otherInfo?: any
 }
 
@@ -38,7 +40,10 @@ export interface IGame {
   stepCount: number,
   playerIndex: number,
   players: Array<IPlayerDocument>,
-  otherInfo: any,
+  otherInfo: {
+    [something: string]: any;
+    cellEventOptions?: { [cellFunctionId: string]: Array<number> };
+  },
 
   createdAt: Date,
   updatedAt: Date,
@@ -172,21 +177,26 @@ const gameSchema = new Schema({
     default: []
   },
   otherInfo: {
-    type: Object,
+    type: {
+      cellEventOptions: {
+        type: Object,
+        required: false
+      }
+    },
     required: false
   }
 }, {
-  timestamps: true,
-  collection: 'games',
-  toObject: {
-    transform(doc: IGameDocument, ret: IGame, options) {
-      for (let player of ret.players) {
-        delete player.session;
+    timestamps: true,
+    collection: 'games',
+    toObject: {
+      transform(doc: IGameDocument, ret: IGame, options) {
+        for (let player of ret.players) {
+          delete player.session;
+        }
+        return ret;
       }
-      return ret;
     }
-  }
-});
+  });
 
 gameSchema.methods.extendedPopulate = async function (this: IGameDocument, paths: Array<string>, fromRequest: boolean = false): Promise<void> {
   if (!(Array.isArray(paths) && paths.length)) {
