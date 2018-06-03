@@ -63,18 +63,18 @@
 // console.log(process.memoryUsage());
 // process.exit(0);
 
-const obj = {
-  a: '444',
-  b: 4,
-  f: (...args) => {
-// debugger;
-    
-    for (let prop in this) {
-      console.log(prop, this.prop);
-    }
-    console.log(args);
-    return this;
-  }
-};
+const arr = new Array(1e6).fill({});
+let start = process.hrtime();
+arr.reduce((el, i) => {});
+console.log(process.hrtime(start));
+start = process.hrtime();
+for (let i = 0; i < arr.length; i++) {
+  
+}
+console.log(process.hrtime(start));
 
-console.log(obj === obj.f.bind(new Number(4), 4, 42, 'hi')());
+start = process.hrtime();
+for (let el of arr) {
+  
+}
+console.log(process.hrtime(start));

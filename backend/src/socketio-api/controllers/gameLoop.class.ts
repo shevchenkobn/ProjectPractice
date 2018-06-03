@@ -1,24 +1,26 @@
 import { IBoardDocument } from "../../models/board.model";
 import { findBoard } from "../../services/board.service";
-import { promisify } from "util";
 import { findGame } from "../../services/game.service";
 import { IGameDocument } from "../../models/game.model";
 import { ICellFunctionDocument } from "../../models/cellFunction.model";
 import { AuthorizedSocket } from "../@types";
-import { GameEventsManager } from "../services/gameEventsManager.class";
-import { getService } from "../services/helpers.service";
+import { GameEventsManager } from "./gameEventsManager.class";
+import { getService, getClientIds, disconnectSocket } from "../services/helpers.service";
+import { ObjectId } from "bson";
+import { ISessionDocument } from "../../models/session.model";
 
 const helperService = getService();
 
-export interface IGameStarter {
+export interface IGameManager {
   initiateGame(game: IGameDocument): Promise<any>;
+  tryWinGame(game: IGameDocument): Promise<boolean>;
 }
 
 export interface IGameRulesProvider {
   readonly board: IBoardDocument;
 }
 
-export class GameLoopController implements IGameRulesProvider, IGameStarter {
+export class GameLoopController implements IGameRulesProvider, IGameManager {
   private static _namespace: SocketIO.Namespace;
   private static _instances: { [boardId: string]: GameLoopController };
 
@@ -43,7 +45,7 @@ export class GameLoopController implements IGameRulesProvider, IGameStarter {
     if (!this._instances[boardId]) {
       this._instances[boardId] = new GameLoopController(await findBoard(boardId));
     }
-    return this._instances[boardId] as IGameStarter;
+    return this._instances[boardId] as IGameManager;
   }
 
   /**
@@ -72,19 +74,52 @@ export class GameLoopController implements IGameRulesProvider, IGameStarter {
       throw new Error('Game is undefined');
     }
 
+    const clients: Array<any> = await getClientIds(GameLoopController._namespace, game.id);
+    clients.forEach((id, i, arr) => {
+      arr[i] = GameLoopController._namespace.connected[id];
+    });
+
     await this.initializeGame(
       game,
-      await promisify(GameLoopController._namespace.to(game.id).clients)() as Array<SocketIO.Socket>
+      clients as Array<AuthorizedSocket>
     );
+  }
+
+  async tryWinGame(game: IGameDocument) {
+    const activePlayersIndexes = game.players.reduce((indexesArray, player, index) => {
+      if (player.status === 'active') {
+        indexesArray.push(index);
+      } 
+      return indexesArray;
+    }, [] as Array<number>);
+    if (activePlayersIndexes.length === 1) {
+      const winnerIndex = activePlayersIndexes[0];
+      game.winner = game.players[winnerIndex].user;
+      game.status = 'finished';
+      await game.save();
+      const socketIds = await getClientIds(GameLoopController._namespace, game.id);
+      for (let socketId of socketIds) {
+        const socket = GameLoopController._namespace.connected[socketId] as AuthorizedSocket;
+        if (
+          socket.data.sessionId === (game.players[winnerIndex].session instanceof ObjectId
+            ? (game.players[winnerIndex].session as ObjectId).toHexString()
+            : (game.players[winnerIndex].session as ISessionDocument).id)
+        ) {
+          socket.emit('winner') // TODO: use from event handles
+          disconnectSocket(socket, {
+            message: 'Game is finished. You are winner.'
+          });
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private parseBoard(): void {
     let willSave = false;
     const rules = this._board.rules;
-    if (!rules.playerLimits.min) {
-      rules.playerLimits.min = 1;
-      willSave = true;
-    }
     for (let dice of rules.dices) {
       if (!dice.min) {
         dice.min = 1;
@@ -100,7 +135,7 @@ export class GameLoopController implements IGameRulesProvider, IGameStarter {
     }
   }
 
-  private async initializeGame(game: IGameDocument, sockets: Array<SocketIO.Socket>) {
+  private async initializeGame(game: IGameDocument, sockets: Array<AuthorizedSocket>) {
     await this.prepareGame(game);
     this.addListeners(game, sockets);
     this.startGame(game.id);
@@ -111,6 +146,8 @@ export class GameLoopController implements IGameRulesProvider, IGameStarter {
 
     game.stepCount = 0;
     game.playerIndex = 0;
+
+    game.players = game.players.filter(player => player.status === 'active');
 
     for (let player of game.players) {
       player.cash = rules.initialCash;
@@ -138,17 +175,16 @@ export class GameLoopController implements IGameRulesProvider, IGameStarter {
         }
       }
     }
-
-
+    
     // FIXME: probably board events should also go to otherInfo
+    await game.save();
   }
 
-  private addListeners(game: IGameDocument, sockets: Array<SocketIO.Socket>) {
+  private addListeners(game: IGameDocument, sockets: Array<AuthorizedSocket>) {
     for (let eventName of this._eventsManager.eventNames) {
       for (let socket of sockets) {
         socket.on(eventName, this._eventsManager.getListener(
-          eventName,          
-          game,
+          eventName,
           socket as AuthorizedSocket
         ));
       }

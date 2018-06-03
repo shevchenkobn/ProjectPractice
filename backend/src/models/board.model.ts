@@ -8,7 +8,7 @@ import { ICellFunctionDocument } from './cellFunction.model';
  */
 export interface IRange {
   min?: number,
-  max?: number
+  max: number
 }
 
 export interface IBoardEvent {
@@ -35,7 +35,10 @@ export interface IBoardDocument extends Document {
       "limit": number,
       "defaultOption": number
     },
-    "playerLimits": IRange,
+    "playerLimits": {
+      min: number,
+      max: number
+    },
     "roles": Array<ICellFunctionDocument | Types.ObjectId>,
     "dices": Array<IRange>,
     "building": {
@@ -196,7 +199,18 @@ const boardSchema = new Schema({
       }
     },
     "playerLimits": {
-      type: rangeSchema,
+      type: {
+        max: {
+          type: Number,
+          required: true,
+          min: 2
+        },
+        min: {
+          type: Number,
+          required: true,
+          min: 2
+        }
+      },
       required: true,
     },
     "roles": {

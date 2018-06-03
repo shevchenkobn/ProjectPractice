@@ -3,11 +3,10 @@ import GameInitializer, { IGameDocument, IGameModel } from '../../models/game.mo
 import { ServiceError } from '../../services/common.service';
 import { IBoardDocument } from '../../models/board.model';
 import { IUserDocument } from '../../models/user.model';
-import { stopSuspendedRemoving, changeRemovingCondition, RemoveEventHandler, hasRemovingCondition, findGame } from '../../services/game.service';
+import { stopSuspendedRemoving, changeRemovingCondition, RemoveEventHandler, hasRemovingCondition, findGame, IGamesConfig, suspendRemoving, gamesConfig } from '../../services/game.service';
 import SessionInitializer, { ISessionDocument, ISessionModel } from '../../models/session.model';
 import { ObjectID, ObjectId } from 'bson';
-import { ISocketIOHelpersService, getService } from '../services/helpers.service';
-import { promisify } from 'util';
+import { ISocketIOHelpersService, getService, getClientIds, disconnectSocket } from '../services/helpers.service';
 import { GameLoopController } from './gameLoop.class';
 
 let Game: IGameModel;
@@ -45,26 +44,24 @@ export function initialize(socketIoServer: SocketIO.Server): ISocketIoNamespace 
 export const connectionHandler: SocketHandler = async socket => {
   try {
     await joinGame(socket);
-    socket.on('disconnect', async () => {
-      try {
-        await disconnectPlayerFromGame(
-          await findGame(socket.data.gameId),
-          await Session.findById(socket.data.sessionId)
-        );
-      } catch (err) {
-        // TODO: log error
-      }
-    });
+    socket.on('disconnect', disconnectHandler.bind(this, socket));
   } catch (err) {
-    socket.emit('disconnect-message', err);
-    socket.disconnect(true);
+    // TODO: log error
+    disconnectSocket(socket, err);
+    try {
+      namespace.to(socket.data.gameId).emit('player-left', {
+        id: ((await Session.findById(socket.data.sessionId)).user as ObjectId).toHexString()
+      });
+    } catch (err) {
+      // TODO: log error
+    }
   }
 }
 
 export async function joinGame(socket: AuthorizedSocket) {
   const game = await findGame(socket.data.gameId);
   const session = await Session.findById(socket.data.sessionId);
-  if (game.state !== 'open') {
+  if (game.status !== 'open') {
     throw new ServiceError('The game room is not open');
   }
   await game.populate('board').execPopulate();
@@ -79,29 +76,39 @@ export async function joinGame(socket: AuthorizedSocket) {
     status: 'active'
   });
   session.game = game.id;
-  if (await tryStartGame(game)) {
-    stopSuspendedRemoving(game.id);
-  } else if (!hasRemovingCondition(game.id)) {
+  if (!(await trySetCoundownForGame(game) || hasRemovingCondition(game.id))) {
     changeRemovingCondition(game.id, suspendedRemovingCondition);
   }
   await game.save();
   await session.save();
+  namespace.to(socket.data.gameId).emit('player-joined', {
+    id: (session.user as ObjectId).toHexString()
+  });
   socket.join(socket.data.gameId);
 }
 
-async function tryStartGame(game: IGameDocument): Promise<boolean> {
+async function trySetCoundownForGame(game: IGameDocument, mustBeFull = true): Promise<boolean> {
   if (!game.populated('board')) {
     await game.populate('board').execPopulate();
   }
-  if (game.players.length === (game.board as IBoardDocument).rules.playerLimits.max) {
-    game.state = 'playing';
+  if (
+    mustBeFull && game.players.length === (game.board as IBoardDocument).rules.playerLimits.max
+    || game.players.length >= (game.board as IBoardDocument).rules.playerLimits.min
+  ) {
+    game.status = 'playing';
+    await game.save();
+    
+    if (hasRemovingCondition(game.id)) {
+      stopSuspendedRemoving(game.id);
+    }
 
-    // TODO: start game
-    startGame(game).then(() => {
-      // TODO: add logging
-    }).catch(err => {
-      // TODO: add logging      
-    });
+    for (let clientId of await getClientIds(namespace, game.id)) {
+      namespace.connected[clientId].on('ready', readyHandler);
+    }
+
+    suspendRemoving(game.id, gamesConfig.startCountdown);
+    changeRemovingCondition(game.id, countdownRemovingCondition);
+
     return true;
   } else {
     return false;
@@ -137,22 +144,14 @@ export function disconnectUser(session: ISessionDocument) {
 }
 
 const suspendedRemovingCondition: RemoveEventHandler = async (game) => {
-  if (await tryStartGame(game)) {
+  if (await trySetCoundownForGame(game, false)) {
     return false;
   } else {
     if (game.players.length) {
-      const withRoomNsp = namespace.to(game.id);
-      const clients = await (promisify(withRoomNsp.clients.bind(withRoomNsp))());
+      const clients = await getClientIds(namespace, game.id);
       for (let client of clients) {
-        namespace.connected[client].emit("disconnect-message", new Error("The room is being closed"));
-        namespace.connected[client].disconnect(true);
+        disconnectSocket(namespace.connected[client], new Error("The room is being closed"));
       }
-      // namespace.to(game.id).clients
-      // (((err, clients) => {
-      //   for (let client of clients) {
-      //     namespace.connected[client].disconnect(true);
-      //   }
-      // }) as NamespaceClientsCallback);
       const promises = [];
       await game.extendedPopulate(['players.sessions']);
       for (let i = 0; i < game.players.length; i++) {
@@ -167,8 +166,37 @@ const suspendedRemovingCondition: RemoveEventHandler = async (game) => {
   }
 }
 
+const countdownRemovingCondition: RemoveEventHandler = async (game) => {
+  if (game.populated('board')) {
+    await game.populate('board');
+  }
+  if (
+    game.players.reduce((sum, player) => {
+      if (player.status !== 'gone') {
+        sum++;
+      }
+      return sum;
+    }, 0) >= (game.board as IBoardDocument).rules.playerLimits.min
+  ) {
+    for (let player of game.players) {
+      if (player.status === 'waiting') {
+        player.status = 'active';
+      }
+    }
+    await game.save();
+    startGame(game).then(() => {
+      // TODO: add logging
+    }).catch(err => {
+      // TODO: add logging      
+    });
+    return false;
+  } else {
+    return true;
+  }
+}
+
 async function disconnectPlayerFromGame(game: IGameDocument, session: ISessionDocument) {
-  // TODO: probably additional check game.id == session.id is needed
+  // FIXME: probably additional check game.id == session.id is needed
   const playerIndex = game.players.findIndex(player => {
     const playerSessionId: string = player.session instanceof ObjectID
       ? player.session.toHexString()
@@ -178,11 +206,25 @@ async function disconnectPlayerFromGame(game: IGameDocument, session: ISessionDo
   // if (playerIndex < 0) {
   //   throw new Error('This session is not attached to this game');
   // }
-  game.players.splice(playerIndex, 1);
+  if (game.status === 'open') {
+    game.players.splice(playerIndex, 1);
+  } else {
+    game.players[playerIndex].status = 'gone';
+    game.players[playerIndex].whenGone = new Date();
+  }
   await game.save();
   session.game = null;
   await session.save();
-  // TODO: define user if 1 player left
+
+  namespace.to(game.id).emit('player-left', {
+    id: session.populated('user') ? (session.user as IUserDocument).id : (session.user as ObjectId).toHexString()
+  });
+
+  if (game.status === 'playing') {
+    (await GameLoopController.getInstance(
+      game.populated('board') ? (game.board as IBoardDocument).id : (game.board as ObjectId).toHexString()
+    )).tryWinGame(game);
+  }
   // TODO: add reconnect timeout and freeze game until time is up
 }
 
@@ -192,4 +234,44 @@ async function startGame(game: IGameDocument) {
   }
   const controller = await GameLoopController.getInstance((game.board as IBoardDocument).id);
   return await controller.initiateGame(game);
+}
+
+async function disconnectHandler(socket: AuthorizedSocket) {
+  try {
+    await disconnectPlayerFromGame(
+      await findGame(socket.data.gameId),
+      await Session.findById(socket.data.sessionId)
+    );
+  } catch (err) {
+    // TODO: log error
+  }
+}
+
+async function readyHandler(socket: AuthorizedSocket) {
+  try {
+    const game = await findGame(socket.data.gameId);
+    game.players.find(player => (player.session as ObjectId).toHexString() === socket.data.sessionId).status = 'active';
+    await game.save();
+    const nonGonePlayers = game.players.filter(player => player.status !== 'gone');
+    if (
+      nonGonePlayers.length === nonGonePlayers.reduce((count, player) => {
+        if (player.status === 'active') {
+          count++;
+        }
+        return count;
+      }, 0)
+    ) {
+      stopSuspendedRemoving(game.id);
+      for (let socketId of await getClientIds(namespace, game.id)) {
+        namespace.connected[socketId].removeAllListeners('ready');
+      }
+      startGame(game).then(() => {
+        // TODO: add logging
+      }).catch(err => {
+        // TODO: add logging      
+      });
+    }
+  } catch (err) {
+    // TODO: log error
+  }
 }

@@ -14,8 +14,8 @@ export interface IPlayerDocument {
   session: Types.ObjectId | ISessionDocument,
   user: Types.ObjectId | IUserDocument,
   role?: Types.ObjectId | ICellFunctionDocument,
-  status: 'active' | 'gone',
-  dateLeft?: Date,
+  status: 'waiting' | 'active' | 'gone',
+  whenGone?: Date,
   cash: number,
   assets: number,
   depts?: {
@@ -32,7 +32,7 @@ export interface IPlayerDocument {
 
 export interface IGame {
   createdBy: Types.ObjectId | IUserDocument,
-  state: 'open' | 'playing' | 'finished',
+  status: 'open' | 'playing' | 'finished',
   board: Types.ObjectId | IBoardDocument,
   winner?: Types.ObjectId | IUserDocument,
   stepCount: number,
@@ -74,12 +74,13 @@ const playerSchema = new Schema({
     type: String,
     required: true,
     enum: [
+      'waiting',
       'active',
       'gone'
     ],
-    default: 'active'
+    default: 'waiting'
   },
-  dateLeft: {
+  whenGone: {
     type: Date,
     required: false
   },
@@ -135,7 +136,7 @@ const gameSchema = new Schema({
     required: true,
     ref: 'User'
   },
-  state: {
+  status: {
     type: String,
     required: true,
     enum: [

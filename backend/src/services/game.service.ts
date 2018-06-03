@@ -16,7 +16,7 @@ export interface IGamesConfig {
 
 export type RemoveEventHandler = (game: IGameDocument) => Promise<boolean>;
 
-let gamesConfig: IGamesConfig;
+export let gamesConfig: IGamesConfig;
 let Game: IGameModel;
 
 export function initialize() {
@@ -117,15 +117,14 @@ export const suspendRemoving = (game: IGameDocument, time: number): Promise<IGam
     throw new TypeError(`Remove timeout for "${id}" is already set`);
   }
   const eventEmitter = new EventEmitter();
-  const gameId = game.id;
   removeTasks[id] = [setTimeout(async () => {
-    const game = await findGame(gameId);
+    stopSuspendedRemoving(id);
+    const game = await findGame(id);
     if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
       game.remove()
         .then((...args: Array<any>) => eventEmitter.emit('resolve', ...args))
         .catch((...args: Array<any>) => eventEmitter.emit('reject', ...args));
     } else {
-      stopSuspendedRemoving(id);
       eventEmitter.emit('reject');
     }
   }, time), null];

@@ -11,6 +11,7 @@ import { rethrowError, ServiceError } from '../../services/common.service';
 import { IUserDocument } from '../../models/user.model';
 import { ISessionDocument } from '../../models/session.model';
 import shuffleArray from 'shuffle-array';
+import { promisify } from 'util';
 
 export interface ISocketIOHelpersService {
   checkAuthAndAccessMiddleware: SocketMiddleware;
@@ -91,4 +92,14 @@ function getGameId(url: string): string {
   }
   const gameId = url.split('?')[0].replace(baseUrl, '').replace('\/', '');
   return gameId;//gameIdRegex.test(gameId) ? gameId : null;
+}
+
+export function disconnectSocket(socket: SocketIO.Socket, message: any, close: boolean = true) {
+  socket.emit('disconnect-message', message);
+  socket.disconnect(close);
+}
+
+export function getClientIds(nsp: SocketIO.Namespace, room: string): Promise<Array<string>> {
+  const nspWithRoom = nsp.in(room);
+  return promisify(nspWithRoom.clients.bind(nspWithRoom))();
 }
