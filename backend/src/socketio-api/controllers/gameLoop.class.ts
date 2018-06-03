@@ -5,11 +5,11 @@ import { IGameDocument } from "../../models/game.model";
 import { ICellFunctionDocument } from "../../models/cellFunction.model";
 import { AuthorizedSocket } from "../@types";
 import { GameEventsManager } from "./gameEventsManager.class";
-import { getService, getClientIds, disconnectSocket } from "../services/helpers.service";
+import { initialize, getClientIds, disconnectSocket, getRange } from "../services/helpers.service";
 import { ObjectId } from "bson";
 import { ISessionDocument } from "../../models/session.model";
 
-const helperService = getService();
+const helperService = initialize();
 
 export interface IGameManager {
   initiateGame(game: IGameDocument): Promise<any>;
@@ -170,7 +170,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
         for (let cell of eventCellsWithOptions) {
           const event = cell.function as ICellFunctionDocument;
           if (!events[event.id]) {
-            events[event.id] = helperService.getRange(event.event.options.length, true);
+            events[event.id] = getRange(event.event.options.length, true);
           }
         }
       }

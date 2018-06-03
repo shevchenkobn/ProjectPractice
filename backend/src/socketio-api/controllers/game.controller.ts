@@ -6,14 +6,13 @@ import { IUserDocument } from '../../models/user.model';
 import { stopSuspendedRemoving, changeRemovingCondition, RemoveEventHandler, hasRemovingCondition, findGame, IGamesConfig, suspendRemoving, gamesConfig } from '../../services/game.service';
 import SessionInitializer, { ISessionDocument, ISessionModel } from '../../models/session.model';
 import { ObjectID, ObjectId } from 'bson';
-import { ISocketIOHelpersService, getService, getClientIds, disconnectSocket } from '../services/helpers.service';
+import { getClientIds, disconnectSocket, checkAuthAndAccessMiddleware } from '../services/helpers.service';
 import { GameLoopController } from './gameLoop.class';
 
 let Game: IGameModel;
 let Session: ISessionModel;
 
 const namespaceName: string = '/games';
-let helpersService: ISocketIOHelpersService;
 let server: SocketIO.Server;
 let namespaceInfo: ISocketIoNamespace;
 let namespace: SocketIO.Namespace;
@@ -22,11 +21,10 @@ let namespace: SocketIO.Namespace;
 
 export function initialize(socketIoServer: SocketIO.Server): ISocketIoNamespace {
   if (server && server !== socketIoServer) {
-    throw new TypeError('Server is already initialized! Recheck or comment this line');
+    throw new TypeError('Server is already initialized!');
   }
   server = socketIoServer;
   namespace = server.of(namespaceName);
-  helpersService = getService();
 
   Session = SessionInitializer.getModel();
   Game = GameInitializer.getModel();
@@ -34,7 +32,7 @@ export function initialize(socketIoServer: SocketIO.Server): ISocketIoNamespace 
   namespaceInfo = {
     connectionHandler,
     middlewares: [
-      helpersService.checkAuthAndAccessMiddleware
+      checkAuthAndAccessMiddleware
     ],
     name: namespaceName
   }

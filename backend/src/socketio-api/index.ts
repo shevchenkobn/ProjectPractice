@@ -1,9 +1,8 @@
 import { SocketMiddleware, ISocketIoNamespace } from './@types';
-import { getService, ISocketIOHelpersService, ISocketIOUrls } from './services/helpers.service';
+import { initialize as helperServiceInitialize, ISocketIOUrls } from './services/helpers.service';
 import config from 'config';
 import { connectionHandler, initialize as gameControllerInitializer } from './controllers/game.controller';
 
-let helpersService: ISocketIOHelpersService;
 let socketIoNamespaces: Array<ISocketIoNamespace>;
 const upgradeUrl = config.get<ISocketIOUrls>('socketIO').baseUrl;
 
@@ -15,7 +14,7 @@ export function initialize(server: SocketIO.Server): Array<ISocketIoNamespace> {
     throw new Error('Server must be provided');
   }
   
-  // helpersService = getService();
+  helperServiceInitialize();
 
   socketIoNamespaces = [
     gameControllerInitializer(server)

@@ -13,74 +13,51 @@ import { ISessionDocument } from '../../models/session.model';
 import shuffleArray from 'shuffle-array';
 import { promisify } from 'util';
 
-export interface ISocketIOHelpersService {
-  checkAuthAndAccessMiddleware: SocketMiddleware;
-  getRange(size: number, shuffle?: boolean): Array<number>;
-  getIntegerBetween(min: number, max: number): number;
-}
-
 export interface ISocketIOUrls {
   baseUrl: string,
   apiSwitch: string
 }
 
 let authService: IAuthenticationService;
-let service: ISocketIOHelpersService;
 
-export function getService() {
-  if (service) {
-    return service;
+export const checkAuthAndAccessMiddleware: SocketMiddleware = async (socket, next) => {
+  try {
+    const req = socket.request;
+    let session = authService.getState(req);
+    if (!session) {
+      const token = authService.getToken(req);
+      session = await authService.getSessionFromToken(token);
+      if (!session) {
+        return next(new NamespaceMiddlewareError("Invalid Token"));
+      }
+    }
+    const gameId = getGameId(req.url);
+    let game;
+    try {
+      game = await findGame(gameId);
+    } catch (err) {
+      rethrowError(err);
+    }
+    if (!game) {
+      return next(new NamespaceMiddlewareError("Invalid game id"));
+    }
+
+    (socket as AuthorizedSocket).data = {
+      sessionId: session.id,
+      gameId: gameId
+    };
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export function initialize() {
+  if (authService) {
+    return;
   }
   authService = getAuthService();
-  service = {
-    checkAuthAndAccessMiddleware: async (socket, next) => {
-      try {
-        const req = socket.request;
-        let session = authService.getState(req);
-        if (!session) {
-          const token = authService.getToken(req);
-          session = await authService.getSessionFromToken(token);
-          if (!session) {
-            return next(new NamespaceMiddlewareError("Invalid Token"));
-          }
-        }
-        const gameId = getGameId(req.url);
-        let game;
-        try {
-          game = await findGame(gameId);
-        } catch (err) {
-          rethrowError(err);
-        }
-        if (!game) {
-          return next(new NamespaceMiddlewareError("Invalid game id"));
-        }
-
-        (socket as AuthorizedSocket).data = {
-          sessionId: session.id,
-          gameId: gameId
-        };
-
-        next();
-      } catch (err) {
-        next(err);
-      }
-    },
-
-    getRange(size, shuffle = false) {
-      const arr = Array.apply(null, { length: size })
-        .map(Number.call, Number) // range [0 ... length]
-      if (shuffle) {
-        shuffleArray(arr);
-      }
-      return arr;
-    },
-
-    getIntegerBetween(min, max) {
-      min = Math.round(min), max = Math.round(max + 1);
-      return Math.round(min + Math.random() * (max - min));
-    }
-  };
-  return service;
 }
 
 let urls = config.get<ISocketIOUrls>('socketIO');
@@ -102,4 +79,18 @@ export function disconnectSocket(socket: SocketIO.Socket, message: any, close: b
 export function getClientIds(nsp: SocketIO.Namespace, room: string): Promise<Array<string>> {
   const nspWithRoom = nsp.in(room);
   return promisify(nspWithRoom.clients.bind(nspWithRoom))();
+}
+
+export function getRange(size: number, shuffle = false): Array<number> {
+  const arr = Array.apply(null, { length: size })
+    .map(Number.call, Number) // range [0 ... length]
+  if (shuffle) {
+    shuffleArray(arr);
+  }
+  return arr;
+}
+
+export function getIntegerBetween(min: number, max: number): number {
+  min = Math.round(min), max = Math.round(max + 1);
+  return Math.round(min + Math.random() * (max - min));
 }
