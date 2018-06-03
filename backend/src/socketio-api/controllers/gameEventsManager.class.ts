@@ -4,7 +4,7 @@ import { AuthorizedSocket } from "../@types";
 import { findGame } from "../../services/game.service";
 import { GameTimeouts } from "../services/gameTimeouts.class";
 
-export type SocketEventHanler = (this: IGameRulesProvider, game: IGameDocument, socket: AuthorizedSocket, ...args: Array<any>) => any;
+export type SocketEventHanler = (this: GameEventsManager, game: IGameDocument, socket: AuthorizedSocket, ...args: Array<any>) => any;
 
 export type SocketEventListeners = { [eventName: string]: SocketEventHanler };
 
@@ -12,7 +12,9 @@ export class GameEventsManager {
   private _timeouts: GameTimeouts;
   private _rulesProvider: IGameRulesProvider;
   private _listeners: SocketEventListeners = {
-    step() {}
+    step(game, socket) {
+      
+    }
   }
 
   public constructor(rulesProvider: IGameRulesProvider) {
@@ -25,14 +27,14 @@ export class GameEventsManager {
   }
 
   public getListener(eventName: string, socket: AuthorizedSocket): (...args: Array<any>) => any {
-    return this.listenerWrapper.bind(this, socket, this._listeners[eventName]);
+    return listenerWrapper.bind(this, socket, this._listeners[eventName]);
   }
+}
 
-  private async listenerWrapper(socket: AuthorizedSocket, listener: SocketEventHanler, ...args: Array<any>) {
-    const game = await findGame(socket.data.gameId);
-    if (game.status === 'playing') {
-      await listener.call(this, game, socket, ...args);
-      await game.save();
-    }
+async function listenerWrapper(socket: AuthorizedSocket, listener: SocketEventHanler, ...args: Array<any>) {
+  const game = await findGame(socket.data.gameId);
+  if (game.status === 'playing') {
+    await listener.call(this, game, socket, ...args);
+    await game.save();
   }
 }
