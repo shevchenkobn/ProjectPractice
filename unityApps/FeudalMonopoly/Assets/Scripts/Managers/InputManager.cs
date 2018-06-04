@@ -18,6 +18,9 @@ public class InputManager : MonoBehaviour
     private bool isSwiping = false;
     private Vector2 lastTouchPosition;
 
+    private float lastTap;
+    private bool isDoubleTap = false;
+
     /// <summary>
     /// Makes sure that Instance references only to one object in the scene
     /// </summary>

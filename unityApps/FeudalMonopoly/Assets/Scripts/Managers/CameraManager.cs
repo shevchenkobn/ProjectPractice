@@ -18,6 +18,8 @@ public class CameraManager : MonoBehaviour
 
     public RawImage buildingCameraImage;
 
+    [SerializeField] private float tapDelay = 0.005f;
+
     private BuildingCamera buildingCameraComponent;
 
     private float distanceToBackground = 100f;
@@ -63,8 +65,14 @@ public class CameraManager : MonoBehaviour
     {
         Transform targetBuilding = DetectBuilding();
 
-        if (targetBuilding) ActivateBuildingCamera(targetBuilding);
-        else if (UIManager.Instance.buildingInfoPanel.activeSelf) return;
+        if (targetBuilding && targetBuilding.GetComponent<Building>().IsCaptured)
+        {
+            ActivateBuildingCamera(targetBuilding);
+        }
+        else if (UIManager.Instance.buildingInfoPanel.activeSelf)
+        {
+            return;
+        }
         else DeactivateBuildingCamera();        
     }
 
@@ -212,7 +220,29 @@ public class CameraManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit, distanceToBackground, buildingsLayerMask))
         {
             Building buildingHit = hit.transform.GetComponent<Building>();
-            if (buildingHit) BuildingCaptured(buildingHit.buidlingInfo);
+
+            if (buildingHit)
+            {
+                if (buildingHit.TapCount == 0)
+                {
+                    buildingHit.TapCount++;
+                    buildingHit.TapTime = Time.time + tapDelay;
+                    buildingHit.IsCaptured = false;
+                }
+                else if (buildingHit.TapCount == 1 && buildingHit.TapTime >= Time.time)
+                {
+                    buildingHit.TapTime = float.MaxValue;
+                    buildingHit.TapCount = 0;
+                    buildingHit.IsCaptured = true;
+                    BuildingCaptured(buildingHit.buidlingInfo);
+                }
+                else
+                {
+                    buildingHit.TapTime = float.MaxValue;
+                    buildingHit.TapCount = 0;
+                    buildingHit.IsCaptured = false;
+                }
+            }            
 
             return hit.transform;           
         }
