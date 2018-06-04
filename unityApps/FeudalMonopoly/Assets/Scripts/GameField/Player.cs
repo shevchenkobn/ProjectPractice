@@ -86,9 +86,7 @@ public class Player : MonoBehaviour
 
         yield return new WaitForSeconds(delayBeforeMove); //TODO: temporary workaround bc it is freezing on start
 
-        int bound = currentStepIndex + stepsToMove;
-
-        for (int i = currentStepIndex; i < bound; i = ++i % possibleSpots.Count)
+        for (int i = currentStepIndex; stepsToMove > 0; i = ++i % possibleSpots.Count, stepsToMove--)
         {
             Vector3 initialPoition = transform.position;
             float fraction = speed * Time.deltaTime;
