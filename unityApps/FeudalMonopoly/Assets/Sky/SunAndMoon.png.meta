@@ -1,0 +1,254 @@
+fileFormatVersion: 2
+guid: 8f2618579ee9ac54f920f1ebac1664de
+timeCreated: 1452526140
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Sun_01
+    21300002: Sun_02
+    21300004: Sun_03
+    21300006: Moon_01
+    21300008: Moon_02
+    21300010: Moon_03
+    21300012: Sun_04
+    21300014: Sun_05
+    21300016: Sun_06
+    21300018: Moon_04
+    21300020: Moon_05
+    21300022: Moon_06
+    21300024: Sun_07
+    21300026: Sun_08
+    21300028: SunAndMoon_14
+    21300030: Moon_07
+    21300032: Moon_08
+    21300034: Moon_09
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: Sun_01
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 722
+        width: 205
+        height: 200
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_02
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 723
+        width: 204
+        height: 198
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_03
+      rect:
+        serializedVersion: 2
+        x: 613
+        y: 724
+        width: 200
+        height: 196
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_01
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 684
+        width: 280
+        height: 280
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_02
+      rect:
+        serializedVersion: 2
+        x: 1372
+        y: 687
+        width: 280
+        height: 280
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_03
+      rect:
+        serializedVersion: 2
+        x: 1737
+        y: 717
+        width: 214
+        height: 214
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_04
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 417
+        width: 221
+        height: 221
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_05
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 406
+        width: 243
+        height: 243
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_06
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 406
+        width: 244
+        height: 243
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_04
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 372
+        width: 280
+        height: 280
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_05
+      rect:
+        serializedVersion: 2
+        x: 1436
+        y: 397
+        width: 214
+        height: 214
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_06
+      rect:
+        serializedVersion: 2
+        x: 1769
+        y: 386
+        width: 213
+        height: 213
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_07
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 116
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Sun_08
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 107
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SunAndMoon_14
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 99
+        width: 182
+        height: 182
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_07
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 84
+        width: 151
+        height: 213
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_08
+      rect:
+        serializedVersion: 2
+        x: 1453
+        y: 75
+        width: 154
+        height: 214
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Moon_09
+      rect:
+        serializedVersion: 2
+        x: 1804
+        y: 62
+        width: 143
+        height: 213
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,540 @@
+fileFormatVersion: 2
+guid: 49d71e0f00fc4be4b988db85bb6f46d8
+timeCreated: 1452525631
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Tree_01
+    21300002: Tree_02
+    21300004: Tree_03
+    21300006: Tree_04
+    21300008: Tree_05
+    21300010: Tree_06
+    21300012: Tree_07
+    21300014: Tree_08
+    21300016: Tree_09
+    21300018: Flower_01
+    21300020: Flower_02
+    21300022: Flower_03
+    21300024: Flower_04
+    21300026: Flower_05
+    21300028: Flower_06
+    21300030: Flower_07
+    21300032: Flower_08
+    21300034: Flower_09
+    21300036: Flower_10
+    21300038: Flower_11
+    21300040: Flower_12
+    21300042: Vegetation_1
+    21300044: Flower_13
+    21300046: Flower_14
+    21300048: Flower_15
+    21300050: Flower_16
+    21300052: Flower_17
+    21300054: Flower_18
+    21300056: Flower_19
+    21300058: Flower_20
+    21300060: Flower_21
+    21300062: Flower_22
+    21300064: Flower_23
+    21300066: Flower_24
+    21300068: Vegetation_34
+    21300070: Vegetation_2
+    21300072: Vegetation_10
+    21300074: Vegetation_9
+    21300076: Vegetation_8
+    21300078: Vegetation_7
+    21300080: Vegetation_6
+    21300082: Vegetation_5
+    21300084: Vegetation_4
+    21300086: Vegetation_3
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: Tree_01
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 667
+        width: 206
+        height: 302
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_02
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 667
+        width: 206
+        height: 272
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_03
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 667
+        width: 159
+        height: 321
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_04
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 667
+        width: 205
+        height: 315
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_05
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 667
+        width: 136
+        height: 312
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_06
+      rect:
+        serializedVersion: 2
+        x: 1162
+        y: 667
+        width: 117
+        height: 345
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_07
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 667
+        width: 130
+        height: 329
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_08
+      rect:
+        serializedVersion: 2
+        x: 1512
+        y: 667
+        width: 193
+        height: 333
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Tree_09
+      rect:
+        serializedVersion: 2
+        x: 1723
+        y: 667
+        width: 207
+        height: 284
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_01
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 522
+        width: 117
+        height: 92
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_02
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 522
+        width: 117
+        height: 92
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_03
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 522
+        width: 117
+        height: 92
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_04
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 518
+        width: 122
+        height: 96
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_05
+      rect:
+        serializedVersion: 2
+        x: 693
+        y: 518
+        width: 122
+        height: 96
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_06
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 518
+        width: 122
+        height: 96
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_07
+      rect:
+        serializedVersion: 2
+        x: 1004
+        y: 523
+        width: 108
+        height: 91
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_08
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 523
+        width: 108
+        height: 91
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_09
+      rect:
+        serializedVersion: 2
+        x: 1308
+        y: 523
+        width: 108
+        height: 91
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_10
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 545
+        width: 59
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_11
+      rect:
+        serializedVersion: 2
+        x: 1559
+        y: 544
+        width: 59
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_12
+      rect:
+        serializedVersion: 2
+        x: 1657
+        y: 547
+        width: 59
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_1
+      rect:
+        serializedVersion: 2
+        x: 1796
+        y: 520
+        width: 133
+        height: 113
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_13
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 295
+        width: 111
+        height: 174
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_14
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 295
+        width: 111
+        height: 174
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_15
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 295
+        width: 112
+        height: 174
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_16
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 295
+        width: 102
+        height: 162
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_17
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 295
+        width: 103
+        height: 162
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_18
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 295
+        width: 102
+        height: 162
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_19
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 295
+        width: 107
+        height: 164
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_20
+      rect:
+        serializedVersion: 2
+        x: 1128
+        y: 295
+        width: 107
+        height: 164
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_21
+      rect:
+        serializedVersion: 2
+        x: 1278
+        y: 295
+        width: 107
+        height: 164
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_22
+      rect:
+        serializedVersion: 2
+        x: 1412
+        y: 295
+        width: 93
+        height: 163
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_23
+      rect:
+        serializedVersion: 2
+        x: 1528
+        y: 295
+        width: 93
+        height: 163
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Flower_24
+      rect:
+        serializedVersion: 2
+        x: 1624
+        y: 295
+        width: 95
+        height: 163
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_34
+      rect:
+        serializedVersion: 2
+        x: 1838
+        y: 448
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_2
+      rect:
+        serializedVersion: 2
+        x: 1762
+        y: 295
+        width: 144
+        height: 151
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_10
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 36
+        width: 340
+        height: 193
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_9
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 45
+        width: 313
+        height: 177
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_8
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 36
+        width: 196
+        height: 238
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_7
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 32
+        width: 174
+        height: 210
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_6
+      rect:
+        serializedVersion: 2
+        x: 1136
+        y: 32
+        width: 236
+        height: 158
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_5
+      rect:
+        serializedVersion: 2
+        x: 1394
+        y: 32
+        width: 212
+        height: 130
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_4
+      rect:
+        serializedVersion: 2
+        x: 1623
+        y: 34
+        width: 142
+        height: 182
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Vegetation_3
+      rect:
+        serializedVersion: 2
+        x: 1801
+        y: 50
+        width: 142
+        height: 181
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.21774241, g: 0.46573913, b: 0.7306165, a: 1}
+  m_IndirectSpecularColor: {r: 0.036697544, g: 0.18390767, b: 0.5043659, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -273,9 +273,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoomThreshold: 0.3
-  zoomSpeed: 0.2
-  horizontalRotationSpeed: 1.3
-  verticalRotationSpeed: 1.45
+  zoomSpeed: 0.05
+  horizontalRotationSpeed: 0.75
+  verticalRotationSpeed: 1
 --- !u!114 &218975064 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114515374879778092, guid: 5c32fa8245323cf4f85a5c67bbdbbfe1,

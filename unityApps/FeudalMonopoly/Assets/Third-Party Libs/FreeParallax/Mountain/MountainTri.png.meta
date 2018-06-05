@@ -1,0 +1,309 @@
+fileFormatVersion: 2
+guid: 974011cd752dfae42a7e60fd7606f636
+timeCreated: 1452525197
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: MountainTri_0
+    21300002: MountainTri_1
+    21300004: MountainTri_2
+    21300006: MountainTri_3
+    21300008: MountainTri_4
+    21300010: MountainTri_5
+    21300012: MountainTri_6
+    21300014: MountainTri_7
+    21300016: MountainTri_8
+    21300018: MountainTri_9
+    21300020: MountainTri_10
+    21300022: MountainTri_11
+    21300024: MountainTri_12
+    21300026: MountainTri_13
+    21300028: MountainTri_14
+    21300030: MountainTri_15
+    21300032: MountainTri_16
+    21300034: MountainTri_17
+    21300036: MountainTri_18
+    21300038: MountainTri_19
+    21300040: MountainTri_20
+    21300042: MountainTri_21
+    21300044: MountainTri_22
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: MountainTri_0
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 740
+        width: 284
+        height: 241
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_1
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 740
+        width: 260
+        height: 262
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_2
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 740
+        width: 286
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_3
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 740
+        width: 277
+        height: 279
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_4
+      rect:
+        serializedVersion: 2
+        x: 1351
+        y: 740
+        width: 286
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_5
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 740
+        width: 260
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_6
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 456
+        width: 284
+        height: 241
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_7
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 456
+        width: 259
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_8
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 456
+        width: 285
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_9
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 456
+        width: 276
+        height: 279
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_10
+      rect:
+        serializedVersion: 2
+        x: 1360
+        y: 456
+        width: 285
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_11
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 456
+        width: 259
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_12
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 169
+        width: 284
+        height: 241
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_13
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 169
+        width: 260
+        height: 261
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_14
+      rect:
+        serializedVersion: 2
+        x: 682
+        y: 169
+        width: 286
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_15
+      rect:
+        serializedVersion: 2
+        x: 1027
+        y: 169
+        width: 277
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_16
+      rect:
+        serializedVersion: 2
+        x: 1354
+        y: 169
+        width: 286
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_17
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 169
+        width: 260
+        height: 261
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_18
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 0
+        width: 535
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_19
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 0
+        width: 206
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_20
+      rect:
+        serializedVersion: 2
+        x: 1000
+        y: 0
+        width: 376
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_21
+      rect:
+        serializedVersion: 2
+        x: 1492
+        y: 0
+        width: 105
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainTri_22
+      rect:
+        serializedVersion: 2
+        x: 1693
+        y: 0
+        width: 247
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

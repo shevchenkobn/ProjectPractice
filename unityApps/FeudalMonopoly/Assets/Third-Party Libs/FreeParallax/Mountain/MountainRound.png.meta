@@ -1,0 +1,298 @@
+fileFormatVersion: 2
+guid: 07b26c1d01199104fba866af943d533b
+timeCreated: 1452525170
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: MountainRound_0
+    21300002: MountainRound_1
+    21300004: MountainRound_2
+    21300006: MountainRound_3
+    21300008: MountainRound_4
+    21300010: MountainRound_5
+    21300012: MountainRound_6
+    21300014: MountainRound_7
+    21300016: MountainRound_8
+    21300018: MountainRound_9
+    21300020: MountainRound_10
+    21300022: MountainRound_11
+    21300024: MountainRound_12
+    21300026: MountainRound_13
+    21300028: MountainRound_14
+    21300030: MountainRound_15
+    21300032: MountainRound_16
+    21300034: MountainRound_17
+    21300036: MountainRound_18
+    21300038: MountainRound_19
+    21300040: MountainRound_20
+    21300042: MountainRound_21
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: MountainRound_0
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 794
+        width: 290
+        height: 214
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_1
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 794
+        width: 299
+        height: 220
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_2
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 794
+        width: 289
+        height: 213
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_3
+      rect:
+        serializedVersion: 2
+        x: 1019
+        y: 790
+        width: 297
+        height: 221
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_4
+      rect:
+        serializedVersion: 2
+        x: 1359
+        y: 794
+        width: 285
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_5
+      rect:
+        serializedVersion: 2
+        x: 1669
+        y: 794
+        width: 287
+        height: 201
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_6
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 526
+        width: 290
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_7
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 526
+        width: 299
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_8
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 526
+        width: 290
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_9
+      rect:
+        serializedVersion: 2
+        x: 1020
+        y: 523
+        width: 296
+        height: 220
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_10
+      rect:
+        serializedVersion: 2
+        x: 1360
+        y: 526
+        width: 285
+        height: 213
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_11
+      rect:
+        serializedVersion: 2
+        x: 1659
+        y: 526
+        width: 287
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_12
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 265
+        width: 290
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_13
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 265
+        width: 299
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_14
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 265
+        width: 290
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_15
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 262
+        width: 296
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_16
+      rect:
+        serializedVersion: 2
+        x: 1372
+        y: 265
+        width: 286
+        height: 213
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_17
+      rect:
+        serializedVersion: 2
+        x: 1675
+        y: 265
+        width: 287
+        height: 202
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_18
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 0
+        width: 548
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_19
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 0
+        width: 477
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_20
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 0
+        width: 262
+        height: 232
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MountainRound_21
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 0
+        width: 458
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
