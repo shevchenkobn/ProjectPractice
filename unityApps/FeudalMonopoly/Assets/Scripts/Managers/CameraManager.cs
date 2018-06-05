@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour
 
     private BuildingCamera buildingCameraComponent;
 
-    private float distanceToBackground = 100f;
+    private float distanceToBackground = 500f;
     private int buildingsLayerMask;
 
     /// <summary>

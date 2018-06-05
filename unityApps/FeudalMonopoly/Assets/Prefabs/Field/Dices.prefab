@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1516401359536588
 GameObject:
   m_ObjectHideFlags: 1
@@ -154,7 +154,6 @@ GameObject:
   - component: {fileID: 135916692006543702}
   - component: {fileID: 23136195875524666}
   - component: {fileID: 114348163448116024}
-  - component: {fileID: 54197832363583552}
   m_Layer: 0
   m_Name: 4
   m_TagString: Untagged
@@ -193,7 +192,6 @@ GameObject:
   - component: {fileID: 135078683827906776}
   - component: {fileID: 23500697799843118}
   - component: {fileID: 114967544184137586}
-  - component: {fileID: 54702334850318612}
   m_Layer: 0
   m_Name: 2
   m_TagString: Untagged
@@ -213,7 +211,6 @@ GameObject:
   - component: {fileID: 135595855117211904}
   - component: {fileID: 23967947631855816}
   - component: {fileID: 114515374879778092}
-  - component: {fileID: 54619548614033460}
   m_Layer: 0
   m_Name: 3
   m_TagString: Untagged
@@ -233,7 +230,6 @@ GameObject:
   - component: {fileID: 135495378448332534}
   - component: {fileID: 23706064882181692}
   - component: {fileID: 114194741664877474}
-  - component: {fileID: 54877897654215774}
   m_Layer: 0
   m_Name: 5
   m_TagString: Untagged
@@ -272,7 +268,6 @@ GameObject:
   - component: {fileID: 135481683828533438}
   - component: {fileID: 23343394460939090}
   - component: {fileID: 114314682404086252}
-  - component: {fileID: 54363528330517922}
   m_Layer: 0
   m_Name: 1
   m_TagString: Untagged
@@ -292,7 +287,6 @@ GameObject:
   - component: {fileID: 135895598565073584}
   - component: {fileID: 23328233080363968}
   - component: {fileID: 114856746986679100}
-  - component: {fileID: 54393741493659458}
   m_Layer: 0
   m_Name: 6
   m_TagString: Untagged
@@ -325,7 +319,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1043375682617584}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -419,7 +413,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1303800973927394}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -27, y: 18, z: 30.5}
+  m_LocalPosition: {x: -75, y: 6, z: 75}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_Children:
   - {fileID: 4640764402915520}
@@ -890,8 +884,8 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1303800973927394}
   m_Enabled: 1
-  m_CastShadows: 2
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -1108,98 +1102,8 @@ Rigidbody:
   m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &54197832363583552
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1516401359536588}
-  serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &54363528330517922
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1961281331451792}
-  serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &54393741493659458
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1983520604828234}
-  serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &54619548614033460
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1608990306365166}
-  serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &54702334850318612
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1602835326055884}
-  serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &54877897654215774
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1834668193740236}
-  serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -1242,6 +1146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114967544184137586}
   value: 2
 --- !u!114 &114314682404086252
 MonoBehaviour:
@@ -1254,6 +1159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114856746986679100}
   value: 6
 --- !u!114 &114348163448116024
 MonoBehaviour:
@@ -1266,6 +1172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114515374879778092}
   value: 3
 --- !u!114 &114384299690552248
 MonoBehaviour:
@@ -1278,6 +1185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114601418604765232}
   value: 5
 --- !u!114 &114400829714660844
 MonoBehaviour:
@@ -1290,6 +1198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114645793301699614}
   value: 6
 --- !u!114 &114511706406575934
 MonoBehaviour:
@@ -1313,6 +1222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114348163448116024}
   value: 4
 --- !u!114 &114601418604765232
 MonoBehaviour:
@@ -1325,6 +1235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114384299690552248}
   value: 2
 --- !u!114 &114645793301699614
 MonoBehaviour:
@@ -1337,6 +1248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114400829714660844}
   value: 1
 --- !u!114 &114823111612386950
 MonoBehaviour:
@@ -1360,6 +1272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114314682404086252}
   value: 1
 --- !u!114 &114907799360121988
 MonoBehaviour:
@@ -1372,6 +1285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114991741407935206}
   value: 4
 --- !u!114 &114967544184137586
 MonoBehaviour:
@@ -1384,6 +1298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114194741664877474}
   value: 5
 --- !u!114 &114991741407935206
 MonoBehaviour:
@@ -1396,6 +1311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24800213bb0844c47aa4ab25acaed2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oppositeSide: {fileID: 114907799360121988}
   value: 3
 --- !u!135 &135078683827906776
 SphereCollider:

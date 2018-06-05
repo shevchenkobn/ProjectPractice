@@ -8,15 +8,20 @@ public class Player : MonoBehaviour
 
     public int Id { get; private set; } = 0; // TODO: temporary workaround
 
-    [SerializeField] private float initialStep = 7;
-    [SerializeField] private float step = 5;
+    [SerializeField] private float initialStep = 26;
+    [SerializeField] private float step = 12.5f;
     [SerializeField] private float speed = 10;
     [SerializeField] private float delayBeforeMove = 0.5f;
     [SerializeField] private float delayBetweenSteps = 0.6f;
 
     private Vector3 cornerRotation = new Vector3(0, -90, 0);
     private Vector3 movementDirection = Vector3.forward;
-    private int currentStepIndex = 1;    
+
+    private Vector3 specialBuildingCurrentCorrection = new Vector3(-3f, 0, 0);
+    private Vector3 specialBuildingNextCorrection = new Vector3(0, 0, 6f);
+
+    private int currentStepIndex = 1;
+    private int specialBuildingIndex = 20;
 
     private List<Vector3> possibleSpots = new List<Vector3>(Field.CORNERS_AMOUNT * (Field.STEPS_PER_CORNER + 1));
 
@@ -68,6 +73,14 @@ public class Player : MonoBehaviour
             else if (i == 1) movementDirection = Vector3.back;
             else movementDirection = Vector3.right;
         }
+
+        //workaround
+        Vector3 previousPosition = possibleSpots[specialBuildingIndex - 1];
+        Vector3 nextPosition = possibleSpots[specialBuildingIndex + 1];
+        Vector3 newPosition = Vector3.Lerp(previousPosition, nextPosition, 0.5f);
+
+        possibleSpots[specialBuildingIndex] = newPosition + specialBuildingCurrentCorrection;
+        possibleSpots[specialBuildingIndex + 1] += specialBuildingNextCorrection;
     }
 
     public void Move(int stepsToMove)
@@ -89,7 +102,18 @@ public class Player : MonoBehaviour
         for (int i = currentStepIndex; stepsToMove > 0; i = ++i % possibleSpots.Count, stepsToMove--)
         {
             Vector3 initialPoition = transform.position;
-            float fraction = speed * Time.deltaTime;
+
+            float fraction;
+
+            //for steps on corners
+            if (currentStepIndex % 10 == 1 || currentStepIndex % 10 == 0)
+            {
+                fraction = speed / 2f * Time.deltaTime;
+            }
+            else
+            {
+                fraction = speed * Time.deltaTime;
+            }
 
             while (fraction < 1)
             {

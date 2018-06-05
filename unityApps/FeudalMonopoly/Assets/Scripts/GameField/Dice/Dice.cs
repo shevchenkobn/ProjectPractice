@@ -193,9 +193,13 @@ public class Dice : MonoBehaviour
     /// <summary>
     /// Rolls dice again that is resets its initial position and throws
     /// </summary>
-    private void RollAgain()
+    public void RollAgain()
     {
         ResetDice();
+
+        randomNumber = Random.Range(1, 7); // should be sent from server
+        DiceRolling();
+
         ThrowDice(randomNumber);
     }
 
