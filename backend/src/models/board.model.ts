@@ -52,7 +52,7 @@ export interface IBoardDocument extends Document {
         }
       },
       "improvements": {
-        "type": "string",
+        "type": "level",
         "monopoly": boolean,
         "sell": {
           "price": number,

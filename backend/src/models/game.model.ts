@@ -24,7 +24,8 @@ export interface IPlayerDocument {
     [playerIndex: number]: number
   },
   cellId: number,
-  possessions: Array<ObjectId | ICellFunctionDocument>,
+  buildings: Array<ObjectId | ICellFunctionDocument>,
+  inventory: Array<ObjectId | ICellFunctionDocument>,
   monopolies?: { [cellFunctionClassId: string]: boolean },// if monopoly is active
   improvements?: { [cellFunctionId: string]: any } // FIXME: find out what to save here
   modifiers: Array<ObjectId | ICellFunctionDocument>,
@@ -108,12 +109,21 @@ const playerSchema = new Schema({
     required: true,
     default: 0
   },
-  possessions: {//FIXME: inventory for now is included here
+  buildings: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
+    required: true,
+    default: []
+  },
+  inventory: {
     type: [{ type: Schema.Types.ObjectId, ref: 'CellFunction' }],
     required: true,
     default: []
   },
   monopolies: {
+    type: {},
+    required: false
+  },
+  improvements: {
     type: {},
     required: false
   },

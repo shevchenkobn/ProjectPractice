@@ -1,4 +1,4 @@
-import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
+import mongoose, { Schema, Connection, Model, Document, Types } from 'mongoose';
 import { IModelInitializer } from '.';
 import { ICellFunctionClassDocument } from './cellFunctionClass.model';
 
@@ -16,7 +16,7 @@ export interface IOption {
 }
 
 export interface ICellFunctionDocument extends Document {
-  class?: Schema.Types.ObjectId | ICellFunctionClassDocument
+  class?: Types.ObjectId | ICellFunctionClassDocument
   event?: {
     triggers: Array<string>,
     action?: any
@@ -25,7 +25,7 @@ export interface ICellFunctionDocument extends Document {
   building?: {
     price: number,
     fee: number,
-    implements: Array<IImprovement>
+    improvements: Array<IImprovement>
   },
   modifier?: {
     actions: any,

@@ -87,16 +87,43 @@ export class GameEventsManager {
         const descriptor = action.cashDescriptor;
         switch (descriptor.type) {
           case 'building.fee':
-            let possessions = player.possessions;
-            if (!descriptor.countMortgaged) {
-              possessions = possessions.filter(objectId => !player.mortgaged.findIndex(
+            let buildingsIds = player.buildings;
+            if (!descriptor.countMortgaged && this._rules.building.fee.monopoly.mortgageBreaks) {
+              buildingsIds = buildingsIds.filter(objectId => !player.mortgaged.findIndex(
                 object2Id => (objectId as ObjectID).toHexString() === (object2Id as ObjectID).toHexString()
               ));
             }
-            const buildings = await Promise.all(
-              possessions.map(objectId => findCellFunction((objectId as ObjectId).toHexString()))
-            );
-            const classes = from(buildings).where(building => !!building.class).select(building => building.class.toString());
+            const buildings = (await Promise.all(
+              buildingsIds.map(objectId => findCellFunction((objectId as ObjectId).toHexString()))
+            ));
+            const percentage = descriptor.each.percentage as number;
+            let feeSum = 0;
+            if (
+              descriptor.countMonopolistic
+              || this._rules.building.improvements.monopoly && descriptor.countImprovements
+            ) {
+              const monopolisticFuncs = from(buildings).where(
+                func =>
+                  !!func.building
+                  && !!func.class
+                  && player.monopolies[(func.class as ObjectId).toHexString()]
+              ).toArray();
+              
+              if (this._rules.building.improvements.type === 'level') {
+                const monopolyFactor = this._rules.building.fee.monopoly.factor;
+                for (let func of monopolisticFuncs) {
+                  if (typeof player.improvements[func.id] === 'number') {
+                    const level = player.improvements[func.id] as number;
+                    feeSum += func.building.improvements[level].fee * percentage;
+                  } else {
+                    feeSum += func.building.fee * monopolyFactor * percentage;
+                  }
+                }
+              }
+            } else {
+
+            }
+            player.cash += feeSum;
             
 
             break;
