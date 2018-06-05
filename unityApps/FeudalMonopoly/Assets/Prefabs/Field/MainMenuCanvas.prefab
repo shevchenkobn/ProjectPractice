@@ -1703,6 +1703,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 281dc5b5b55887649a3ca3c2d6cf240f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  volumeSlider: {fileID: 114699104193598288}
   qualityDropdown: {fileID: 114414701429645784}
 --- !u!114 &114107689235803436
 MonoBehaviour:
