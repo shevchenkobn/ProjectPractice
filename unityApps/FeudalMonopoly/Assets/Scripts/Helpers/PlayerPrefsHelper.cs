@@ -5,6 +5,8 @@ public class PlayerPrefsHelper : MonoBehaviour
     const string TOKEN_KEY = "token";
     const string VOLUME_KEY = "volume";
 
+    const float DEFAULT_VOLUME = 0.2f;
+
     public static void SetToken(string token)
     {
         PlayerPrefs.SetString(TOKEN_KEY, token);       
@@ -29,6 +31,7 @@ public class PlayerPrefsHelper : MonoBehaviour
 
     public static float GetVolume()
     {
-        return PlayerPrefs.GetFloat(VOLUME_KEY);
+        float volume = PlayerPrefs.GetFloat(VOLUME_KEY);
+        return volume != 0.0f ? volume : DEFAULT_VOLUME;
     }
 }

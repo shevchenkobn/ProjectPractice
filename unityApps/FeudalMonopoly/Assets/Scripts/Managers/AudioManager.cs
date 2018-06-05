@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 class AudioManager : MonoBehaviour
 {
@@ -31,17 +32,27 @@ class AudioManager : MonoBehaviour
         audioSource.PlayOneShot(levelMusic[0]);
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnLevelLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnLevelLoaded;
+    }
+
     public void SetVolume(float value)
     {
         audioSource.volume = value;
         PlayerPrefsHelper.SetVolume(value);
     }
 
-    void OnLevelWasLoaded(int level)
+    void OnLevelLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (level <= 0) return;
+        if (scene.buildIndex <= 0) return;
 
-        AudioClip currentClip = levelMusic[level - 1];
+        AudioClip currentClip = levelMusic[scene.buildIndex - 1];
 
         if (currentClip)
         {
