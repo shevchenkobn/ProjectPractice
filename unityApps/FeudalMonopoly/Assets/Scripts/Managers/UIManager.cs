@@ -24,6 +24,13 @@ public class UIManager : MonoBehaviour
     public Text buildingFinalUpgradeCostText;
     public Text buildingMortgageText;
 
+    public GameObject cpecialPanel;
+    public Image specialTitlePanel;
+
+    public Text speciaTypeText;
+    public Text speciaTitleText;
+    public Text speciaDesciptionText;
+
     /// <summary>
     /// Makes sure that Instance references only to one object in the scene
     /// </summary>
@@ -54,7 +61,7 @@ public class UIManager : MonoBehaviour
         ShowBuidlingInfo(buildingInfo);
     }
 
-    private void ShowBuidlingInfo(BuidlingInfo buildingInfo)
+    public void ShowBuidlingInfo(BuidlingInfo buildingInfo)
     {
         titlePanel.color = buildingInfo.Color;
 
@@ -80,5 +87,21 @@ public class UIManager : MonoBehaviour
     {
         buildingInfoPanel.SetActive(false);
         CameraManager.Instance.DeactivateBuildingCamera();
+    }
+
+    public void ShowSpecialInfo(Special special)
+    {
+        specialTitlePanel.color = special.Color;
+
+        speciaTypeText.text = special.Type;
+        speciaTitleText.text = special.Title;
+        speciaDesciptionText.text = special.Description;
+
+        cpecialPanel.SetActive(true);
+    }
+
+    public void CloseSpecialInfPanel()
+    {
+        cpecialPanel.SetActive(false);
     }
 }

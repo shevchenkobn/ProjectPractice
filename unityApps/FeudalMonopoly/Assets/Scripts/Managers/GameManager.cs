@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System.IO;
 
 public enum GameStatus { Active, Pause, GameOver }
@@ -19,6 +20,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Special[] chances;
+    public Special[] events;
+
+    public CellBuildingPair[] cellBuildingPairs;
+
+    [System.Serializable]
+    public struct CellBuildingPair
+    {
+        public int cellIndex;
+        public Transform transform;
+    }
+
     private const int PLAYER_AMOUNT = 4;
 
     private Player[] players = new Player[PLAYER_AMOUNT];
@@ -27,6 +40,9 @@ public class GameManager : MonoBehaviour
     private int stepsToMove = 0;
 
     private bool isRolledTwice = false;
+
+    private List<int> listOfChances = new List<int>() { 3, 5, 13, 19, 34, 37};
+    private List<int> listOfEvents = new List<int>() { 8, 24, 39 };
 
     /// <summary>
     /// Makes sure that Instance references only to one object in the scene
@@ -47,16 +63,19 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GameManagerLoaded();
+
     }
 
     private void OnEnable()
     {
+        Player.PlayerStopped += OnPlayerStopped;
         Application.logMessageReceived += OnExceptionReceived;
         Dice.DiceRolled += OnDiceRolled;
     }
 
     private void OnDisable()
     {
+        Player.PlayerStopped -= OnPlayerStopped;
         Application.logMessageReceived -= OnExceptionReceived;
         Dice.DiceRolled -= OnDiceRolled;
     }
@@ -65,6 +84,34 @@ public class GameManager : MonoBehaviour
     {
         string path = Path.Combine(Application.persistentDataPath, "/logs.txt");
         Logger.Log(path, $"Condition: {condition}; Messgae: {message}; Type: {logType}.");
+    }
+
+    private void OnPlayerStopped(int cellIndex)
+    {
+        if (listOfChances.Contains(cellIndex))
+        {
+            Special special = chances[Random.Range(0, chances.Length)];
+            UIManager.Instance.ShowSpecialInfo(special);
+            return;
+        }
+
+        if (listOfEvents.Contains(cellIndex))
+        {
+            Special special = events[Random.Range(0, events.Length)];
+            UIManager.Instance.ShowSpecialInfo(special);
+            return;
+        }
+
+        for (int i = 0; i < cellBuildingPairs.Length; i++)
+        {
+            if (cellBuildingPairs[i].cellIndex == cellIndex)
+            {
+                CameraManager.Instance.ActivateBuildingCamera(cellBuildingPairs[i].transform);
+                UIManager.Instance.ShowBuidlingInfo(cellBuildingPairs[i].transform.GetComponent<Building>().buidlingInfo);
+
+                return; 
+            }
+        }
     }
 
     /// <summary>

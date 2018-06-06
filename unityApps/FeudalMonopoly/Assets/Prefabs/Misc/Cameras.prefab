@@ -329,6 +329,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 353ae45686bc992488f995cb4766f07e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chances:
+  - {fileID: 11400000, guid: e98186f32ef59e143b25c00137c24821, type: 2}
+  - {fileID: 11400000, guid: 152734665f47f8e4d86dda7034f5ae37, type: 2}
+  - {fileID: 11400000, guid: 8c19cb8d4225f2c4f964234cca2f9500, type: 2}
+  - {fileID: 11400000, guid: 007f73653c330f54fa8444721f5726e0, type: 2}
+  - {fileID: 11400000, guid: b0688fb6c4008294b9371c8360edf582, type: 2}
+  events:
+  - {fileID: 11400000, guid: 797c38af72f06f040bb1f36753bef21b, type: 2}
+  - {fileID: 11400000, guid: 4187180f6836fe147858ea7e82cc0afa, type: 2}
+  - {fileID: 11400000, guid: 5b1828c885e49864e86d21e80551a337, type: 2}
+  cellBuildingPairs:
+  - cellIndex: 2
+    transform: {fileID: 0}
+  - cellIndex: 4
+    transform: {fileID: 0}
+  - cellIndex: 6
+    transform: {fileID: 0}
+  - cellIndex: 15
+    transform: {fileID: 0}
+  - cellIndex: 26
+    transform: {fileID: 0}
+  - cellIndex: 32
+    transform: {fileID: 0}
+  - cellIndex: 33
+    transform: {fileID: 0}
+  - cellIndex: 35
+    transform: {fileID: 0}
+  - cellIndex: 36
+    transform: {fileID: 0}
+  - cellIndex: 38
+    transform: {fileID: 0}
+  - cellIndex: 40
+    transform: {fileID: 0}
 --- !u!114 &114120508616322374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -354,6 +387,11 @@ MonoBehaviour:
   buildingBasicUpgradeCostText: {fileID: 0}
   buildingFinalUpgradeCostText: {fileID: 0}
   buildingMortgageText: {fileID: 0}
+  cpecialPanel: {fileID: 0}
+  specialTitlePanel: {fileID: 0}
+  speciaTypeText: {fileID: 0}
+  speciaTitleText: {fileID: 0}
+  speciaDesciptionText: {fileID: 0}
 --- !u!114 &114258193265064244
 MonoBehaviour:
   m_ObjectHideFlags: 1

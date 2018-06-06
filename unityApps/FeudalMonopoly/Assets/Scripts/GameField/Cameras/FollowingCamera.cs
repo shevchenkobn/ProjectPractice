@@ -14,12 +14,12 @@ public class FollowingCamera : MonoBehaviour
 
     private void OnEnable()
     {
-        Player.Rotated += OnPlayerRotated;
+        Player.PlayerRotated += OnPlayerRotated;
     }
 
     private void OnDisable()
     {
-        Player.Rotated -= OnPlayerRotated;
+        Player.PlayerRotated -= OnPlayerRotated;
     }
 
     private void LateUpdate()

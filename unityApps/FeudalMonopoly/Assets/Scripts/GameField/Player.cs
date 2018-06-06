@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public static event System.Action Rotated = delegate { };
+    public static event System.Action PlayerRotated = delegate { };
+    public static event System.Action<int> PlayerStopped = delegate { };
 
     public int Id { get; private set; } = 0; // TODO: temporary workaround
 
@@ -126,13 +127,15 @@ public class Player : MonoBehaviour
             if (currentStepIndex % 10 == 0)
             {
                 transform.Rotate(cornerRotation);
-                Rotated();
+                PlayerRotated();
             }
 
             GenerateNextStepIndex(); // for keeping track of current position            
 
             yield return new WaitForSeconds(delayBetweenSteps);
-        }        
+        }
+
+        PlayerStopped(currentStepIndex);
     }
 
     /// <summary>
