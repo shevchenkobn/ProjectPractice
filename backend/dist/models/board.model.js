@@ -73,6 +73,10 @@ const improvementsSchema = new mongoose_1.Schema({
     _id: false
 });
 const eventSchema = new mongoose_1.Schema({
+    type: {
+        type: String,
+        required: true,
+    },
     triggers: {
         type: [String],
         required: true
@@ -105,7 +109,18 @@ const boardSchema = new mongoose_1.Schema({
             }
         },
         "playerLimits": {
-            type: rangeSchema,
+            type: {
+                max: {
+                    type: Number,
+                    required: true,
+                    min: 2
+                },
+                min: {
+                    type: Number,
+                    required: true,
+                    min: 2
+                }
+            },
             required: true,
         },
         "roles": {
@@ -120,7 +135,15 @@ const boardSchema = new mongoose_1.Schema({
                     type: Number,
                     required: true
                 },
-                "liftInterestPledgePercent": Number,
+                "monopoly": {
+                    type: Boolean,
+                    required: true
+                },
+                "improvements": {
+                    type: Boolean,
+                    required: true
+                },
+                "liftInterestPercent": Number,
                 "sell": {
                     "pricePercentPay": Number
                 }
@@ -206,22 +229,28 @@ boardSchema.methods.extendedPopulate = async function (paths, poolEntities = tru
                     continue;
                 }
                 const id = this.cells[i].function.toHexString();
-                if (sharedIDs[id]) {
-                    sharedIDs[id].push(i);
-                }
-                else {
-                    this.populate(pathPieces.join(i.toString()));
-                    sharedIDs[id] = [i];
+                const path = pathPieces.join(i.toString());
+                if (!this.populated(path)) {
+                    if (sharedIDs[id]) {
+                        sharedIDs[id].push(i);
+                    }
+                    else {
+                        this.populate(path);
+                        sharedIDs[id] = [i];
+                    }
                 }
             }
         }
         else {
             for (let i = 0; i < this.cells.length; i++) {
-                this.populate(pathPieces.join(i.toString()));
+                const path = pathPieces.join(i.toString());
+                if (!this.populated(path)) {
+                    this.populate(pathPieces.join(i.toString()));
+                }
             }
         }
     }
-    if (paths.includes('roles')) {
+    if (paths.includes('roles') && !this.populated('roles')) {
         this.populate('roles');
     }
     await this.execPopulate();
@@ -249,6 +278,32 @@ boardSchema.methods.extendedPopulate = async function (paths, poolEntities = tru
     //     this.cells[i].function = functions[i];
     //   }
     // }
+};
+boardSchema.methods.extendedPopulated = function (paths) {
+    if (!(paths && paths.length)) {
+        return {};
+    }
+    const populated = paths.reduce((obj, path) => obj[path] = false, {});
+    const cellFunctionsIndex = paths.indexOf('cellFunctions');
+    const pathPieces = ['cells.', '.function'];
+    let sharedIDs;
+    if (~cellFunctionsIndex) {
+        paths.splice(cellFunctionsIndex, 1);
+        for (let i = 0; i < this.cells.length; i++) {
+            const path = pathPieces.join(i.toString());
+            if (!this.populated(path)) {
+                populated.cellFunctions = false;
+                break;
+            }
+            else {
+                populated.cellFunctions = true;
+            }
+        }
+    }
+    for (let path of paths) {
+        populated[path] = this.populated(path);
+    }
+    return populated;
 };
 let _modelName = 'Board';
 let Board;

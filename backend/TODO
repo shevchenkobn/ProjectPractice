@@ -1,5 +1,9 @@
 handle fee dept
 
+----------------------- important
+
+fix issue with swagger $ref for GameSeed on notebook
+
 ----------------------- improvements
 add timeout before game start and after it was open
 

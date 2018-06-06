@@ -10,8 +10,6 @@ import { ObjectId } from "bson";
 import { ISessionDocument } from "../../models/session.model";
 import { getId } from "../../services/helpers.service";
 
-const helperService = initialize();
-
 export interface IGameManager {
   initiateGame(game: IGameDocument): Promise<any>;
   tryWinGame(game: IGameDocument): Promise<boolean>;
@@ -33,6 +31,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
     if (this._namespace) {
       throw new Error('Type is initialized');
     }
+    initialize();
     if (!namespace) {
       throw new Error('namespace is undefined');
     }

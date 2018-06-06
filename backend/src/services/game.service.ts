@@ -154,5 +154,5 @@ export const changeRemovingCondition = (gameId: string, condition: RemoveEventHa
 }
 
 export const hasRemovingCondition = (gameId: string) => {
-  return !!removeTasks[gameId][1];
+  return !!removeTasks[gameId] && !!removeTasks[gameId][1];
 }

@@ -8,10 +8,9 @@ const common_service_1 = require("./common.service");
 const board_service_1 = require("./board.service");
 const config_1 = __importDefault(require("config"));
 const events_1 = require("events");
-let gamesConfig;
 let Game;
 function initialize() {
-    gamesConfig = config_1.default.get('games');
+    exports.gamesConfig = config_1.default.get('games');
     Game = game_model_1.default.getModel();
 }
 exports.initialize = initialize;
@@ -71,8 +70,8 @@ exports.constructAndSaveGame = async (boardId, userId, createSuspendedRemoving =
     if (await Game.count({
         createdBy: userId,
         state: 'open'
-    }) >= gamesConfig.gamesPerUser) {
-        throw new common_service_1.ServiceError(`The user "${userId}" has created maximum possible games (${gamesConfig.gamesPerUser})`);
+    }) >= exports.gamesConfig.gamesPerUser) {
+        throw new common_service_1.ServiceError(`The user "${userId}" has created maximum possible games (${exports.gamesConfig.gamesPerUser})`);
     }
     await board_service_1.findBoard(boardId);
     try {
@@ -82,7 +81,7 @@ exports.constructAndSaveGame = async (boardId, userId, createSuspendedRemoving =
         });
         await newGame.save();
         if (createSuspendedRemoving) {
-            exports.suspendRemoving(newGame, gamesConfig.removeTimeout)
+            exports.suspendRemoving(newGame, exports.gamesConfig.removeTimeout)
                 // .then(err => console.log(err))//TODO: add loggin in error callback
                 .catch(err => console.log(err)); //TODO: add loggin in error callback
         }
@@ -103,14 +102,14 @@ exports.suspendRemoving = (game, time) => {
     }
     const eventEmitter = new events_1.EventEmitter();
     removeTasks[id] = [setTimeout(async () => {
-            game = await exports.findGame(game._id);
+            exports.stopSuspendedRemoving(id);
+            const game = await exports.findGame(id);
             if (!removeTasks[id][1] || await removeTasks[id][1](game)) {
                 game.remove()
                     .then((...args) => eventEmitter.emit('resolve', ...args))
                     .catch((...args) => eventEmitter.emit('reject', ...args));
             }
             else {
-                exports.stopSuspendedRemoving(id);
                 eventEmitter.emit('reject');
             }
         }, time), null];
@@ -136,6 +135,6 @@ exports.changeRemovingCondition = (gameId, condition) => {
     removeTasks[gameId][1] = condition;
 };
 exports.hasRemovingCondition = (gameId) => {
-    return !!removeTasks[gameId][1];
+    return !!removeTasks[gameId] && !!removeTasks[gameId][1];
 };
 //# sourceMappingURL=game.service.js.map

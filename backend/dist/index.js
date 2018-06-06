@@ -52,6 +52,10 @@ let dbConnection = database_service_1.initialize(mongoConfig);
             },
             validatorOptions: {
                 validateResponse: false
+            },
+            uiOptions: {
+                apiDocs: "/docs/rest-api/json",
+                swaggerUi: "/docs/rest-api/"
             }
         }
     });

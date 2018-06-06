@@ -24,12 +24,13 @@ const playerSchema = new mongoose_1.Schema({
         type: String,
         required: true,
         enum: [
+            'waiting',
             'active',
             'gone'
         ],
-        default: 'active'
+        default: 'waiting'
     },
-    dateLeft: {
+    whenGone: {
         type: Date,
         required: false
     },
@@ -52,12 +53,21 @@ const playerSchema = new mongoose_1.Schema({
         required: true,
         default: 0
     },
-    possessions: {
+    buildings: {
+        type: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'CellFunction' }],
+        required: true,
+        default: []
+    },
+    inventory: {
         type: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'CellFunction' }],
         required: true,
         default: []
     },
     monopolies: {
+        type: {},
+        required: false
+    },
+    improvements: {
         type: {},
         required: false
     },
@@ -70,6 +80,10 @@ const playerSchema = new mongoose_1.Schema({
         type: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'CellFunction' }],
         required: true,
         default: []
+    },
+    otherInfo: {
+        type: Object,
+        required: false
     }
 }, {
     _id: false
@@ -80,7 +94,7 @@ const gameSchema = new mongoose_1.Schema({
         required: true,
         ref: 'User'
     },
-    state: {
+    status: {
         type: String,
         required: true,
         enum: [
@@ -114,14 +128,23 @@ const gameSchema = new mongoose_1.Schema({
         type: [playerSchema],
         required: true,
         default: []
+    },
+    otherInfo: {
+        type: {
+            cellEventOptions: {
+                type: Object,
+                required: false
+            }
+        },
+        required: false
     }
 }, {
     timestamps: true,
     collection: 'games',
     toObject: {
         transform(doc, ret, options) {
-            for (let i = 0; i < ret.players.length; i++) {
-                delete ret.players[i].session;
+            for (let player of ret.players) {
+                delete player.session;
             }
             return ret;
         }

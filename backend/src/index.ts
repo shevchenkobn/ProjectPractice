@@ -53,6 +53,10 @@ let dbConnection = initializeMongoose(mongoConfig);
       },
       validatorOptions: {
         validateResponse: false
+      },
+      uiOptions: { //TODO: add to config file
+        apiDocs: "/docs/rest-api/json",
+        swaggerUi: "/docs/rest-api/"
       }
     }
   });

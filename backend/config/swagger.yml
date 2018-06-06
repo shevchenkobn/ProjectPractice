@@ -185,7 +185,12 @@ paths:
         - in: body
           name: gameSeed
           schema:
-            $ref: "#/definitions/GameSeed"
+            type: object
+            properties:
+              boardId:
+                type: string
+            required:
+              - boardId
       responses:
         200:
           description: OK
@@ -239,6 +244,7 @@ definitions:
     required:
       - message
   GameSeed:
+    type: object
     properties:
       boardId:
         type: string
