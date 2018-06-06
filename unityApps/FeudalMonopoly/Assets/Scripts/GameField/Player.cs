@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
             //for steps on corners
             if (currentStepIndex % 10 == 1 || currentStepIndex % 10 == 0)
             {
-                fraction = speed / 2f * Time.deltaTime;
+                fraction = speed / 4f * Time.deltaTime;
             }
             else
             {

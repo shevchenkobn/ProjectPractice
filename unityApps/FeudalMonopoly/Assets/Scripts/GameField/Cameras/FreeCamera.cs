@@ -6,7 +6,7 @@ public class FreeCamera : MonoBehaviour
 
     public Transform Transform { get; private set; }
 
-    public float MaxHeight { get; private set; }  = 40f;
+    public float MaxHeight { get; private set; }  = 60f;
     public float MinHeight { get; private set; }  = 10f;
 
     [SerializeField] private float horizontalRotationSpeed = 5f;
