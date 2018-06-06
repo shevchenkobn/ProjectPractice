@@ -1,6 +1,4 @@
-gameEventsManager.class.ts:100
-
-delete optionId for cellFunction (EXCEPT #3) if really not needed
+handle fee dept
 
 ----------------------- improvements
 add timeout before game start and after it was open

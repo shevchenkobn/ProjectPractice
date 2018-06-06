@@ -86,7 +86,7 @@
           "optionId": 6,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 10
             }
           ]
@@ -111,7 +111,7 @@
           "optionId": 11,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 1,
               "reverse": true
             }
@@ -139,8 +139,8 @@
             {
               "event": [
                 {
-                  "boardId": "ObjectId: enFMBoard",
-                  "eventId": "ObjectId: chance"
+                  "board": "ObjectId: enFMBoard",
+                  "event": "ObjectId: chance"
                 }
               ]
             }
@@ -514,7 +514,7 @@
           "optionId": 0,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 34
             }
           ]
@@ -523,7 +523,7 @@
           "optionId": 1,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 0
             }
           ]
@@ -535,7 +535,7 @@
         {
           "optionId": 3,
           "cashDescriptor": {
-            "type": "building.improvements:level",
+            "type": "building.improvements",
             "each": {
               "any": -40,
               "max": -115
@@ -546,7 +546,7 @@
           "optionId": 4,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 26
             }
           ]
@@ -563,19 +563,20 @@
           "optionId": 7,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 10
             }
           ]
         },
         {
-          "optionId": 3
+          "optionId": 8,
+          "useOptionId": 3
         },
         {
           "optionId": 9,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 25
             }
           ]
@@ -600,7 +601,7 @@
           "optionId": 14,
           "goto": [
             {
-              "boardId": "ObjectId: enFMBoard",
+              "board": "ObjectId: enFMBoard",
               "cellId": 6
             }
           ]
@@ -770,7 +771,7 @@
       "action": {
         "goto": [
           {
-            "boardId": "ObjectId: enFMBoard",
+            "board": "ObjectId: enFMBoard",
             "cellId": 10
           }
         ]

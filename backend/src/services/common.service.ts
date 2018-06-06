@@ -1,4 +1,5 @@
-import { Error as MongooseError, CastError, ValidationError } from 'mongoose';
+import { Error as MongooseError, CastError, ValidationError, Document } from 'mongoose';
+import { ObjectId } from 'bson';
 
 export class ServiceError extends Error { }
 

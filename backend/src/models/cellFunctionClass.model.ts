@@ -1,4 +1,4 @@
-import mongoose, { Schema, Connection, Model, Document } from 'mongoose';
+import mongoose, { Schema, Connection, Model, Document, Types } from 'mongoose';
 import { IModelInitializer } from '.';
 import { ICellFunctionDocument } from './cellFunction.model';
 
@@ -8,13 +8,16 @@ import { ICellFunctionDocument } from './cellFunction.model';
 
 export interface ICellFunctionClassDocument extends Document {
   type: 'building',
-  functions: Array<Schema.Types.ObjectId | ICellFunctionDocument>,
+  functions: Array<Types.ObjectId | ICellFunctionDocument>,
   descriptor: {
     improvements?: {
       price: number
     },
     price?: number,
-    feeDescriptor?: any
+    feeDescriptor?: {
+      type: string,
+      [prop: string]: any,
+    }
   }
 }
 

@@ -28,7 +28,7 @@ export interface ICellFunctionDocument extends Document {
     improvements: Array<IImprovement>
   },
   modifier?: {
-    actions: any,
+    action: any,
     break: {
       triggers: Array<string>,
       action?: any

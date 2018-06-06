@@ -84,8 +84,7 @@
           ],
           "action": {
             "auction": {
-              "triggerId": 0,
-              "object": "trigger",
+              "cellId": "player",
               "price": {
                 "start": "anyPlayer"
               },

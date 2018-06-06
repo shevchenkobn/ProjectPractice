@@ -8,6 +8,7 @@ import { GameEventsManager } from "./gameEventsManager.class";
 import { initialize, getClientIds, disconnectSocket, getRange } from "../services/helpers.service";
 import { ObjectId } from "bson";
 import { ISessionDocument } from "../../models/session.model";
+import { getId } from "../../services/helpers.service";
 
 const helperService = initialize();
 
@@ -110,9 +111,7 @@ export class GameLoopController implements IGameRulesProvider, IGameManager {
       for (let socketId of socketIds) {
         const socket = GameLoopController._namespace.connected[socketId] as AuthorizedSocket;
         if (
-          socket.data.sessionId === (game.players[winnerIndex].session instanceof ObjectId
-            ? (game.players[winnerIndex].session as ObjectId).toHexString()
-            : (game.players[winnerIndex].session as ISessionDocument).id)
+          socket.data.sessionId === getId(game.players[winnerIndex].session)
         ) {
           socket.emit('winner') // TODO: use from event handles
           disconnectSocket(socket, {

@@ -8,6 +8,7 @@ import SessionInitializer, { ISessionDocument, ISessionModel } from '../../model
 import { ObjectID, ObjectId } from 'bson';
 import { getClientIds, disconnectSocket, checkAuthAndAccessMiddleware } from '../services/helpers.service';
 import { GameLoopController } from './gameLoop.class';
+import { getId } from '../../services/helpers.service';
 
 let Game: IGameModel;
 let Session: ISessionModel;
@@ -101,7 +102,7 @@ async function trySetCoundownForGame(game: IGameDocument, mustBeFull = true): Pr
     }
 
     for (let clientId of await getClientIds(namespace, game.id)) {
-      namespace.connected[clientId].on('ready', readyHandler);
+      namespace.connected[clientId].once('ready', readyHandler);
     }
 
     suspendRemoving(game.id, gamesConfig.startCountdown);
@@ -196,9 +197,7 @@ const countdownRemovingCondition: RemoveEventHandler = async (game) => {
 async function disconnectPlayerFromGame(game: IGameDocument, session: ISessionDocument) {
   // FIXME: probably additional check game.id == session.id is needed
   const playerIndex = game.players.findIndex(player => {
-    const playerSessionId: string = player.session instanceof ObjectID
-      ? player.session.toHexString()
-      : player.session.id;
+    const playerSessionId: string = getId(player.session);
     return playerSessionId === session.id;
   });
   // if (playerIndex < 0) {
@@ -260,9 +259,10 @@ async function readyHandler(socket: AuthorizedSocket) {
       }, 0)
     ) {
       stopSuspendedRemoving(game.id);
-      for (let socketId of await getClientIds(namespace, game.id)) {
-        namespace.connected[socketId].removeAllListeners('ready');
-      }
+      // FIXME: uncomment if once is not working
+      // for (let socketId of await getClientIds(namespace, game.id)) {
+      //   namespace.connected[socketId].removeAllListeners('ready');
+      // }
       startGame(game).then(() => {
         // TODO: add logging
       }).catch(err => {
