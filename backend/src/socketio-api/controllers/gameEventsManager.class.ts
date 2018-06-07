@@ -209,9 +209,6 @@ export class GameEventsManager {
                 obj2 => getId(obj) === getId(obj2)
               )), findCellFunction);
             }
-            // const buildings = (await Promise.all(
-            //   buildingsIds.map(objectId => findCellFunction((objectId as ObjectId).toHexString()))
-            // ));
             if (descriptor.each) {
               const percentage = descriptor.each.percentage as number;
               if (descriptor.countMonopolistic && descriptor.countImprovements) {
