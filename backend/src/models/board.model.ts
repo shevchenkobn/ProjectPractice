@@ -351,22 +351,6 @@ boardSchema.methods.extendedPopulate = async function (this: IBoardDocument, pat
       }
     }
   }
-  // if (!CellFunction) {
-  //   CellFunction = CellFunctionInitializer.getModel();
-  // }
-  // const promises = [];
-  // for (let i = 0; i < this.cells.length; i++) {
-  //   if (this.cells[i].function instanceof Types.ObjectId) {
-  //     promises[i] = CellFunction.findById(this.cells[i].function.toString());
-  //   }
-  // }
-  // const functions = await Promise.all(promises);
-  // // console.log(functions);
-  // for (let i = 0; i < functions.length; i++) {
-  //   if (functions[i]) {
-  //     this.cells[i].function = functions[i];
-  //   }
-  // }
 };
 
 boardSchema.methods.extendedPopulated = function (this: IBoardDocument, paths: Array<string>): { [path: string]: boolean } {
